@@ -143,6 +143,9 @@ i{font-style:normal;color:var(--laranja)}
 .telinha:fullscreen .ampliar,.telinha:-webkit-full-screen .ampliar{display:none}
 .aulao-card p{font-size:13px;color:rgba(255,255,255,.95);line-height:1.5;max-width:32ch;
   text-align:center}
+.duracao{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;
+  color:rgba(255,255,255,.82)!important;margin-top:-5px}
+.duracao[hidden]{display:none}
 
 
 /* ══════════════════════════════════════════════════════════════════════════

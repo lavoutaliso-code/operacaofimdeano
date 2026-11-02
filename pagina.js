@@ -12,7 +12,42 @@ const XIS   = `<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>`;
 (function aulao(){
   const q = g('quadroAulao'), v = g('videoAulao');
   if(!q) return;
-  const tocar = () => { q.classList.add('tocando'); v.controls = true; v.play();
+  /* ⚠️ A AULA É HLS, e os dois mundos se dividem assim:
+     · iPhone/Safari — toca .m3u8 NATIVO e não suporta hls.js (sem MSE). Basta
+       pôr o endereço no `src`.
+     · Chrome/Firefox/Android — não tocam .m3u8 sozinhos; precisam do hls.js,
+       que mora aqui do lado (nada de CDN).
+     Em ambos o arquivo só é buscado no play: `preload="none"` é de propósito,
+     pra ninguém gastar dado de celular sem ter pedido a aula. */
+  const FONTE = v.dataset.hls;
+  let armado = false;
+  function armar(){
+    if(armado) return Promise.resolve(); armado = true;
+    if(v.canPlayType('application/vnd.apple.mpegurl')){ v.src = FONTE; return Promise.resolve(); }
+    return new Promise(ok => {
+      const s = document.createElement('script');
+      s.src = 'video/hls.min.js'; s.onload = () => {
+        if(window.Hls && Hls.isSupported()){
+          const h = new Hls({maxBufferLength:30}); h.loadSource(FONTE); h.attachMedia(v);
+        } else { v.src = FONTE; }   /* último recurso: deixa o navegador tentar */
+        ok();
+      };
+      s.onerror = () => { v.src = FONTE; ok(); };
+      document.head.appendChild(s);
+    });
+  }
+
+  /* a duração só se sabe depois que o manifesto chega */
+  v.addEventListener('loadedmetadata', () => {
+    if(!isFinite(v.duration) || v.duration < 60) return;
+    const h = Math.floor(v.duration/3600), m = Math.round(v.duration%3600/60);
+    const d = g('duracaoAulao');
+    d.textContent = h ? `${h}h${String(m).padStart(2,'0')} de aula` : `${m} min de aula`;
+    d.hidden = false;
+  });
+
+  const tocar = () => { q.classList.add('tocando'); v.controls = true;
+    armar().then(() => v.play().catch(()=>{}));
     marcar('AulaoPlay'); };
   g('playAulao').addEventListener('click', tocar);
   v.addEventListener('pause', () => { if(v.currentTime === 0) q.classList.remove('tocando'); });
@@ -28,6 +63,8 @@ const XIS   = `<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>`;
     if(!q.classList.contains('tocando')) tocar();
     if(typeof v.webkitEnterFullscreen === 'function' && !document.fullscreenEnabled){
       const abre = () => v.webkitEnterFullscreen();
+      /* ⚠️ no iPhone o vídeo tem que ter METADADOS antes — chamar isto com o
+         <video> ainda vazio não faz nada e parece que o botão quebrou. */
       v.readyState >= 1 ? abre() : v.addEventListener('loadedmetadata', abre, {once:true});
       return;
     }
