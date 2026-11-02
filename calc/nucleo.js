@@ -263,9 +263,18 @@ function extrato(d){
     nome: p.nome, detalhe: R$0(n(p.frasco)) + ' ÷ ' + n(p.rende) + ' usos',
     v: cent(n(p.rende) > 0 ? n(p.frasco) / n(p.rende) : 0),
   }));
+  /* ⛔ 02/11 — AQUI O ALUGUEL ERA COBRADO DUAS VEZES.
+     `atend` é o que UMA pessoa atende (o total do salão dividido pelas bocas).
+     Ratear as contas por ele significa que, num salão de 2 pessoas com 104
+     atendimentos no mês, os R$ 1.200 de aluguel viravam R$ 23,08 em cada um
+     dos 104 — R$ 2.400 no mês, o dobro do que ela paga.
+     A conta do salão é PAGA UMA VEZ: ela se divide por TODOS os atendimentos do
+     salão, não pelos de uma pessoa. Medido no caso dela: lucro líquido de
+     R$ 189,17 (errado) para R$ 200,71 (certo). */
+  const atendDoSalao = n(d.salaoMes) > 0 ? n(d.salaoMes) : atend;
   const salao = _contas.map(c => ({
-    nome: c.nome, detalhe: R$0(n(c.v)) + ' ÷ ' + atend,
-    v: cent(atend > 0 ? n(c.v) / atend : 0),
+    nome: c.nome, detalhe: R$0(n(c.v)) + ' ÷ ' + atendDoSalao,
+    v: cent(atendDoSalao > 0 ? n(c.v) / atendDoSalao : 0),
   }));
   const taxas = _taxas.map(t => ({
     nome: t.nome, detalhe: String(n(t.pct)).replace('.', ',') + '% de ' + R$0(preco),
