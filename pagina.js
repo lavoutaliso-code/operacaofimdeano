@@ -255,15 +255,10 @@ const reais = v => v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFrac
     '−' + Math.round((1 - por/de)*100) + '%';
 })();
 
-(function termometro(){
-  const {total, restam} = VAGAS;
-  const tomadas = Math.max(0, total - restam);
-  g('termoNum').textContent = restam === 1 ? 'resta 1 vaga' : `restam ${restam} vagas`;
-  g('termoBarra').style.width = (tomadas/total*100).toFixed(1) + '%';
-  g('termoPe').textContent = tomadas
-    ? `${tomadas} de ${total} já foram. A turma fecha quando a barra encher.`
-    : `A turma tem ${total} lugares e fecha quando a barra encher.`;
-})();
+/* ⛔ 02/11 — O TERMÔMETRO DE VAGAS SAIU DA TELA, por ordem dela.
+   Não havia fonte pra ele: `VAGAS.restam` era um número digitado à mão, e barra
+   de vaga enchendo sem fonte é afirmação de venda que não aconteceu. Se um dia
+   voltar, a contagem tem que vir das vendas pagas da Kiwify — não daqui. */
 
 /* o link do checkout. Enquanto for '#', o botão avisa em vez de enganar. */
 (function liga(){

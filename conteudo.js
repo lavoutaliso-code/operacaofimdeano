@@ -23,10 +23,12 @@ window.PRECO = {
   JUROS_AM: 0.0349   // 3,49% a.m. — tabela Price, como a Kiwify faz
 };
 
-/* ⚠️ NÚMERO DE VAGA NÃO É MEDIDO — é o que ela definir. Não existe fonte
-   externa pra isso ainda; quando existir (a planilha da turma, o checkout),
-   é daqui que ele passa a vir. Até lá, os dois números abaixo são a verdade. */
-window.VAGAS = { total: 20, restam: 20 };
+/* ⛔ 02/11 — `window.VAGAS` foi REMOVIDO junto com o termômetro, por ordem dela.
+   Era um número digitado à mão movendo uma barra de «vagas preenchidas» — ou seja,
+   venda afirmada na tela sem venda. Se a barra voltar um dia, a contagem vem das
+   vendas pagas da Kiwify (`netlify/functions/kiwify.mjs`), nunca daqui.
+   A etiqueta «vagas abertas · as 20 primeiras» continua: o limite de 20 no preço
+   promocional é real e não precisa de contador. */
 
 /* ── As 5 perguntas ──────────────────────────────────────────────────────
    `ilu`  = a ilustração do gargalo (uma por pergunta)

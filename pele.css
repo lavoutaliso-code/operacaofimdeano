@@ -329,15 +329,8 @@ i{font-style:normal;color:var(--laranja)}
   font-size:12px;color:#848C97;line-height:1.45;letter-spacing:-.005em}
 .fonte b{color:#B9C0C9}
 
-.termo{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-  border-radius:18px;padding:clamp(13px,2vh,20px) clamp(14px,2.4vw,22px);text-align:left}
-.termo-cab{display:flex;justify-content:space-between;align-items:baseline;
-  font-size:13.5px;color:#9BA2AC;margin-bottom:10px}
-.termo-cab b{font-family:var(--sfd);font-size:17px;color:#fff;letter-spacing:-.02em}
-.barra{height:12px;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden}
-.barra i{display:block;height:100%;border-radius:999px;
-  background:linear-gradient(90deg,#FF8A3D,#FA6503);transition:width .9s cubic-bezier(.3,0,.2,1)}
-.termo-pe{margin-top:9px;font-size:12.5px;color:#8E96A1;letter-spacing:-.01em}
+/* ⛔ 02/11 — as regras do termômetro de vagas (.termo/.barra/.termo-pe) saíram
+   junto com o bloco. Ver a nota no pagina.js. */
 
 /* o que ela leva — é isto que justifica o preço, então vem ANTES dele */
 .leva-tit{font-family:var(--sfd);font-weight:700;font-size:clamp(16px,2.3vh,20px);
