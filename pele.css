@@ -270,8 +270,13 @@ i{font-style:normal;color:var(--laranja)}
    748 de altura e os últimos 69px entravam POR BAIXO da doca — o pé da
    calculadora sumia. Com `aspect-ratio`, limitar a altura encolhe a largura na
    mesma proporção, então ele cresce até o limite da tela e para ali. */
-.moldura{flex:0 0 auto;width:min(100%,460px);aspect-ratio:390/780;
-  max-height:calc(100svh - var(--doca) - 104px);
+/* ⚠️ MEDIDO: `width` + `max-height` juntos DEFORMAM o aparelho — ele ficou
+   374×678, que não é proporção de iPhone (390/780), e a calculadora de dentro
+   passava 58px do fundo da lente: o botão «Calcular meu preço» era cortado.
+   Mandar na ALTURA e deixar a largura sair da proporção resolve os dois. */
+.moldura{flex:0 0 auto;
+  height:min(calc(100svh - var(--doca) - 104px), calc((100vw - 16px) * 2));
+  width:auto;aspect-ratio:390/780;max-width:min(100%,460px);
   background:#0B0A08;border-radius:clamp(30px,6vw,44px);padding:8px;
   box-shadow:0 2px 4px rgba(0,0,0,.3),0 50px 90px -50px rgba(0,0,0,.85);position:relative}
 /* ⚠️ a ilha do iPhone TAPAVA o título da calculadora, que foi desenhada sem
