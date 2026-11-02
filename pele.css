@@ -132,6 +132,15 @@ i{font-style:normal;color:var(--laranja)}
   place-items:center;box-shadow:0 10px 26px -10px rgba(0,0,0,.8)}
 .play svg{width:24px;height:24px;margin-left:3px;fill:var(--laranja)}
 .telinha.tocando .play{opacity:0;pointer-events:none}
+/* o «tela cheia» fica SEMPRE à vista, inclusive antes do play */
+.ampliar{position:absolute;z-index:3;right:9px;bottom:9px;display:inline-flex;align-items:center;
+  gap:6px;border:0;border-radius:999px;padding:7px 12px 7px 10px;cursor:pointer;
+  background:rgba(0,0,0,.62);color:#fff;font:inherit;font-size:12px;font-weight:600;
+  letter-spacing:-.01em;-webkit-backdrop-filter:none;backdrop-filter:none}
+.ampliar svg{width:14px;height:14px;flex:0 0 auto}
+/* com os controles nativos na tela, o botão sobe pra não ficar em cima deles */
+.telinha.tocando .ampliar{bottom:46px;background:rgba(0,0,0,.52)}
+.telinha:fullscreen .ampliar,.telinha:-webkit-full-screen .ampliar{display:none}
 .aulao-card p{font-size:13px;color:rgba(255,255,255,.95);line-height:1.5;max-width:32ch;
   text-align:center}
 
@@ -239,7 +248,12 @@ i{font-style:normal;color:var(--laranja)}
 
 /* ═══════════ 2 · CALCULADORA ═══════════ */
 .aparelho{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%}
-.moldura{width:min(360px,92vw);aspect-ratio:390/780;
+/* ⚠️ 02/11 — O MOCKUP ESTAVA PRESO EM 360px. O `min(360px,92vw)` fazia o teto de
+   360 vencer em QUALQUER tela a partir de 392px: num iPhone de 430 sobravam 70px
+   de lado sem uso e a calculadora rodava escalada a 0,88. Agora ele acompanha a
+   largura da tela, e a seção abre mão do respiro lateral pra isso. */
+#sec-calc{padding-inline:8px}
+.moldura{width:min(100%,460px);aspect-ratio:390/780;
   background:#0B0A08;border-radius:clamp(30px,6vw,44px);padding:8px;
   box-shadow:0 2px 4px rgba(0,0,0,.3),0 50px 90px -50px rgba(0,0,0,.85);position:relative}
 /* ⚠️ a ilha do iPhone TAPAVA o título da calculadora, que foi desenhada sem
@@ -256,7 +270,7 @@ i{font-style:normal;color:var(--laranja)}
 .controles button:hover:not(:disabled){border-color:#C7CDD5;transform:translateY(-1px)}
 .controles button:disabled{opacity:.3;cursor:default}
 .rot{font-size:13.5px;color:var(--t2);min-width:13ch;text-align:center;letter-spacing:-.015em}
-.nota{font-size:12px;color:var(--t3);text-align:center;max-width:44ch;line-height:1.35}
+/* ⛔ 02/11 — `.nota` (a legenda sob o aparelho) saiu da tela por ordem dela. */
 
 /* ═══════════ 3 · ANTES → DEPOIS ═══════════ */
 /* ⚠️ CAIXA LARGA E BAIXA ESMAGA A PEÇA. O motor dimensiona o braço pela MENOR

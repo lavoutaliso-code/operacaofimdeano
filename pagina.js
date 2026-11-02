@@ -16,6 +16,27 @@ const XIS   = `<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>`;
     marcar('AulaoPlay'); };
   g('playAulao').addEventListener('click', tocar);
   v.addEventListener('pause', () => { if(v.currentTime === 0) q.classList.remove('tocando'); });
+
+  /* ⚠️ 02/11 — TELA CHEIA. Três caminhos, porque os três existem de verdade:
+     · iPhone: o Safari NÃO abre tela cheia num <div>. Só o próprio <video>
+       responde, e só pelo `webkitEnterFullscreen` — com o vídeo já tocando.
+     · Android/Chrome: aceita o contêiner, e aí os controles vão junto.
+     · Computador: `requestFullscreen` no contêiner. */
+  g('ampliarAulao').addEventListener('click', ev => {
+    ev.stopPropagation();
+    marcar('AulaoTelaCheia');
+    if(!q.classList.contains('tocando')) tocar();
+    if(typeof v.webkitEnterFullscreen === 'function' && !document.fullscreenEnabled){
+      const abre = () => v.webkitEnterFullscreen();
+      v.readyState >= 1 ? abre() : v.addEventListener('loadedmetadata', abre, {once:true});
+      return;
+    }
+    const pede = q.requestFullscreen || q.webkitRequestFullscreen;
+    if(pede) Promise.resolve(pede.call(q)).catch(() => {
+      if(typeof v.webkitEnterFullscreen === 'function') v.webkitEnterFullscreen();
+    });
+    else if(typeof v.webkitEnterFullscreen === 'function') v.webkitEnterFullscreen();
+  });
 })();
 
 /* ─────────────── 2 · CHECKLIST ─────────────── */
