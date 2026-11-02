@@ -254,14 +254,55 @@ addEventListener('message', e => {
 });
 /* ⚠️ a escala é MEDIDA, não chutada: a lente diz quanto cabe e o iframe de
    390px é reduzido na proporção exata. Sem isso a calculadora nasce espremida. */
+/* ⛔ 02/11 — O TAMANHO DO APARELHO É CALCULADO AQUI, E SÓ MUDA SE A LARGURA
+   MUDAR. Em CSS, com `100svh`, o teclado do celular encolhia a janela e o
+   mockup inteiro encolhia junto (339px → 177px): era por isso que o botão
+   «Continuar» sumia e voltava enquanto ela digitava o procedimento.
+   Girar o aparelho muda a largura e refaz a conta; teclado não. */
+let larguraDeReferencia = 0;
+function ajustaMoldura(){
+  const m = document.querySelector('.moldura'); if(!m) return;
+  if(innerWidth === larguraDeReferencia) return;   // só a LARGURA manda
+  larguraDeReferencia = innerWidth;
+  const cabeEmLargura = Math.min(innerWidth - 16, 460);
+  const cabeEmAltura  = innerHeight - 62 /* a doca */ - 104;
+  /* o aparelho é 390×780: a altura é o dobro da largura */
+  const altura = Math.max(380, Math.min(cabeEmAltura, cabeEmLargura * 2));
+  m.style.setProperty('--molh', Math.round(altura) + 'px');
+}
+
 function ajustaLente(){
   const l = g('lente'); if(!l) return;
   const esc = l.clientWidth / 390;
   l.style.setProperty('--esc', esc.toFixed(5));
   g('calc').style.setProperty('--esc', esc.toFixed(5));
 }
+ajustaMoldura();
 ajustaLente();
+addEventListener('resize', () => { ajustaMoldura(); ajustaLente(); });
+addEventListener('orientationchange', () => {
+  larguraDeReferencia = 0; setTimeout(() => { ajustaMoldura(); ajustaLente(); }, 250);
+});
 new ResizeObserver(ajustaLente).observe(g('lente'));
+
+/* ⚠️ 02/11 — O TECLADO TAPA O BOTÃO. Mesmo com o aparelho parado, um teclado de
+   ~300px cobre o pé do mockup, e o «Continuar» fica embaixo dele: ela digita, não
+   consegue tocar, e a calculadora parece travada. Duas saídas, as duas medidas:
+   1. a própria tela avisa quando um campo ganha foco, e aqui eu rolo a página
+      até o botão ficar ACIMA do teclado (pelo `visualViewport`, que é quem
+      sabe o tamanho real da área que sobrou);
+   2. a tecla «ir» do teclado avança — ver o `nav.js` das telas. */
+addEventListener('message', e => {
+  if(!e.data || e.data.calc !== 'focou') return;
+  const vv = window.visualViewport;
+  setTimeout(() => {
+    const m = document.querySelector('.moldura'); if(!m) return;
+    const alturaUtil = vv ? vv.height : innerHeight;
+    const folga = 12;
+    const sobra = m.getBoundingClientRect().bottom - (alturaUtil - folga);
+    if(sobra > 0) scrollBy({top: sobra, behavior:'smooth'});
+  }, 320);   /* o teclado leva ~300ms pra terminar de subir */
+});
 
 vaiCalc(0);
 

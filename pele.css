@@ -273,10 +273,17 @@ i{font-style:normal;color:var(--laranja)}
 /* ⚠️ MEDIDO: `width` + `max-height` juntos DEFORMAM o aparelho — ele ficou
    374×678, que não é proporção de iPhone (390/780), e a calculadora de dentro
    passava 58px do fundo da lente: o botão «Calcular meu preço» era cortado.
-   Mandar na ALTURA e deixar a largura sair da proporção resolve os dois. */
+   Mandar na ALTURA e deixar a largura sair da proporção resolve os dois.
+
+   ⛔ E A ALTURA NÃO PODE VIR DE `svh`. Medido em 02/11: quando o TECLADO do
+   celular abre, o navegador encolhe a altura da janela — e com a conta em CSS o
+   aparelho inteiro encolhia junto, de 339px para 177px. É isso que fazia o botão
+   «Continuar» SUMIR E APARECER enquanto ela digitava o procedimento.
+   Agora quem calcula é o `pagina.js`, UMA vez, e só refaz a conta quando a
+   LARGURA muda (girar o aparelho). Teclado abrindo não mexe mais em nada. */
 .moldura{flex:0 0 auto;
-  height:min(calc(100svh - var(--doca) - 104px), calc((100vw - 16px) * 2));
-  width:auto;aspect-ratio:390/780;max-width:min(100%,460px);
+  height:var(--molh,678px);
+  width:auto;aspect-ratio:390/780;
   background:#0B0A08;border-radius:clamp(30px,6vw,44px);padding:8px;
   box-shadow:0 2px 4px rgba(0,0,0,.3),0 50px 90px -50px rgba(0,0,0,.85);position:relative}
 /* ⚠️ a ilha do iPhone TAPAVA o título da calculadora, que foi desenhada sem
