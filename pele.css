@@ -18,7 +18,9 @@
 /* ⚠️ [hidden] perde pra qualquer display: sem isto o fecho do checklist nasce
    DESENHADO POR CIMA da pergunta. */
 [hidden]{display:none!important}
-html{scroll-behavior:smooth}
+/* ⚠️ `scroll-behavior:smooth` GLOBAL disputa com a rolagem do dedo no celular e
+   deixa a navegação pastosa. O suave fica só nos cliques da doca, por JS. */
+html{scroll-behavior:auto}
 body{background:var(--fundo);color:var(--tinta);font-family:var(--sf);
   -webkit-font-smoothing:antialiased;letter-spacing:-.011em;
   /* a página rola na vertical e NUNCA na horizontal */
@@ -32,13 +34,24 @@ i{font-style:normal;color:var(--laranja)}
    fila de etapas, é um lugar com quatro cômodos.
    ══════════════════════════════════════════════════════════════════════════ */
 :root{--doca:62px}
+/* ⚠️ A DOCA TREMIA AO ROLAR. Três causas, medidas:
+   1. `backdrop-filter:blur(16px)` obriga o navegador a repintar o desfoque a
+      CADA quadro da rolagem — no celular isso treme. Fundo sólido não repinta.
+   2. Sem camada própria, ela era repintada junto com a página. `translateZ(0)`
+      + `will-change` a promovem a camada de composição: a rolagem passa por
+      baixo sem tocar nela.
+   3. `contain:paint` impede que o que está dentro force repintura de fora. */
 .doca{position:fixed;bottom:0;left:0;right:0;z-index:60;display:flex;
-  background:rgba(255,255,255,.95);-webkit-backdrop-filter:blur(16px);
-  backdrop-filter:blur(16px);border-top:1px solid var(--linha);
-  padding-bottom:env(safe-area-inset-bottom,0)}
+  background:#fff;border-top:1px solid var(--linha);
+  padding-bottom:env(safe-area-inset-bottom,0);
+  transform:translateZ(0);will-change:transform;contain:paint;
+  backface-visibility:hidden}
 .doca a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:4px;padding:9px 2px 8px;text-decoration:none;color:#A9AFB7;
-  font-size:10px;font-weight:600;letter-spacing:-.005em;transition:color .22s}
+  font-size:10px;font-weight:600;letter-spacing:-.005em;
+  /* transição curta: com .22s a cor ainda estava mudando quando a próxima
+     troca chegava, e a barra parecia piscar sem parar */
+  transition:color .12s linear}
 .doca a svg{width:23px;height:23px;flex:0 0 auto}
 .doca a.on{color:var(--laranja)}
 .doca a.feito{color:var(--verde)}

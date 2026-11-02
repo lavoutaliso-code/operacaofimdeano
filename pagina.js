@@ -297,7 +297,10 @@ const PARTE_DA_SECAO = {
   'sec-antes':4, 'sec-mentoria':4
 };
 const elosTrilha = [...document.querySelectorAll('.doca a')];
+let parteAtual = 0;
 function acende(p){
+  if(p === parteAtual) return;        // ⚠️ só mexe quando MUDA de verdade
+  parteAtual = p;
   elosTrilha.forEach(a => {
     const n = +a.dataset.p;
     a.classList.toggle('on', n === p);
@@ -305,12 +308,40 @@ function acende(p){
   });
 }
 acende(1);
-const olho = new IntersectionObserver(ents => {
-  const visivel = ents.filter(e => e.isIntersecting)
-                      .sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
-  if(visivel) acende(PARTE_DA_SECAO[visivel.target.id] || 1);
-}, {threshold:[.25,.5,.75], rootMargin:'-20% 0px -20% 0px'});
-Object.keys(PARTE_DA_SECAO).forEach(id => { const s = g(id); if(s) olho.observe(s); });
+
+/* ⚠️ A DOCA PISCAVA AO ROLAR. O observador acendia a cada cruzamento de limiar
+   — 9 trocas de classe numa rolagem só, com transição de cor em cada uma. Agora
+   ele decide UMA vez por quadro de animação, pela seção que ocupa o meio da
+   tela, e só escreve quando a parte realmente muda. */
+let pendente = false;
+function decidir(){
+  pendente = false;
+  const meio = innerHeight / 2;
+  let melhor = null, menor = Infinity;
+  for(const id in PARTE_DA_SECAO){
+    const s = g(id); if(!s || s.hidden) continue;
+    const r = s.getBoundingClientRect();
+    if(r.bottom < 0 || r.top > innerHeight) continue;
+    const d = Math.abs((r.top + r.bottom)/2 - meio);
+    if(d < menor){ menor = d; melhor = id; }
+  }
+  if(melhor) acende(PARTE_DA_SECAO[melhor]);
+}
+addEventListener('scroll', () => {
+  if(pendente) return;
+  pendente = true;
+  requestAnimationFrame(decidir);
+}, {passive:true});
+addEventListener('resize', decidir, {passive:true});
+decidir();
+
+/* o rolar suave vive só no clique da doca — no CSS ele brigava com o dedo */
+elosTrilha.forEach(a => a.addEventListener('click', e => {
+  const alvo = document.querySelector(a.getAttribute('href'));
+  if(!alvo) return;
+  e.preventDefault();
+  alvo.scrollIntoView({behavior:'smooth', block:'start'});
+}));
 
 /* rolagem dos botões internos */
 document.querySelectorAll('[data-ir]').forEach(b =>
