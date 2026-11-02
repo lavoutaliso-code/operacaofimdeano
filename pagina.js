@@ -46,138 +46,35 @@ const XIS   = `<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>`;
     d.hidden = false;
   });
 
-  /* ⚠️ `v.controls` FICA FALSO — ela recusou o padrão do navegador. Tudo abaixo
-     é o nosso painel. A única exceção é o iPhone em tela cheia, onde o sistema
-     impõe os controles dele e não há como desligar. */
-  const painel  = g('painelVideo'), roda = g('rodinhaAulao');
-  const bPausa  = g('pvPausa'), bVel = g('pvVel'), bCheia = g('ampliarAulao');
-  const barra   = g('pvBarra'), andou = g('pvAndou'), carregou = g('pvCarregou'),
-        bolinha = g('pvBolinha'), relogio = g('pvTempo');
-
-  const relogioDe = s => {
-    if(!isFinite(s)) s = 0;
-    s = Math.max(0, Math.floor(s));
-    const h = Math.floor(s/3600), m = Math.floor(s%3600/60), g2 = s%60;
-    return (h ? h + ':' + String(m).padStart(2,'0') : String(m)) + ':' + String(g2).padStart(2,'0');
-  };
+  /* ⚠️ 02/11 — CONTROLES NATIVOS, IGUAL À VSL DA ANAMNESE. Ela reprovou o painel
+     próprio: *«a tela que aumenta e acelera estão tampando o vídeo»*. Os nativos
+     somem sozinhos enquanto a aula roda, já trazem velocidade e tela cheia, e no
+     iPhone são os únicos que funcionam dentro da tela cheia do sistema. */
+  const andou = g('barraAndou'), carregou = g('barraCarregou');
 
   function pinta(){
     const d = v.duration;
     if(!isFinite(d) || d <= 0) return;
-    const p = Math.min(1, v.currentTime / d);
-    andou.style.width = (p*100).toFixed(3) + '%';
-    bolinha.style.left = (p*100).toFixed(3) + '%';
-    barra.setAttribute('aria-valuenow', Math.round(p*100));
-    /* o quanto JÁ BAIXOU, a partir de onde ela está */
+    andou.style.width = (Math.min(1, v.currentTime/d)*100).toFixed(3) + '%';
     let fim = 0;
     for(let i = 0; i < v.buffered.length; i++)
       if(v.buffered.start(i) <= v.currentTime + .25 && v.buffered.end(i) > fim)
         fim = v.buffered.end(i);
     carregou.style.width = (Math.min(1, fim/d)*100).toFixed(3) + '%';
-    relogio.textContent = relogioDe(v.currentTime) + ' / ' + relogioDe(d);
   }
   v.addEventListener('timeupdate', pinta);
   v.addEventListener('progress', pinta);
   v.addEventListener('durationchange', pinta);
 
-  /* a rodinha: só aparece quando o vídeo REALMENTE está esperando dado */
-  const espera = liga => { roda.hidden = !liga; };
-  v.addEventListener('waiting',   () => espera(true));
-  v.addEventListener('stalled',   () => espera(true));
-  v.addEventListener('playing',   () => espera(false));
-  v.addEventListener('canplay',   () => espera(false));
-  v.addEventListener('seeking',   () => espera(true));
-  v.addEventListener('seeked',    () => espera(false));
-
-  const marcaEstado = () => q.classList.toggle('pausado', v.paused);
-  v.addEventListener('play',  marcaEstado);
-  v.addEventListener('pause', marcaEstado);
-  v.addEventListener('ended', () => { q.classList.add('pausado'); espera(false); });
-
   const tocar = () => {
-    q.classList.add('tocando'); v.controls = false;
-    painel.hidden = false;
-    espera(true);
+    q.classList.add('tocando');
+    v.controls = true;
     armar().then(() => v.play().catch(()=>{}));
     marcar('AulaoPlay');
   };
   g('playAulao').addEventListener('click', tocar);
-  bPausa.addEventListener('click', e => { e.stopPropagation();
-    v.paused ? v.play().catch(()=>{}) : v.pause(); });
-
-  /* VELOCIDADE — aula de 1h25 se assiste em 1,5× e ela sabe disso */
-  const VELS = [1, 1.25, 1.5, 1.75, 2];
-  let iv = 0;
-  bVel.addEventListener('click', e => { e.stopPropagation();
-    iv = (iv + 1) % VELS.length; v.playbackRate = VELS[iv];
-    bVel.textContent = String(VELS[iv]).replace('.', ',') + '×';
-    marcar('AulaoVelocidade', {vel: VELS[iv]}); });
-
-  /* ARRASTAR A BARRA — ponteiro, porque cobre dedo, caneta e mouse de uma vez */
-  let arrastando = false;
-  const posicao = ev => {
-    const r = barra.getBoundingClientRect();
-    const x = Math.min(r.right, Math.max(r.left, ev.clientX));
-    return (x - r.left) / r.width;
-  };
-  const vai = ev => { if(!isFinite(v.duration)) return;
-    const p = posicao(ev); v.currentTime = p * v.duration;
-    andou.style.width = bolinha.style.left = (p*100).toFixed(3) + '%'; };
-  barra.addEventListener('pointerdown', ev => { ev.stopPropagation();
-    arrastando = true; barra.setPointerCapture(ev.pointerId); vai(ev); });
-  barra.addEventListener('pointermove', ev => { if(arrastando) vai(ev); });
-  const solta = ev => { if(!arrastando) return; arrastando = false;
-    try{ barra.releasePointerCapture(ev.pointerId); }catch(e){} };
-  barra.addEventListener('pointerup', solta);
-  barra.addEventListener('pointercancel', solta);
-  barra.addEventListener('keydown', ev => {
-    if(!isFinite(v.duration)) return;
-    if(ev.key === 'ArrowRight'){ v.currentTime = Math.min(v.duration, v.currentTime + 10); ev.preventDefault(); }
-    if(ev.key === 'ArrowLeft'){  v.currentTime = Math.max(0, v.currentTime - 10); ev.preventDefault(); }
-  });
-
-  /* ⚠️ 02/11 — TELA CHEIA. Três caminhos, porque os três existem de verdade:
-     · iPhone: o Safari NÃO abre tela cheia num <div>. Só o próprio <video>
-       responde, e só pelo `webkitEnterFullscreen` — com o vídeo já tocando.
-       Lá os controles são os da Apple; não há como pôr os nossos.
-     · Android/Chrome: aceita o contêiner, e aí o nosso painel vai junto.
-     · Computador: `requestFullscreen` no contêiner. */
-  const estaCheia = () => document.fullscreenElement === q ||
-                          document.webkitFullscreenElement === q;
-  bCheia.addEventListener('click', ev => {
-    ev.stopPropagation();
-    marcar('AulaoTelaCheia');
-    if(!q.classList.contains('tocando')) tocar();
-    if(estaCheia()){
-      (document.exitFullscreen || document.webkitExitFullscreen).call(document);
-      return;
-    }
-    if(typeof v.webkitEnterFullscreen === 'function' && !document.fullscreenEnabled){
-      const abre = () => v.webkitEnterFullscreen();
-      /* ⚠️ no iPhone o vídeo tem que ter METADADOS antes — chamar isto com o
-         <video> ainda vazio não faz nada e parece que o botão quebrou. */
-      v.readyState >= 1 ? abre() : v.addEventListener('loadedmetadata', abre, {once:true});
-      return;
-    }
-    const pede = q.requestFullscreen || q.webkitRequestFullscreen;
-    if(pede) Promise.resolve(pede.call(q)).catch(() => {
-      if(typeof v.webkitEnterFullscreen === 'function') v.webkitEnterFullscreen();
-    });
-    else if(typeof v.webkitEnterFullscreen === 'function') v.webkitEnterFullscreen();
-  });
-  const trocouCheia = () => q.classList.toggle('cheia', estaCheia());
-  document.addEventListener('fullscreenchange', trocouCheia);
-  document.addEventListener('webkitfullscreenchange', trocouCheia);
-
-  /* tocar na tela do vídeo mostra o painel por 3s e some de novo */
-  let somePainel;
-  q.addEventListener('click', ev => {
-    if(ev.target.closest('.painel-video') || ev.target.closest('.play')) return;
-    if(!q.classList.contains('tocando')) return;
-    q.classList.add('mostra');
-    clearTimeout(somePainel);
-    somePainel = setTimeout(() => q.classList.remove('mostra'), 3000);
-  });
+  /* se ela parar no segundo zero, o cartaz e o play voltam */
+  v.addEventListener('pause', () => { if(v.currentTime === 0) q.classList.remove('tocando'); });
 })();
 
 /* ─────────────── 2 · CHECKLIST ─────────────── */
