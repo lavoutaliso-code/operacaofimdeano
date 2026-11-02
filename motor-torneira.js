@@ -51,6 +51,24 @@ class Torneira{
         this._tro=setTimeout(()=>this.desenhar(),110); });
       this._ro.observe(svg);
     }
+    /* ⚠️ CADA TORNEIRA ANIMAVA SEM PARAR, VISÍVEL OU NÃO. São quatro na página
+       (checklist, card, antes e depois): quatro laços de requestAnimationFrame
+       movendo moedas e redesenhando pilhas o tempo todo. Num celular isso come
+       a CPU e a rolagem engasga — medido: 21 fps. Agora só anima a que está na
+       tela; as outras dormem. */
+    this.visivel = true;
+    if(window.IntersectionObserver){
+      this.visivel = false;
+      this._io = new IntersectionObserver(es => {
+        const v = es.some(e => e.isIntersecting);
+        if(v && !this.visivel){ this.visivel = true; this.acordar(); }
+        else this.visivel = v;
+      }, {rootMargin:'120px'});
+      this._io.observe(svg);
+    }
+    this._rodando = true;
+    this._vis = () => { if(!document.hidden) this.acordar(); };
+    document.addEventListener('visibilitychange', this._vis);
     requestAnimationFrame(()=>this.passo());
   }
 
@@ -335,7 +353,17 @@ class Torneira{
   }
   /* uma leva por clique: o dinheiro só anda quando ela responde */
   enviar(){ if(this.G.W) this.soltarLeva(); }
+  /* religa o laço quando a peça volta à tela */
+  acordar(){
+    if(this._rodando) return;
+    this._rodando = true;
+    this._vis = () => { if(!document.hidden) this.acordar(); };
+    document.addEventListener('visibilitychange', this._vis);
+    requestAnimationFrame(()=>this.passo());
+  }
   passo(){
+    // fora da tela (ou aba em segundo plano) a peça dorme: nada de desenhar
+    if(!this.visivel || document.hidden){ this._rodando = false; return; }
     const G=this.G;
     if(this.o.auto && this.moedas.length===0 && G.W) this.soltarLeva();
     const v=G.W*.0062; let mudou=false;
