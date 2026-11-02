@@ -1,6 +1,6 @@
 <!doctype html><html lang="pt-BR"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>T2 · Tempo</title><link rel="stylesheet" href="telas.css?v=31">
+<title>T2 · Tempo</title><link rel="stylesheet" href="telas.css?v=32">
 <style>.ex{color:#D4D5D8}
 .btn:disabled{opacity:.3;pointer-events:none}  .atalhosH{display:flex;gap:6px;margin-top:11px;padding-top:11px;border-top:1px solid var(--linha);
     justify-content:space-between}
@@ -31,8 +31,8 @@
   <div class="conta" id="conta">—</div>
 </div>
 <div class="pe"><button class="btn">Continuar</button></div>
-<script src="nucleo.js?v=31"></script>
-<script src="estado.js?v=31"></script>
+<script src="nucleo.js?v=32"></script>
+<script src="estado.js?v=32"></script>
 <script>
 const EXPED=10;
 let h = EST.horas != null ? +EST.horas : null;   /* ⚠️ nasce vazio */
@@ -71,5 +71,5 @@ g('atalhosH').onclick=e=>{const b=e.target.closest('button'); if(!b) return;
 g('m').onclick=()=>{ if(h==null) return; h=+(h-.5).toFixed(1); if(h<.5) h=null; pinta(); };
 g('p').onclick=()=>{ h = h==null ? .5 : Math.min(10,+(h+.5).toFixed(1)); pinta(); };
 pinta();
-</script><script src="nav.js?v=31"></script>
+</script><script src="nav.js?v=32"></script>
 </body></html>

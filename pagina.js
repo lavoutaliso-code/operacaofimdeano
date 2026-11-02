@@ -244,7 +244,7 @@ let c = 0;
 /* ⚠️ `?v=` TAMBÉM NO HTML DA TELA. Sem isso o GitHub Pages serve a tela velha
    por 10 minutos e a correção publicada simplesmente não aparece. O número
    acompanha o do `index.html` — quem publica, carimba os dois. */
-const VCALC = 31;
+const VCALC = 32;
 function vaiCalc(k){
   c = Math.max(0, Math.min(TELAS.length-1, k));
   g('calc').src = TELAS[c][0] + '?v=' + VCALC;
@@ -446,3 +446,100 @@ document.querySelectorAll('[data-ir]').forEach(b =>
     .scrollIntoView({behavior:'smooth', block:'start'})));
 
 render();
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PROVA VIVA — monta os cartões, as setas e os pontinhos.
+
+   ⚠️ As setas são pedido dela («setas indicativas pra arrastar pro lado»), mas
+   num celular quem arrasta é o dedo. Então as setas EXISTEM e funcionam, e a
+   posição é lida do scroll de verdade — assim dedo e seta nunca discordam.
+   ══════════════════════════════════════════════════════════════════════════ */
+(function provaViva(){
+  const tira = g('pvTira'), pontos = g('pvPontos'),
+        ant = g('pvAnt'), prox = g('pvProx'), dica = g('pvArrasta');
+  if(!tira || typeof DEPOIMENTOS_LIVE === 'undefined') return;
+
+  const esc = s => String(s).replace(/[&<>"]/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  tira.innerHTML = DEPOIMENTOS_LIVE.map(d => `
+    <article class="pv-card">
+      <div class="pv-barra">
+        <span class="mini"><i></i>AO VIVO</span>
+        <b>Chat da aula<span>2 de novembro</span></b>
+      </div>
+      <div class="pv-corpo">
+        <div class="pv-nome">${esc(d.nome)}</div>
+        <div class="pv-bolha">${esc(d.fala)}</div>
+        ${d.fala2 ? `<div class="pv-bolha">${esc(d.fala2)}</div>` : ''}
+        <div class="pv-assina">
+          <span class="pv-av" style="background:${d.cor}">${esc(d.nome.trim()[0])}</span>
+          <span class="pv-hora">escrito às ${esc(d.hora)}, durante a aula</span>
+        </div>
+      </div>
+    </article>`).join('');
+
+  pontos.innerHTML = DEPOIMENTOS_LIVE.map((_, i) =>
+    `<i class="${i === 0 ? 'on' : ''}"></i>`).join('');
+  const bolas = [...pontos.children];
+
+  const passo = () => {
+    const c = tira.querySelector('.pv-card');
+    return c ? c.offsetWidth + 10 : tira.clientWidth;   /* 10 = o gap */
+  };
+  /* ⚠️ NO FIM DA TIRA A DIVISÃO NÃO FECHA. O scroll máximo (698px) é menor que
+     3 passos (882px), então `round(698/294)` dava 2 e o pontinho marcava o 3º
+     no 4º cartão. No limite, o índice é o último, ponto. */
+  const fim = () => tira.scrollWidth - tira.clientWidth;
+  const atual = () => tira.scrollLeft >= fim() - 2
+    ? DEPOIMENTOS_LIVE.length - 1
+    : Math.round(tira.scrollLeft / passo());
+
+  /* ⚠️ `primeira` existe porque o navegador RESTAURA o scroll da tira ao
+     recarregar. Sem ela, a primeira pintura via scrollLeft > 8, dava a dica
+     por cumprida e escondia o «arrasta pro lado» de quem nunca arrastou. */
+  let jaArrastou = false, primeira = true;
+  function pinta(){
+    const i = Math.max(0, Math.min(bolas.length - 1, atual()));
+    bolas.forEach((b, k) => b.classList.toggle('on', k === i));
+    /* ⚠️ a conta usa 2px de folga: em tela de densidade fracionada o
+       scrollLeft máximo não bate exatamente com a largura rolável, e a seta
+       da direita ficava acesa pra sempre no último cartão. */
+    ant.disabled  = tira.scrollLeft <= 2;
+    prox.disabled = tira.scrollLeft >= fim() - 2;
+    if(!primeira && !jaArrastou && tira.scrollLeft > 8){
+      jaArrastou = true;
+      dica.classList.add('sumiu');          /* cumpriu o papel, sai da frente */
+      marcar('ArrastouDepoimentos');
+    }
+    primeira = false;
+  }
+  tira.addEventListener('scroll', pinta, { passive:true });
+  ant.addEventListener('click',  () => tira.scrollBy({ left:-passo(), behavior:'smooth' }));
+  prox.addEventListener('click', () => tira.scrollBy({ left: passo(), behavior:'smooth' }));
+  addEventListener('resize', pinta);
+  /* ⚠️ a primeira pintura tem que esperar o LAYOUT. Rodando direto, a largura
+     rolável ainda era 0 e a seta da esquerda nascia acesa no primeiro cartão. */
+  requestAnimationFrame(() => requestAnimationFrame(pinta));
+  addEventListener('load', pinta);
+  pinta();
+})();
+
+/* ── o SEGUNDO botão, embaixo da prova viva ──
+   Mesmo destino do primeiro, evento próprio: é assim que dá pra saber se a
+   prova das ex-mentoradas vende, em vez de supor. */
+(function liga2(){
+  const a = g('cta2');
+  if(!a) return;
+  if(LINK_MENTORIA && LINK_MENTORIA !== '#'){
+    a.href = LINK_MENTORIA;
+    a.addEventListener('click', () => {
+      marcar('CliqueMentoria', { origem:'depois-dos-depoimentos' });
+      try{ if(window.fbq) fbq('track','InitiateCheckout',
+        {value: PRECO.por, currency:'BRL'}); }catch(e){}
+    });
+  }else{
+    a.classList.add('morto');
+    a.addEventListener('click', e => e.preventDefault());
+  }
+})();

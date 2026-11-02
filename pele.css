@@ -471,3 +471,105 @@ i{font-style:normal;color:var(--laranja)}
   .folha{height:auto;min-height:100svh}
   .arte{min-height:90px}
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PROVA VIVA — o que as ex-mentoradas falaram ao vivo no chat.
+
+   Mora DENTRO de `.tela.escuro`, logo abaixo do primeiro botão. Cada cartão é
+   uma captura de conversa: cabeçalho de chat, bolha, avatar e hora. A forma já
+   diz que foi ao vivo — por isso o cartão é claro sobre a seção escura.
+   ══════════════════════════════════════════════════════════════════════════ */
+.provaviva{width:100%;margin:26px 0 18px}
+.provaviva header{margin-bottom:14px}
+.provaviva .aovivo{display:inline-flex;align-items:center;gap:7px;
+  background:#FF3B30;color:#fff;border-radius:999px;padding:4px 11px 4px 9px;
+  font-family:var(--sfd);font-weight:800;font-size:10.5px;letter-spacing:.08em;
+  text-transform:uppercase}
+.provaviva .aovivo i{width:6px;height:6px;border-radius:50%;background:#fff;
+  animation:pvpulsa 1.6s ease-in-out infinite}
+@keyframes pvpulsa{0%,100%{opacity:1}50%{opacity:.28}}
+.provaviva h3{font-family:var(--sfd);font-weight:800;font-size:clamp(19px,3.1vh,25px);
+  line-height:1.16;letter-spacing:-.028em;margin-top:9px;color:#fff}
+.provaviva header p{font-size:12.5px;line-height:1.45;color:#8E96A1;
+  letter-spacing:-.01em;margin-top:6px}
+
+/* ── o palco: tira que desliza, com as setas por cima ── */
+.pv-palco{position:relative}
+.pv-tira{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;
+  scroll-behavior:smooth;padding:2px 0 4px;
+  scrollbar-width:none;-ms-overflow-style:none;
+  /* ⚠️ a tira sangra até a borda da tela pra o próximo cartão «espiar» — é esse
+     pedaço cortado que faz a pessoa entender que tem mais pro lado */
+  margin:0 -16px;padding-left:16px;padding-right:16px;
+  /* ⚠️ SEM `scroll-padding-left` o snap para em 16px, nunca em 0: ele alinha o
+     cartão com a borda da ÁREA DE CONTEÚDO, que o padding da sangria empurrou.
+     Medido: a tira nascia em scrollLeft=16, então a seta da esquerda nascia
+     acesa e a dica «arrasta pro lado» se dava por cumprida e sumia sozinha. */
+  scroll-padding-left:16px}
+.pv-tira::-webkit-scrollbar{display:none}
+
+/* ⚠️ snap no INÍCIO, não no centro: centralizado, o 1º cartão nunca encostava
+   na borda esquerda (voltava pra 111px) e a tira parecia desalinhada. */
+.pv-card{flex:0 0 auto;width:min(284px,78vw);scroll-snap-align:start;
+  background:#fff;border-radius:18px;overflow:hidden;color:#000;
+  box-shadow:0 10px 26px rgba(0,0,0,.34)}
+.pv-barra{display:flex;align-items:center;gap:8px;padding:11px 13px 10px;
+  background:#F7F7FA;border-bottom:1px solid rgba(0,0,0,.08)}
+.pv-barra .mini{display:inline-flex;align-items:center;gap:5px;background:#FF3B30;
+  color:#fff;border-radius:999px;padding:3px 8px 3px 6px;
+  font-family:var(--sfd);font-weight:800;font-size:8.5px;letter-spacing:.07em}
+.pv-barra .mini i{width:5px;height:5px;border-radius:50%;background:#fff}
+.pv-barra b{font-family:var(--sfd);font-weight:700;font-size:12px;letter-spacing:-.02em;
+  color:#1C1C1E}
+.pv-barra b span{display:block;font-weight:400;font-size:10px;color:#8E8E93;margin-top:1px}
+
+.pv-corpo{padding:14px 14px 13px;display:flex;flex-direction:column;
+  /* altura igual em todos: senão os cartões ficam em degrau ao deslizar */
+  min-height:246px}
+.pv-nome{font-size:11px;font-weight:600;color:#6C6C70;margin:0 0 7px 9px;
+  letter-spacing:-.01em}
+/* ⚠️ a seção é centralizada; sem isto a bolha herdava o centro e a fala saía
+   alinhada no meio — bolha de conversa nenhuma é assim. */
+.pv-card,.provaviva header{text-align:left}
+.pv-bolha{background:#E9E9EB;border-radius:17px;padding:12px 14px;
+  font-size:14.5px;line-height:1.37;letter-spacing:-.012em;color:#000}
+.pv-bolha + .pv-bolha{margin-top:6px;font-size:13px;color:#3C3C43}
+.pv-assina{display:flex;align-items:center;gap:9px;margin-top:auto;padding-top:12px}
+.pv-av{width:28px;height:28px;border-radius:50%;flex:0 0 auto;display:grid;
+  place-items:center;font-family:var(--sfd);font-weight:800;font-size:12.5px;color:#fff}
+.pv-hora{font-size:10.5px;color:#8E8E93;letter-spacing:-.008em}
+
+/* ── as setas: ela pediu. Flutuam nas bordas e somem no fim da tira ── */
+/* ⛔ AS SETAS NÃO FLUTUAM MAIS SOBRE OS CARTÕES. Medido em 390px: o botão de
+   38px por cima da bolha comia palavras inteiras da fala — a prova que a
+   seção existe pra mostrar. Agora são controle no pé, ao lado dos pontinhos. */
+.pv-setas{display:flex;gap:8px}
+.pv-seta{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.18);
+  display:grid;place-items:center;background:rgba(255,255,255,.10);color:#fff;
+  cursor:pointer;transition:opacity .2s,transform .12s,background .2s;
+  -webkit-tap-highlight-color:transparent}
+.pv-seta svg{width:18px;height:18px}
+.pv-seta:active{transform:scale(.9);background:rgba(255,255,255,.2)}
+.pv-seta[disabled]{opacity:.26;pointer-events:none}
+
+/* ── pé: pontinhos + a dica de arrastar ── */
+.pv-pe{display:flex;align-items:center;justify-content:space-between;margin-top:14px}
+.pv-pontos{display:flex;gap:6px}
+.pv-pontos i{width:6px;height:6px;border-radius:50%;background:#4A5260;
+  transition:background .2s,width .2s}
+.pv-pontos i.on{background:#fff;width:18px;border-radius:99px}
+.pv-arrasta{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;margin-top:9px;
+  color:#8E96A1;letter-spacing:-.01em;transition:opacity .3s}
+.pv-arrasta svg{width:14px;height:14px;animation:pvmao 1.9s ease-in-out infinite}
+@keyframes pvmao{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+.pv-arrasta.sumiu{opacity:0}
+
+/* ── o segundo botão, embaixo da prova ── */
+.cta.cta2{margin-top:18px}
+
+@media (prefers-reduced-motion:reduce){
+  .provaviva .aovivo i,.pv-arrasta svg{animation:none}
+  .pv-tira{scroll-behavior:auto}
+}
+/* o 2º botão não tem subtítulo: sem o <small>, o padding de baixo fica sobrando */
+.cta.cta2{padding-top:18px;padding-bottom:18px}
