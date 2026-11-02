@@ -252,8 +252,12 @@ i{font-style:normal;color:var(--laranja)}
    360 vencer em QUALQUER tela a partir de 392px: num iPhone de 430 sobravam 70px
    de lado sem uso e a calculadora rodava escalada a 0,88. Agora ele acompanha a
    largura da tela, e a seção abre mão do respiro lateral pra isso. */
+/* ⚠️ E `flex:0 0 auto` NÃO É ENFEITE: sem ele o flex da coluna espremia o
+   aparelho pela ALTURA pra caber na tela, e o mockup CAIU pra 288px — menor do
+   que era. Medido: 288 contra 374. A seção pode passar da altura da tela; o que
+   ela não pode é encolher o aparelho. */
 #sec-calc{padding-inline:8px}
-.moldura{width:min(100%,460px);aspect-ratio:390/780;
+.moldura{flex:0 0 auto;width:min(100%,460px);aspect-ratio:390/780;
   background:#0B0A08;border-radius:clamp(30px,6vw,44px);padding:8px;
   box-shadow:0 2px 4px rgba(0,0,0,.3),0 50px 90px -50px rgba(0,0,0,.85);position:relative}
 /* ⚠️ a ilha do iPhone TAPAVA o título da calculadora, que foi desenhada sem
