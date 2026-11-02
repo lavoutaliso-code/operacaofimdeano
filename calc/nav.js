@@ -58,3 +58,27 @@ addEventListener('keydown', e => {
                                    continua coberto e o clique não chega */
   setTimeout(avanca, 60);
 });
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ⛔ 02/11 — O PRIMEIRO CAMPO VAZIO PISCA, por ordem dela. Numa tela com três
+   colunas (produto · custou · rende) não estava claro onde começar.
+   O piscar para assim que o campo recebe qualquer coisa, e pula pro próximo
+   vazio — vira uma trilha, não um enfeite permanente.
+   ⚠️ Pela mesma razão do resto deste arquivo: por DELEGAÇÃO. As linhas da
+   notinha e das contas são redesenhadas a cada tecla, então amarrar no
+   elemento perderia o campo no primeiro input.
+   ══════════════════════════════════════════════════════════════════════════ */
+(function trilha(){
+  let agendado = false;
+  function pisca(){
+    agendado = false;
+    const todos = [...document.querySelectorAll('input')].filter(digitavel);
+    const alvo = todos.find(i => !String(i.value).trim());
+    todos.forEach(i => i.classList.toggle('pisca', i === alvo));
+  }
+  const agenda = () => { if (!agendado) { agendado = true; requestAnimationFrame(pisca); } };
+  addEventListener('input', e => { if (digitavel(e.target)) agenda(); });
+  /* as telas redesenham as linhas por innerHTML: sem isto o piscar some */
+  new MutationObserver(agenda).observe(document.body, { childList:true, subtree:true });
+  agenda();
+})();

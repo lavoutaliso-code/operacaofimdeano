@@ -50,9 +50,9 @@ function pinta(){
     <div class="env">
       <div class="ic"></div>
       <input class="nomeConta" data-k="${k}" data-c="nome" value="${(c.nome||'').replace(/"/g,'&quot;')}"
-             placeholder="nome da conta">
+             placeholder="${k === 0 ? 'ex: Aluguel' : 'nome da conta'}">
       <div class="val"><em>R$</em><input data-k="${k}" data-c="v" inputmode="decimal"
-        value="${c.v != null ? brl0(c.v) : ''}" placeholder=""></div>
+        value="${c.v != null ? brl0(c.v) : ''}" placeholder="${k === 0 ? '1.200' : ''}"></div>
       ${contas.length > 1 ? `<button class="tiraConta" data-k="${k}" aria-label="tirar">&times;</button>` : ''}
     </div>`).join('');
 

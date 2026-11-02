@@ -52,7 +52,7 @@ g('dias').innerHTML = DIAS.map(([nome], k) => `
     <div class="semCtl">
       <button class="semB menos" data-k="${k}" data-d="-1" aria-label="menos">&minus;</button>
       <input data-k="${k}" inputmode="numeric" value="${DIAS[k][1] || ''}"
-             placeholder="" aria-label="${nome}">
+             placeholder="${k === 0 ? '4' : ''}" aria-label="${nome}">
       <button class="semB mais" data-k="${k}" data-d="1" aria-label="mais">+</button>
     </div>
   </div>`).join('');

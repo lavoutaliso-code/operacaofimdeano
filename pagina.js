@@ -285,24 +285,12 @@ addEventListener('orientationchange', () => {
 });
 new ResizeObserver(ajustaLente).observe(g('lente'));
 
-/* ⚠️ 02/11 — O TECLADO TAPA O BOTÃO. Mesmo com o aparelho parado, um teclado de
-   ~300px cobre o pé do mockup, e o «Continuar» fica embaixo dele: ela digita, não
-   consegue tocar, e a calculadora parece travada. Duas saídas, as duas medidas:
-   1. a própria tela avisa quando um campo ganha foco, e aqui eu rolo a página
-      até o botão ficar ACIMA do teclado (pelo `visualViewport`, que é quem
-      sabe o tamanho real da área que sobrou);
-   2. a tecla «ir» do teclado avança — ver o `nav.js` das telas. */
-addEventListener('message', e => {
-  if(!e.data || e.data.calc !== 'focou') return;
-  const vv = window.visualViewport;
-  setTimeout(() => {
-    const m = document.querySelector('.moldura'); if(!m) return;
-    const alturaUtil = vv ? vv.height : innerHeight;
-    const folga = 12;
-    const sobra = m.getBoundingClientRect().bottom - (alturaUtil - folga);
-    if(sobra > 0) scrollBy({top: sobra, behavior:'smooth'});
-  }, 320);   /* o teclado leva ~300ms pra terminar de subir */
-});
+/* ⛔ 02/11 — AQUI EU TINHA POSTO UM `scrollBy` AO FOCAR NO CAMPO, pra levantar o
+   botão acima do teclado. Ela reprovou na hora: *«quando vai digitar em alguma
+   parte da calculadora, a tela se mexe. isso não pode acontecer»*. Tela que
+   pula enquanto se digita é pior que botão escondido.
+   Quem resolve o teclado agora é só a tecla «ir» (ver `calc/nav.js`), que não
+   mexe um pixel da página. */
 
 vaiCalc(0);
 
