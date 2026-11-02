@@ -431,9 +431,11 @@ i{font-style:normal;color:var(--laranja)}
   .seta{justify-self:center;transform:rotate(90deg)}
 
   /* a calculadora mora DENTRO de um iPhone — pedido dela. */
-  /* ⚠️ MEDIDO: com 330px o aparelho tinha 660 de altura e a seção passava 89px
-     da tela do iPhone. Em 288 ele tem 576 e a parte 2 cabe inteira, sem rolar. */
-  .moldura{width:min(288px,80vw);padding:6px;border-radius:32px}
+  /* ⛔ 02/11 — ERA AQUI QUE O MOCKUP ENCOLHIA. Esta regra prendia o aparelho em
+     288px no celular «pra parte 2 caber inteira sem rolar». Ela pediu o mockup
+     MAIOR, e caber na tela custava 86px de aparelho. Rolar um pouco é o preço, e
+     é o preço certo: a calculadora é pra ler. 288 → 374 (escala 0,70 → 0,92). */
+  .moldura{padding:6px;border-radius:32px}
   .lente{inset:6px;border-radius:27px}
 
   .oferta{gap:18px}
