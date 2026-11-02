@@ -7,10 +7,10 @@
    `~/Desktop/carrossel-feedbacks-live/provas/`, e as 159 mensagens inteiras
    em `provas/chat-completo-159-mensagens.json`.
 
-   ⛔ A CAMILA CANASSA SAIU. O feedback dela («A lei dos potes ajudou muito o
-   meu salão») é da LEI DOS POTES, não da mentoria — e o título diz
-   «ex-mentoradas». Está guardada no arquivo do carrossel se ela quiser de volta
-   com outro título.
+   ⚠️ A CAMILA CANASSA FICA. Eu a tinha tirado porque a FRASE dela é sobre a
+   Lei dos Potes, não sobre a mentoria. Ela confirmou em 02/11: *«pode deixar a
+   camila sim, é ex mentorada»* — o título fala de QUEM escreveu, não de qual
+   produto a frase cita, então está correto.
 
    ⚠️ `texto` é o que vai na tela: só ortografia e pontuação. Nenhuma palavra
    trocada, tirada ou acrescentada — exceto onde a nota avisa, e aí o original
@@ -41,5 +41,11 @@ const DEPOIMENTOS_LIVE = [
     fala: 'Eu fiz uma mentoria com vc e aprendi muita coisa.',
     /* a frase continua falando da dificuldade de montar equipe na cidade
        dela — contexto, não elogio nem crítica */
+  },
+  {
+    nome: 'Camila Canassa Silva', hora: '12:45', cor: '#FF375F',
+    fala: 'A Lei dos Potes ajudou muito o meu salão. Amoooo',
+    /* original com caixa baixa: «A lei dos potes ajudou muito o meu salão.
+       Amoooo» — «Lei dos Potes» é nome de produto, vai maiúsculo */
   },
 ];

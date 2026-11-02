@@ -1,6 +1,6 @@
 <!doctype html><html lang="pt-BR"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>T7 · Cartão e imposto</title><link rel="stylesheet" href="telas.css?v=32">
+<title>T7 · Cartão e imposto</title><link rel="stylesheet" href="telas.css?v=33">
 <style>.ex{color:#D4D5D8}
 .btn:disabled{opacity:.3;pointer-events:none}  .ctrl .linha2 input{width:66px;border:0;background:none;outline:none;font-family:inherit;
     font-size:21px;font-weight:700;color:var(--preto);font-variant-numeric:tabular-nums;
@@ -48,8 +48,8 @@
   <div class="conta" id="conta">—</div>
 </div>
 <div class="pe"><button class="btn">Ver o resultado</button></div>
-<script src="nucleo.js?v=32"></script>
-<script src="estado.js?v=32"></script>
+<script src="nucleo.js?v=33"></script>
+<script src="estado.js?v=33"></script>
 <script>
 /* ⚠️ nascem vazias: 3,5% e 2% eram chute meu, não resposta dela */
 let c = EST.taxaCartao != null ? +EST.taxaCartao : null;
@@ -82,5 +82,5 @@ g('pi').addEventListener('input', () => { i = leia(g('pi').value); pinta(); });
 if (c != null) g('pc').value = vir(c);
 if (i != null) g('pi').value = vir(i);
 pinta();
-</script><script src="nav.js?v=32"></script>
+</script><script src="nav.js?v=33"></script>
 </body></html>

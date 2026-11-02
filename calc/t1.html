@@ -1,6 +1,6 @@
 <!doctype html><html lang="pt-BR"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>T1 · Preço</title><link rel="stylesheet" href="telas.css?v=32">
+<title>T1 · Preço</title><link rel="stylesheet" href="telas.css?v=33">
 <style>
   /* ⚠️ o teclado já ocupa o pé da tela; com margin-top:auto na pergunta ela
      descia 202px à toa. Aqui a pergunta fica no alto e a etiqueta se centra
@@ -31,8 +31,8 @@
 </div>
 <div class="teclado" id="tec" style="padding:0 16px"></div>
 <div class="pe"><button class="btn">Continuar</button></div>
-<script src="nucleo.js?v=32"></script>
-<script src="estado.js?v=32"></script>
+<script src="nucleo.js?v=33"></script>
+<script src="estado.js?v=33"></script>
 <script>
 let buf = EST.preco != null ? String(EST.preco).replace('.', ',') : '';
 const mil=t=>{const[a,b]=String(t).split(',');return a.replace(/\B(?=(\d{3})+(?!\d))/g,'.')+(b!==undefined?','+b:'');};
@@ -55,5 +55,5 @@ function pinta(){
   g('pv').classList.toggle('vazio', !buf);
   document.querySelector('.btn').disabled = !buf;
   salvar({ preco: buf ? parseFloat(buf.replace(',', '.')) : null });}
-</script><script src="nav.js?v=32"></script>
+</script><script src="nav.js?v=33"></script>
 </body></html>
