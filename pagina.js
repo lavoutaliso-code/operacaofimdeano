@@ -343,6 +343,16 @@ elosTrilha.forEach(a => a.addEventListener('click', e => {
   alvo.scrollIntoView({behavior:'smooth', block:'start'});
 }));
 
+/* ⚠️ animação fora da tela é CPU jogada fora — e num celular ela sai do quadro
+   da rolagem. A seção da mentoria só anima quando está à vista. */
+(function pausarForaDaTela(){
+  const alvos = [g('sec-mentoria')].filter(Boolean);
+  if(!window.IntersectionObserver){ return; }
+  const io = new IntersectionObserver(es => es.forEach(e =>
+    e.target.classList.toggle('parado', !e.isIntersecting)), {rootMargin:'80px'});
+  alvos.forEach(a => { a.classList.add('parado'); io.observe(a); });
+})();
+
 /* rolagem dos botões internos */
 document.querySelectorAll('[data-ir]').forEach(b =>
   b.addEventListener('click', () => document.querySelector(b.dataset.ir)

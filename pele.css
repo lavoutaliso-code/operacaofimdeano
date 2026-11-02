@@ -291,10 +291,16 @@ i{font-style:normal;color:var(--laranja)}
   letter-spacing:-.038em;line-height:1.05}
 .oferta h2 i{color:#FF8A3D}
 
-.etiqueta.viva{color:#fff;background:#E5484D;border-color:#E5484D;margin-bottom:22px;
-  animation:respira 1.8s ease-in-out infinite}
-@keyframes respira{0%,100%{box-shadow:0 0 0 0 rgba(229,72,77,.55)}
-  70%{box-shadow:0 0 0 12px rgba(229,72,77,0)}}
+/* ⚠️ ANIMAR `box-shadow` REPINTA A CADA QUADRO. Com a página toda rolando num
+   celular, isso rouba o quadro da rolagem. O halo virou um pseudo-elemento que
+   só anima `transform` e `opacity` — a GPU resolve, sem repintura. */
+.etiqueta.viva{position:relative;color:#fff;background:#E5484D;border-color:#E5484D;
+  margin-bottom:22px}
+.etiqueta.viva::after{content:'';position:absolute;inset:0;border-radius:999px;
+  border:2px solid rgba(229,72,77,.55);pointer-events:none;
+  animation:respira 1.8s ease-out infinite;will-change:transform,opacity}
+@keyframes respira{0%{transform:scale(1);opacity:.7}
+  70%,100%{transform:scale(1.22);opacity:0}}
 
 /* ═══ o preço: é o que tem que pegar o olho primeiro ═══ */
 /* o padding de cima é maior: o selo −50% cavalga a borda e comia o «de R$ 1.997» */
@@ -356,29 +362,35 @@ i{font-style:normal;color:var(--laranja)}
 /* ⚠️ O BOTÃO PISCA — é o último elemento da página e tem que puxar o olho. */
 /* ⚠️ É O ÚLTIMO ELEMENTO DA PÁGINA E TEM QUE GRITAR: pulso de luz, brilho que
    atravessa e o degradê andando. */
+/* ⚠️ fora da tela, animação nenhuma: `parado` é posto por JS quando a seção
+   sai do campo de visão. */
+.parado,.parado *{animation-play-state:paused!important}
 .cta{position:relative;overflow:hidden;width:100%;display:flex;flex-direction:column;
   align-items:center;gap:4px;border-radius:22px;
   padding:clamp(19px,3vh,28px) 20px;text-decoration:none;color:#fff;
   background:linear-gradient(100deg,#FF9A54,#FA6503,#E5484D,#FA6503,#FF9A54);
   background-size:300% 100%;
   font-family:var(--sfd);font-weight:700;letter-spacing:-.028em;
-  animation:pisca 1.5s ease-in-out infinite, corre 6s linear infinite;
+  animation:corre 6s linear infinite;
   transition:transform .16s}
+/* o pulso do botão: anel em transform/opacity, não box-shadow */
+.cta::before{content:'';position:absolute;inset:0;border-radius:22px;
+  border:2.5px solid rgba(250,101,3,.5);pointer-events:none;z-index:0;
+  animation:pisca 1.5s ease-out infinite;will-change:transform,opacity}
 .cta span{font-size:clamp(22px,3.6vh,34px);line-height:1.04;position:relative;z-index:1}
 .cta small{font-family:var(--sfd);font-weight:700;font-size:clamp(14px,2.2vh,20px);
   letter-spacing:-.02em;position:relative;z-index:1;
   text-transform:uppercase;opacity:.97}
-/* o brilho que atravessa o botão */
-.cta::after{content:'';position:absolute;top:-60%;left:-40%;width:28%;height:220%;
+/* ⚠️ o brilho animava `left` — isso é LAYOUT, recalculado a cada quadro. Virou
+   `transform`, que não toca no layout. */
+.cta::after{content:'';position:absolute;top:-60%;left:0;width:28%;height:220%;
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);
-  transform:rotate(14deg);animation:brilho 2.6s ease-in-out infinite}
+  animation:brilho 2.6s ease-in-out infinite;will-change:transform}
 .cta:hover{transform:translateY(-2px) scale(1.012)}
-@keyframes pisca{
-  0%,100%{box-shadow:0 22px 50px -20px rgba(250,101,3,1),0 0 0 0 rgba(250,101,3,.55)}
-  50%    {box-shadow:0 22px 50px -20px rgba(250,101,3,1),0 0 0 20px rgba(250,101,3,0)}
-}
+@keyframes pisca{0%{transform:scale(1);opacity:.75} 70%,100%{transform:scale(1.07);opacity:0}}
 @keyframes corre{to{background-position:300% 0}}
-@keyframes brilho{0%{left:-40%}55%,100%{left:120%}}
+@keyframes brilho{0%{transform:translateX(-160%) rotate(14deg)}
+  55%,100%{transform:translateX(430%) rotate(14deg)}}
 @media (prefers-reduced-motion:reduce){
   .cta{animation:none} .rolar svg{animation:none} html{scroll-behavior:auto}
 }
