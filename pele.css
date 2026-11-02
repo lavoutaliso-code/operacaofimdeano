@@ -132,15 +132,72 @@ i{font-style:normal;color:var(--laranja)}
   place-items:center;box-shadow:0 10px 26px -10px rgba(0,0,0,.8)}
 .play svg{width:24px;height:24px;margin-left:3px;fill:var(--laranja)}
 .telinha.tocando .play{opacity:0;pointer-events:none}
-/* o «tela cheia» fica SEMPRE à vista, inclusive antes do play */
-.ampliar{position:absolute;z-index:3;right:9px;bottom:9px;display:inline-flex;align-items:center;
-  gap:6px;border:0;border-radius:999px;padding:7px 12px 7px 10px;cursor:pointer;
-  background:rgba(0,0,0,.62);color:#fff;font:inherit;font-size:12px;font-weight:600;
-  letter-spacing:-.01em;-webkit-backdrop-filter:none;backdrop-filter:none}
-.ampliar svg{width:14px;height:14px;flex:0 0 auto}
-/* com os controles nativos na tela, o botão sobe pra não ficar em cima deles */
-.telinha.tocando .ampliar{bottom:46px;background:rgba(0,0,0,.52)}
-.telinha:fullscreen .ampliar,.telinha:-webkit-full-screen .ampliar{display:none}
+/* ══════ O PLAYER PRÓPRIO ══════
+   Ela recusou «esse padrão YouTube»: nada de barra preta com ícones de sistema.
+   Aqui a régua é a da página — pílula clara, laranja da marca, letra da casa. */
+.painel-video{position:absolute;z-index:4;left:8px;right:8px;bottom:8px;
+  display:flex;align-items:center;gap:9px;
+  padding:8px 10px;border-radius:17px;
+  background:rgba(12,10,8,.72);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  box-shadow:0 10px 30px -14px rgba(0,0,0,.9);
+  opacity:0;transform:translateY(8px);pointer-events:none;
+  transition:opacity .22s,transform .22s}
+.telinha.tocando .painel-video,.telinha.mostra .painel-video{opacity:1;transform:none;
+  pointer-events:auto}
+.painel-video[hidden]{display:none}
+
+.pv-btn{flex:0 0 auto;display:grid;place-items:center;width:30px;height:30px;padding:0;
+  border:0;border-radius:10px;background:rgba(255,255,255,.1);color:#fff;cursor:pointer;
+  font:inherit;font-size:11.5px;font-weight:700;letter-spacing:-.02em;
+  transition:background .16s,transform .12s}
+.pv-btn:active{transform:scale(.92)}
+.pv-btn svg{width:17px;height:17px;fill:currentColor}
+.pv-vel{width:auto;min-width:34px;padding:0 7px;font-variant-numeric:tabular-nums}
+
+/* o botão de pausa troca de ícone conforme o estado */
+.pv-pausa .i-play{display:none}
+.telinha.pausado .pv-pausa .i-pausa{display:none}
+.telinha.pausado .pv-pausa .i-play{display:block}
+/* o de tela cheia idem */
+.pv-btn .i-fecha{display:none}
+.telinha.cheia .pv-btn .i-abre{display:none}
+.telinha.cheia .pv-btn .i-fecha{display:block}
+
+/* ⚠️ A BARRA TEM DUAS CAMADAS, e as duas importam: a clara é o que JÁ BAIXOU
+   (ela perguntou por «barra de carregamento»), a laranja é onde a aula está. */
+.pv-barra{position:relative;flex:1 1 auto;height:20px;cursor:pointer;touch-action:none}
+.pv-barra::before{content:'';position:absolute;left:0;right:0;top:50%;height:4px;
+  margin-top:-2px;border-radius:999px;background:rgba(255,255,255,.2)}
+.pv-carregou,.pv-andou{position:absolute;left:0;top:50%;height:4px;margin-top:-2px;
+  border-radius:999px;width:0}
+.pv-carregou{background:rgba(255,255,255,.4)}
+.pv-andou{background:linear-gradient(90deg,#FF9A54,#FA6503)}
+.pv-bolinha{position:absolute;top:50%;left:0;width:11px;height:11px;margin:-5.5px 0 0 -5.5px;
+  border-radius:999px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.6);
+  transition:transform .14s}
+.pv-barra:active .pv-bolinha{transform:scale(1.35)}
+
+.pv-tempo{flex:0 0 auto;font-size:11px;font-weight:600;color:rgba(255,255,255,.82);
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em;white-space:nowrap}
+
+/* a rodinha de espera: HLS no 4G demora a encher o primeiro pedaço */
+.rodinha{position:absolute;z-index:3;inset:0;display:grid;place-items:center;
+  background:rgba(0,0,0,.3)}
+.rodinha[hidden]{display:none}
+.rodinha i{width:34px;height:34px;border-radius:999px;border:3px solid rgba(255,255,255,.25);
+  border-top-color:#fff;animation:gira .8s linear infinite}
+@keyframes gira{to{transform:rotate(360deg)}}
+
+/* em tela cheia o vídeo vira a tela inteira — o painel acompanha, maior */
+.telinha:fullscreen,.telinha:-webkit-full-screen{width:100%;height:100%;border-radius:0}
+.telinha:fullscreen video,.telinha:-webkit-full-screen video{object-fit:contain}
+.telinha:fullscreen .painel-video{left:16px;right:16px;bottom:16px;padding:11px 14px;gap:12px}
+.telinha:fullscreen .pv-btn{width:36px;height:36px}
+.telinha:fullscreen .pv-btn svg{width:20px;height:20px}
+.telinha:fullscreen .pv-tempo{font-size:13px}
+
+/* num cartão estreito o relógio é o primeiro a sair — a barra vale mais */
+@media (max-width:360px){ .pv-tempo{display:none} }
 .aulao-card p{font-size:13px;color:rgba(255,255,255,.95);line-height:1.5;max-width:32ch;
   text-align:center}
 .duracao{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;
