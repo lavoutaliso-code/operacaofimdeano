@@ -266,7 +266,12 @@ i{font-style:normal;color:var(--laranja)}
    que era. Medido: 288 contra 374. A seção pode passar da altura da tela; o que
    ela não pode é encolher o aparelho. */
 #sec-calc{padding-inline:8px}
+/* ⚠️ E O TETO DE ALTURA tem que existir: com 374px de largura o aparelho ficava
+   748 de altura e os últimos 69px entravam POR BAIXO da doca — o pé da
+   calculadora sumia. Com `aspect-ratio`, limitar a altura encolhe a largura na
+   mesma proporção, então ele cresce até o limite da tela e para ali. */
 .moldura{flex:0 0 auto;width:min(100%,460px);aspect-ratio:390/780;
+  max-height:calc(100svh - var(--doca) - 104px);
   background:#0B0A08;border-radius:clamp(30px,6vw,44px);padding:8px;
   box-shadow:0 2px 4px rgba(0,0,0,.3),0 50px 90px -50px rgba(0,0,0,.85);position:relative}
 /* ⚠️ a ilha do iPhone TAPAVA o título da calculadora, que foi desenhada sem
