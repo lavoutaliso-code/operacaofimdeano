@@ -16,7 +16,10 @@ function montarNota(enfaseHTML){
     <div class="sec">Por que sobra isso</div>
     ${linha('Preço cobrado', rs(r.preco))}
     ${linha('Produto', '− ' + rs(r.produto))}
-    ${linha('Salão <em>' + rs0(d.contaMes) + ' ÷ ' + r.atend + '</em>', '− ' + rs(r.fixo))}
+    ${/* ⚠️ 02/11 — o rótulo dizia «÷ r.atend» (o que UMA pessoa atende) ao lado
+          de um valor já rateado por TODOS os atendimentos do salão. O número
+          estava certo e a explicação dele, errada. */''}
+    ${linha('Salão <em>' + rs0(r.fixoMes) + ' ÷ ' + r.atendDoSalao + '</em>', '− ' + rs(r.fixo))}
     ${linha('Cartão + imposto', '− ' + rs(r.taxa))}
     ${linha('<b>sobra</b>', '<b>' + rs(r.lucro) + '</b>', 'total' + (r.paga ? ' neg' : ''))}
 

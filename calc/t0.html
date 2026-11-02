@@ -1,6 +1,6 @@
 <!doctype html><html lang="pt-BR"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>T0 · Procedimento</title><link rel="stylesheet" href="telas.css?v=30">
+<title>T0 · Procedimento</title><link rel="stylesheet" href="telas.css?v=31">
 <style>
   /* ⚠️ esta tela não tem instrumento alto: centralizar na tela inteira deixava
      a pergunta a 324px do topo. Aqui o conteúdo começa logo abaixo da barra. */
@@ -26,8 +26,8 @@
   </div>
 </div>
 <div class="pe"><button class="btn">Continuar</button></div>
-<script src="nucleo.js?v=30"></script>
-<script src="estado.js?v=30"></script>
+<script src="nucleo.js?v=31"></script>
+<script src="estado.js?v=31"></script>
 <script>
 const OPCOES=['Progressiva','Botox','Mechas','Corte','Escova','Hidratação','Coloração','Luzes'];
 const g=id=>document.getElementById(id);
@@ -47,5 +47,5 @@ function pinta(){
 salvar({});
 g('nome').addEventListener('input',()=>{ salvar({servico:g('nome').value.trim()||'Procedimento'}); pinta(); });
 pinta();
-</script><script src="nav.js?v=30"></script>
+</script><script src="nav.js?v=31"></script>
 </body></html>

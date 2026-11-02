@@ -39,29 +39,42 @@ const n = v => {
 };
 
 function conta(d) {
-  /* ⚠️ produto, contas e taxas vêm das LISTAS respondidas quando existirem —
-     os campos soltos (d.produto, d.contaMes, d.taxas) são só o atalho do
-     exemplo. Se os dois caminhos divergirem, o extrato e o mês divergem. */
+  /* ══════════════════════════════════════════════════════════════════════
+     ⛔ 02/11 — AQUI MORAVA UMA SEGUNDA CONTA DO MESMO SERVIÇO.
+
+     `conta()` recalculava produto, rateio e taxa por conta própria, e o rateio
+     dela dividia as contas do salão por `atend` — o que UMA pessoa atende — em
+     vez de por todos os atendimentos do salão. É exatamente o aluguel em dobro
+     que foi consertado no `extrato()` e não aqui.
+
+     Medido nos 7 casos da prova: num salão de 2, o anel da tela dizia
+     R$ 180,50 e `conta()` dizia R$ 162,73 pelo MESMO serviço; num salão de 3,
+     R$ 24,62 de diferença. E como cada uma arredondava do seu jeito, até no
+     exemplo sobrava 1 centavo de distância.
+
+     Agora existe UMA conta — a do extrato — e `conta()` LÊ as parcelas dela.
+     É isso que faz as parcelas da tela fecharem com o total.
+     ⚠️ Quem mexer aqui: não volte a calcular parcela nenhuma neste arquivo.
+        Se faltar uma, ela nasce no `extrato()` e é lida aqui.
+     ══════════════════════════════════════════════════════════════════════ */
   const x0 = extrato(d);
   const preco = n(d.preco), horas = n(d.horas);
-  const produto = d.produtos ? x0.tProduto : n(d.produto);
   const atend = n(d.atend);
-  const fixoMes = d.contas ? d.contas.reduce((s, c) => s + n(c.v), 0) : n(d.contaMes);
-  const pTaxa = (d.taxaCartao != null || d.taxaImposto != null)
-    ? (n(d.taxaCartao || 0) + n(d.taxaImposto || 0)) / 100
-    : n(d.taxas) / 100;
   const pCom = n(d.comissao) / 100;
   const pessoas = Math.max(0, Math.round(n(d.pessoas)));
 
-  const taxa = preco * pTaxa;
-  const fixo = atend > 0 ? fixoMes / atend : 0; // rateio por atendimento
+  const produto = x0.tProduto;
+  const taxa    = x0.tTaxas;
+  const fixo    = x0.tSalao;     // rateio do salão por atendimento DO SALÃO
+  const fixoMes = x0.fixoMes;
+  const pTaxa   = x0.pTaxa;
 
   /* --- por serviço feito pelas mãos dela ---
      ⚠️ SEM DESCONTAR O TRABALHO DELA (ela tirou essa pergunta). Então este
      número é tudo o que sobra para ela: o pagamento do próprio trabalho E o
      lucro, juntos. Não é «lucro além do salário». */
-  const custo = produto + fixo + taxa;
-  const lucro = preco - custo;
+  const custo = x0.custo;
+  const lucro = x0.sobra;
   const minimo = pTaxa < .99 ? (produto + fixo) / (1 - pTaxa) : null;
 
   /* --- no mês: sozinha --- */
@@ -103,6 +116,9 @@ function conta(d) {
 
   return {
     preco, horas, produto, fixo, taxa, custo, lucro, minimo,
+    /* ⚠️ fixoMes e pTaxa saem daqui porque os indicadores precisavam deles e
+       estavam lendo os campos soltos do exemplo (ver `indicadores`). */
+    fixoMes, pTaxa, atendDoSalao: x0.atendDoSalao,
     hoje, proximo, degrau, mesCom,
     margem: preco > 0 ? lucro / preco : 0,
     porHora: horas > 0 ? lucro / horas : 0,
@@ -198,19 +214,32 @@ function indicadores(d){
     porHoraCadeira: r.horas > 0 ? r.lucro / r.horas : 0,
     /* ponto de equilíbrio: quantos atendimentos só para pagar o salão */
     margemContrib,
-    equilibrio: margemContrib > 0 ? Math.ceil(n(d.contaMes) / margemContrib) : null,
+    /* ⛔ 02/11 — ESTES DOIS LIAM CAMPOS QUE O APP NUNCA PREENCHE.
+       `d.contaMes` e `d.taxas` são do atalho do exemplo; no caminho real o app
+       grava `d.contas` e as duas taxas separadas. Medido: o ponto de equilíbrio
+       imprimia **0 atendimentos** para pagar o salão (0 ÷ qualquer coisa), e o
+       cenário zerava a taxa do cartão. Agora leem a mesma conta do resto da tela. */
+    equilibrio: margemContrib > 0 ? Math.ceil(r.fixoMes / margemContrib) : null,
     /* quanto sobraria se ela cobrasse o preço mínimo e o preço-alvo */
     cenario(p){
-      const taxa = p * (n(d.taxas)/100);
-      return p - r.produto - r.fixo - taxa;
+      return p - r.produto - r.fixo - p * r.pTaxa;
     },
   };
 }
 
-/* número do documento, estável para o mesmo cálculo */
+/* número do documento, estável para o mesmo cálculo no mesmo dia.
+   ⚠️ 02/11 — o prefixo era chumbado em `2026-1101`: o recibo imprimia
+   «Nº 2026-1101-…» ao lado de «02 NOV 2026». Agora os dois são o mesmo dia.
+   ⚠️ Os 6 últimos dígitos são o lucro em centavos — é por isso que o Nº muda
+   quando o lucro muda. Era aí que a divergência das duas contas aparecia na
+   tela: o anel dizia 180,50 e o Nº terminava em 016273. */
 function numeroDoc(r){
+  const t = new Date();
+  const dia = String(t.getFullYear())
+    + '-' + String(t.getMonth() + 1).padStart(2,'0')
+    + String(t.getDate()).padStart(2,'0');
   const s = String(Math.round(r.lucro * 100)).padStart(6,'0');
-  return '2026-1101-' + s.slice(-6);
+  return dia + '-' + s.slice(-6);
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -252,15 +281,30 @@ const cent = v => Math.round(v * 100) / 100;
    ══════════════════════════════════════════════════════════════════════════ */
 function extrato(d){
   const preco = n(d.preco), atend = n(d.atend);
-  const _produtos = d.produtos || PRODUTOS;
-  const _contas   = d.contas   || CONTAS;
-  const _taxas    = d.taxasLista || [
-    { nome:'Taxa da maquininha', pct: d.taxaCartao  != null ? n(d.taxaCartao)  : 3.5 },
-    { nome:'Imposto',            pct: d.taxaImposto != null ? n(d.taxaImposto) : 2   },
-  ];
+  /* ⚠️ 02/11 — O ATALHO DO EXEMPLO TAMBÉM PASSA POR AQUI, OBRIGATORIAMENTE.
+     `d.produto`, `d.contaMes` e `d.taxas` são campos soltos (um número, sem
+     lista) usados pelo PADRAO e pelos mockups. O extrato os IGNORAVA e caía nas
+     constantes — então o exemplo tinha duas contas por construção, e divergia
+     por 1 centavo. Campo solto agora vira uma linha só, e o extrato segue sendo
+     a única conta da casa. */
+  const _produtos = d.produtos || (d.produto != null
+    ? [{ nome:'Produto do serviço', frasco:n(d.produto), rende:1 }] : PRODUTOS);
+  const _contas   = d.contas   || (d.contaMes != null
+    ? [{ nome:'Contas do salão', v:n(d.contaMes) }] : CONTAS);
+  const _taxas    = d.taxasLista
+    || ((d.taxaCartao != null || d.taxaImposto != null)
+        ? [{ nome:'Taxa da maquininha', pct:n(d.taxaCartao  || 0) },
+           { nome:'Imposto',            pct:n(d.taxaImposto || 0) }]
+        : (d.taxas != null
+            ? [{ nome:'Cartão + imposto', pct:n(d.taxas) }]
+            : [{ nome:'Taxa da maquininha', pct:3.5 },
+               { nome:'Imposto',            pct:2   }]));
 
   const produtos = _produtos.map(p => ({
-    nome: p.nome, detalhe: R$0(n(p.frasco)) + ' ÷ ' + n(p.rende) + ' usos',
+    nome: p.nome,
+    /* «R$ 38 ÷ 1 usos» é o campo solto: o gasto já vem por atendimento */
+    detalhe: n(p.rende) === 1 ? 'por atendimento'
+           : R$0(n(p.frasco)) + ' ÷ ' + n(p.rende) + ' usos',
     v: cent(n(p.rende) > 0 ? n(p.frasco) / n(p.rende) : 0),
   }));
   /* ⛔ 02/11 — AQUI O ALUGUEL ERA COBRADO DUAS VEZES.
@@ -284,9 +328,12 @@ function extrato(d){
   const soma = a => cent(a.reduce((s, x) => s + x.v, 0));
   const tProduto = soma(produtos), tSalao = soma(salao), tTaxas = soma(taxas);
   const sobra = cent(preco - tProduto - tSalao - tTaxas);
+  /* a conta do salão CHEIA, como ela paga — é o que o mês desconta uma vez */
+  const fixoMes = cent(_contas.reduce((s, c) => s + n(c.v), 0));
+  const pTaxa = _taxas.reduce((s, t) => s + n(t.pct), 0) / 100;
 
   return {
-    preco, atend, produtos, salao, taxas,
+    preco, atend, produtos, salao, taxas, fixoMes, pTaxa, atendDoSalao,
     /* ⚠️ sem volume não existe rateio, e sem rateio o lucro por serviço SOBE —
        medido: 0 atendimentos devolvia R$ 198,25 contra R$ 177,03 com 87.
        Quem consome precisa saber que o número não vale. */

@@ -244,7 +244,7 @@ let c = 0;
 /* ⚠️ `?v=` TAMBÉM NO HTML DA TELA. Sem isso o GitHub Pages serve a tela velha
    por 10 minutos e a correção publicada simplesmente não aparece. O número
    acompanha o do `index.html` — quem publica, carimba os dois. */
-const VCALC = 30;
+const VCALC = 31;
 function vaiCalc(k){
   c = Math.max(0, Math.min(TELAS.length-1, k));
   g('calc').src = TELAS[c][0] + '?v=' + VCALC;
