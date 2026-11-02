@@ -28,12 +28,14 @@ cupom(`
       <span style="${r.hoje.liquido < 0 ? 'color:var(--vermelho)' : ''}">${m0(r.hoje.liquido)}</span></div>
       <div class="leg">${r.pessoas === 0
         ? 'Hoje, sozinha,<br>você faz até'
-        : 'Hoje, com ' + r.pessoas + ' profissionais,<br>você faz até'}</div></div>
+        /* ⚠️ 02/11 — imprimia «com 1 PROFISSIONAIS». Plural é por número. */
+        : 'Hoje, com ' + r.pessoas + (r.pessoas === 1 ? ' profissional,' : ' profissionais,')
+          + '<br>você faz até'}</div></div>
     <div class="anelP"><div class="aro">${aro(92,7,1,'#12885C')}
       <span style="color:${r.proximo.liquido < 0 ? 'var(--vermelho)' : '#12885C'}">${m0(r.proximo.liquido)}</span></div>
       <div class="leg verde">${r.pessoas === 0
-        ? 'Se tiver uma equipe<br>de ' + r.degrau + ' pessoas, fará'
-        : 'Se aumentar pra equipe<br>de ' + r.degrau + ' pessoas, fará'}</div></div>
+        ? 'Se tiver uma equipe<br>de ' + r.degrau + (r.degrau === 1 ? ' pessoa, fará' : ' pessoas, fará')
+        : 'Se aumentar pra equipe<br>de ' + r.degrau + (r.degrau === 1 ? ' pessoa, fará' : ' pessoas, fará')}</div></div>
   </div>
   <p class="ressalva">O mês está projetado só com ${d.servico.toLowerCase()},
      ${r.atend} atendimentos por pessoa. Se você faz outros serviços, o número muda.</p>`);
