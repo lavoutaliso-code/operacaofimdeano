@@ -1,0 +1,59 @@
+/* Tela de carregamento: a conta acontecendo na frente dela. */
+:root{
+  --preto:#1C1C1E; --fundo:#F2F2F7; --cinza:#A3AAB4; --cinza2:#6B7280;
+  --linha:#E4E4E6; --verde:#12885C; --verdeClaro:#DEF1E8;
+  --ui:-apple-system,system-ui,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--ui);background:var(--fundo);color:var(--preto);
+     -webkit-font-smoothing:antialiased;display:flex;flex-direction:column;overflow:hidden}
+
+.topo{flex:0 0 auto;padding:30px 28px 0;text-align:center}
+.topo .rot{font-size:9px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--cinza)}
+.topo h3{font-size:21px;font-weight:700;letter-spacing:-.5px;line-height:1.28;margin-top:9px}
+.topo h3 em{font-style:normal;color:var(--verde)}
+
+.meio{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;
+      justify-content:center;padding:0 26px;gap:18px}
+
+/* anel que gira enquanto conta */
+.aro{position:relative;width:150px;height:150px}
+.aro svg{transform:rotate(-90deg)}
+.aro .trilho{stroke:#E6E7EA}
+.aro .carga{stroke:var(--verde);stroke-linecap:round;
+            transition:stroke-dashoffset .5s cubic-bezier(.4,0,.2,1)}
+.aro .pct{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+          justify-content:center}
+.aro .pct b{font-size:30px;font-weight:800;letter-spacing:-1.3px;font-variant-numeric:tabular-nums}
+.aro .pct small{font-size:7.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+                color:var(--cinza);margin-top:3px;max-width:112px;text-align:center;line-height:1.3}
+
+/* as etapas do cálculo */
+.etapas{width:100%;max-width:306px;display:flex;flex-direction:column;gap:2px}
+.et{display:flex;align-items:center;gap:10px;padding:7.5px 12px;border-radius:11px;
+    background:#fff;opacity:0;transform:translateY(8px);
+    transition:opacity .35s, transform .35s, background .35s}
+.et.ver{opacity:1;transform:none}
+.et .ic{width:22px;height:22px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;
+        background:#EDEDEF;position:relative}
+.et .ic svg{width:12px;height:12px;color:#fff;opacity:0;transition:opacity .25s}
+.et .ic::after{content:'';position:absolute;inset:4px;border-radius:50%;
+               border:2px solid #C9CACE;border-top-color:var(--preto);
+               animation:gira .7s linear infinite}
+.et.ok .ic{background:var(--verde)}
+.et.ok .ic svg{opacity:1}
+.et.ok .ic::after{display:none}
+@keyframes gira{to{transform:rotate(360deg)}}
+.et .nome{flex:1;min-width:0;font-size:12px;color:var(--cinza2);
+           white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.et.ok .nome{color:var(--preto)}
+.et .val{flex:0 0 auto;font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums;color:#D4D5D8;
+         transition:color .3s}
+.et.ok .val{color:var(--preto)}
+
+.pe{flex:0 0 auto;padding:16px 26px calc(22px + env(safe-area-inset-bottom));text-align:center}
+.pe p{font-size:11.5px;color:var(--cinza);line-height:1.6}
+.pe .barra{height:3px;background:#E6E7EA;border-radius:3px;overflow:hidden;margin-bottom:13px}
+.pe .barra i{display:block;height:100%;background:var(--preto);width:0;border-radius:3px;
+             transition:width .5s cubic-bezier(.4,0,.2,1)}

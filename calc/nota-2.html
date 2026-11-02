@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Nota 2 · Tarja</title>
+<link rel="stylesheet" href="cupom.css">
+<link rel="stylesheet" href="nota.css">
+</head>
+<body>
+
+<div class="palco" id="palco">
+  <div class="centro">
+    <div class="impressora" id="imp">
+      <div class="carcaca">
+        <div class="logo-box">LL</div>
+        <div class="nome">Calculadora de<br>Precificação</div>
+      </div>
+      <div class="fenda"></div>
+      <div class="dobrinha"></div>
+      <div class="saida" id="saida">
+        <div class="papel" id="papel"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="pe">
+  <button class="bt">Refazer o cálculo</button>
+</div>
+
+<script src="nucleo.js"></script>
+<script src="cupom.js"></script>
+<script src="nota.js"></script>
+<script>
+montarNota((r, d) => `
+  <div class="enfase n2">
+    <div class="tarja">
+      <div class="rot">Seu lucro líquido é de</div>
+      <div class="num${r.paga ? ' neg' : ''}">${rs(r.lucro)}</div>
+      <div class="mini">${miudo(r)}</div>
+    </div>
+  </div>`);
+</script>
+</body>
+</html>

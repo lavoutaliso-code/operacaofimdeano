@@ -1,0 +1,86 @@
+<!doctype html><html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>T7 · Cartão e imposto</title><link rel="stylesheet" href="telas.css">
+<style>.ex{color:#D4D5D8}
+.btn:disabled{opacity:.3;pointer-events:none}  .ctrl .linha2 input{width:66px;border:0;background:none;outline:none;font-family:inherit;
+    font-size:21px;font-weight:700;color:var(--preto);font-variant-numeric:tabular-nums;
+    border-bottom:1.5px solid var(--linha);padding-bottom:2px;text-align:center}
+  .ctrl .linha2 input::placeholder{color:#D4D5D8;font-weight:400}
+  .ctrl .linha2 input:focus{border-bottom-color:var(--preto)}
+  .ctrl .linha2 .pct{font-size:15px;font-weight:700;color:var(--cinza);margin-left:4px}
+  .ctrl .linha2{justify-content:center;gap:0}
+</style></head><body>
+<div class="nav"><button class="volta">&#8249;</button><h2>Calculadora de Precificação</h2></div>
+<div class="topo">
+  <div class="passo">Pergunta 09 de 09</div>
+  <h3>Quanto você paga de taxas<br>pro governo e pra maquininha?</h3>
+  <p>A maquininha e o governo levam uma parte de cada venda, antes de você receber.</p>
+</div>
+<div class="meio">
+  <div class="cedula">
+    <div class="cTit" id="cTit">A cada R$ 100 que entram</div>
+    <div class="notaBar">
+      <div class="fCart" id="bCart"></div>
+      <div class="fImp"  id="bImp"></div>
+      <div class="fVoce" id="bVoce"><span>chega em você</span><b id="vVoce">—</b></div>
+    </div>
+    <div class="legNota">
+      <div><i class="cCart"></i>cartão<b id="vCart">—</b></div>
+      <div><i class="cImp"></i>imposto<b id="vImp">—</b></div>
+    </div>
+    <div class="ctrls">
+      <div class="ctrl">
+        <small>Taxa da maquininha</small>
+        <div class="linha2">
+          <input id="pc" inputmode="decimal" placeholder=""><span class="pct">%</span></div>
+      </div>
+      <div class="ctrl">
+        <small>Imposto</small>
+        <div class="linha2">
+          <input id="pi" inputmode="decimal" placeholder=""><span class="pct">%</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="saida">
+  <div class="rot">Cartão + imposto</div>
+  <div class="n"><span class="v" id="grande">—</span><span class="suf">%</span></div>
+  <div class="conta" id="conta">—</div>
+</div>
+<div class="pe"><button class="btn">Ver o resultado</button></div>
+<script src="nucleo.js"></script>
+<script src="estado.js"></script>
+<script>
+/* ⚠️ nascem vazias: 3,5% e 2% eram chute meu, não resposta dela */
+let c = EST.taxaCartao != null ? +EST.taxaCartao : null;
+let i = EST.taxaImposto != null ? +EST.taxaImposto : null;
+const g=id=>document.getElementById(id);
+const vir=v=>v.toFixed(1).replace('.',',');
+const rs=v=>'R$ '+v.toFixed(2).replace('.',',');
+const rs0=v=>'R$ '+Math.round(v).toLocaleString('pt-BR');
+function pinta(){
+  const cc = c || 0, ii = i || 0;
+  const voce = 100 - cc - ii;
+  const pronto = c != null && i != null;
+  document.querySelector('.btn').disabled = !pronto;
+  salvar({ taxaCartao:c, taxaImposto:i });
+  g('bCart').style.flex=Math.max(cc,0.6); g('bImp').style.flex=Math.max(ii,0.6); g('bVoce').style.flex=voce;
+  g('vCart').textContent = c!=null ? rs(cc) : '—';
+  g('vImp').textContent  = i!=null ? rs(ii) : '—';
+  g('vVoce').textContent = pronto ? rs(voce) : '—';
+
+  g('grande').innerHTML = pronto ? vir(cc+ii) : '<span class=\"ex\">—</span>';
+  g('conta').textContent = pronto
+    ? 'Em cada atendimento de '+rs0(EST.preco)+', você paga '+rs(EST.preco*(cc+ii)/100)
+    : 'Escreva quanto a maquininha e o governo levam';
+}
+/* ⚠️ eram dois steppers de meio em meio ponto: 11 toques para 3,5% + 2%.
+   Agora ela digita. */
+const leia = v => { const x = parseFloat(String(v).replace(',', '.')); return isFinite(x) ? x : null; };
+g('pc').addEventListener('input', () => { c = leia(g('pc').value); pinta(); });
+g('pi').addEventListener('input', () => { i = leia(g('pi').value); pinta(); });
+if (c != null) g('pc').value = vir(c);
+if (i != null) g('pi').value = vir(i);
+pinta();
+</script><script src="nav.js"></script>
+</body></html>

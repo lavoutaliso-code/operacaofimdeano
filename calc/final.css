@@ -1,0 +1,105 @@
+/* O extrato em árvore (E3) na escala tipográfica do E4, cabendo sem rolar. */
+:root{
+  --preto:#1C1C1E; --fundo:#F2F2F7; --cinza:#A3AAB4; --cinza2:#6B7280;
+  --fraco:#C9CACE; --linha:#E4E4E6;
+  --amarelo:#C08A00; --vermelho:#BC3D20; --verde:#12885C;
+  --ui:-apple-system,system-ui,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:var(--ui);background:var(--fundo);color:var(--preto);
+     -webkit-font-smoothing:antialiased;display:flex;flex-direction:column;overflow:hidden}
+.palco{flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;
+       align-items:center;padding:10px 16px 2px}
+.palco::-webkit-scrollbar{display:none}
+.palco > *{margin-block:auto}
+.pe{flex:0 0 auto;padding:8px 20px calc(14px + env(safe-area-inset-bottom))}
+.bt{width:100%;height:48px;border:0;border-radius:99px;background:var(--preto);color:#fff;
+    font-family:inherit;font-size:14.5px;font-weight:600;cursor:pointer}
+
+.sombra{filter:drop-shadow(0 6px 20px rgba(20,22,30,.11))}
+.papel{width:318px;background:#fff;padding:0 0 16px;
+  -webkit-mask:radial-gradient(circle 6px at 6px 0,transparent 5.5px,#000 6px) top left/12px 12px repeat-x,
+    radial-gradient(circle 6px at 6px 12px,transparent 5.5px,#000 6px) bottom left/12px 12px repeat-x,
+    linear-gradient(#000,#000) center/100% calc(100% - 24px) no-repeat;
+  mask:radial-gradient(circle 6px at 6px 0,transparent 5.5px,#000 6px) top left/12px 12px repeat-x,
+    radial-gradient(circle 6px at 6px 12px,transparent 5.5px,#000 6px) bottom left/12px 12px repeat-x,
+    linear-gradient(#000,#000) center/100% calc(100% - 24px) no-repeat}
+.corpo{padding:0 17px}
+
+/* título imponente, compacto */
+.capa{background:var(--preto);color:#fff;padding:19px 16px 15px;text-align:center}
+.capa h1{font-size:16.5px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;line-height:1.42}
+.capa .fio{height:1.5px;background:rgba(255,255,255,.28);margin:9px 40px}
+.capa p{font-size:8px;font-weight:800;letter-spacing:.34em;text-transform:uppercase;color:#8C8E95}
+
+.ident{display:flex;justify-content:space-between;font-size:8.5px;font-weight:700;
+       letter-spacing:.1em;text-transform:uppercase;color:var(--cinza);padding-top:9px}
+.servico{text-align:center;font-size:13.5px;font-weight:700;margin-top:2px}
+.servico em{font-style:normal;font-weight:400;color:var(--cinza2);font-size:11.5px}
+.tracejo{border-top:1.5px dashed var(--linha);margin:9px 0}
+
+/* o extrato — escala do E4 */
+.preco{display:flex;justify-content:space-between;align-items:baseline;
+       font-size:13px;font-weight:700;padding:1px 0 7px}
+.preco .v{font-size:15px;font-variant-numeric:tabular-nums}
+.mae{display:flex;justify-content:space-between;align-items:baseline;
+     font-size:12px;font-weight:700;padding:7px 0 2px;border-top:1px solid var(--linha)}
+.mae .v{font-variant-numeric:tabular-nums}
+.filha{display:flex;align-items:baseline;gap:7px;padding:1.5px 0 1.5px 12px;
+       font-size:11.5px;color:var(--cinza2);position:relative}
+.filha::before{content:'';position:absolute;left:3px;top:0;bottom:0;width:1px;background:#EFEFF1}
+.filha .n{flex:1;min-width:0}
+.filha .n small{color:var(--fraco);font-size:9px}
+.filha .v{flex:0 0 auto;width:62px;text-align:right;font-variant-numeric:tabular-nums;
+          white-space:nowrap}
+.sobra{display:flex;justify-content:space-between;align-items:baseline;
+       padding:9px 0 0;margin-top:7px;border-top:2px solid var(--preto)}
+.sobra span{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.sobra b{font-size:20px;font-weight:800;color:var(--verde);font-variant-numeric:tabular-nums}
+
+/* carimbos — arranjo C2 */
+.cb{display:block;width:fit-content;margin:0 auto;padding:5px 13px 7px;
+    border:2.5px solid currentColor;border-radius:8px;
+    box-shadow:inset 0 0 0 1.5px currentColor;text-align:center;background:#fff}
+.cb small{display:block;font-size:7px;font-weight:800;letter-spacing:.19em;
+          text-transform:uppercase;line-height:1.3}
+.cb b{display:block;font-weight:800;letter-spacing:-1px;line-height:1;margin-top:2px;
+      font-variant-numeric:tabular-nums}
+.cb i{display:block;font-style:normal;font-size:7px;font-weight:800;letter-spacing:.19em;
+      text-transform:uppercase;margin-top:2px}
+.cb.am{color:var(--amarelo)} .cb.vm{color:var(--vermelho)} .cb.vd{color:var(--verde)}
+.cb.g b{font-size:25px}
+.selos .am{transform:rotate(-3.5deg)}
+.selos .par{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.selos .par .cb{flex:1;padding:5px 5px 7px}
+.selos .par .cb b{font-size:17px}
+.selos .par small,.selos .par i{font-size:6px;letter-spacing:.1em}
+.selos .par .vm{transform:rotate(-2.4deg)}
+.selos .par .vd{transform:rotate(2.4deg)}
+
+/* código de barras grande */
+.barras{text-align:center;padding-top:2px}
+.barras svg{display:block;margin:0 auto}
+.barras span{display:block;font-size:9px;font-weight:700;letter-spacing:.28em;
+             color:var(--cinza2);margin-top:5px;font-variant-numeric:tabular-nums}
+
+/* ── F2 · filhas em duas colunas ── */
+.f2 .filhas{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;padding-left:12px;
+            position:relative}
+.f2 .filhas::before{content:'';position:absolute;left:3px;top:0;bottom:0;width:1px;background:#EFEFF1}
+.f2 .filha{padding-left:0;font-size:11px}
+.f2 .filha::before{display:none}
+.f2 .filha .v{width:auto}
+.f2 .filha .n small{display:none}
+
+/* ── F3 · filhas em linha corrida ── */
+.f3 .corrida{padding:3px 0 4px 12px;font-size:10.5px;color:var(--cinza2);line-height:1.75;
+             position:relative}
+.f3 .corrida::before{content:'';position:absolute;left:3px;top:2px;bottom:2px;width:1px;
+                     background:#EFEFF1}
+.f3 .corrida b{font-weight:600;color:var(--preto);font-variant-numeric:tabular-nums}
+.f3 .corrida span{color:var(--fraco);margin:0 4px}
+
+/* ── F4 · o resultado primeiro ── */
+.f4 .selos{margin-bottom:2px}

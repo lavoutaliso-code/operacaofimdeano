@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Resultado 3 · Dois cupons</title>
+<link rel="stylesheet" href="cupom.css">
+<style>
+  .centro{padding:18px 16px 112px;justify-content:center;min-height:100%}
+  .chapeu{width:100%;max-width:348px;text-align:center;margin-bottom:14px}
+  .chapeu h1{font-size:11px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+             color:var(--tinta-3)}
+  .chapeu .big{font-size:34px;font-weight:700;letter-spacing:-1.2px;margin-top:6px;
+               font-variant-numeric:tabular-nums}
+  .chapeu .p{font-size:12px;color:var(--tinta-2);margin-top:3px}
+
+  .dupla{display:flex;gap:11px;width:100%;max-width:348px}
+  .via{flex:1;min-width:0;filter:drop-shadow(0 5px 14px rgba(20,22,30,.10));animation:sobe .5s cubic-bezier(.2,.9,.3,1.1) both}
+  .via:nth-child(2){animation-delay:.12s}
+  @keyframes sobe{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .via .papel.solto{padding:22px 13px 24px;margin:0}
+  .via .tit h4{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+               color:var(--tinta-3)}
+  .via .tit p{font-size:13px;font-weight:700;color:var(--tinta);text-transform:none;
+              letter-spacing:0;margin-top:2px}
+  .via .ln{font-size:11.5px;padding:2px 0}
+  .via .ln .lab em{font-size:10px}
+  .via .ln.hero{padding:4px 0}
+  .via .ln.hero .lab{font-size:8.5px;letter-spacing:.08em}
+  .via .ln.hero .val{font-size:21px;letter-spacing:-.6px}
+  .via .sec{font-size:9px;margin:9px 0 5px;padding-top:7px}
+  .via.eq .papel.solto{--pc:#1C1C1E;border-left-color:#3A3B40;border-right-color:#3A3B40}
+  .via.eq .tit p,.via.eq .ln,.via.eq .ln .val{color:#fff}
+  .via.eq .ln .lab em,.via.eq .tit h4,.via.eq .sub{color:#8C8E95}
+  .via.eq .sec{color:#8C8E95;border-top-color:#3A3B40}
+  .via.eq .ln.total{border-top-color:#fff}
+
+  .remate{width:100%;max-width:348px;margin-top:13px;background:var(--tinta);color:#fff;
+          border-radius:14px;padding:15px 17px;display:flex;align-items:center;gap:13px}
+  .remate .ck{width:38px;height:38px;border-radius:50%;background:var(--verde);flex:0 0 auto;
+              display:grid;place-items:center}
+  .remate .ck svg{width:20px;height:20px}
+  .remate .tx{font-size:12.5px;line-height:1.45;color:#C6C8CD}
+  .remate .tx b{color:#fff;font-weight:700;display:block;font-size:15px;margin-bottom:2px}
+</style>
+</head>
+<body>
+
+<div class="palco pronto">
+  <div class="centro">
+    <div class="chapeu">
+      <h1>Calculadora de Precificação</h1>
+      <div class="big" id="lucro">—</div>
+      <p class="p" id="sub">—</p>
+    </div>
+
+    <div class="dupla">
+      <div class="via"><div class="papel solto" id="pSo"></div></div>
+      <div class="via eq"><div class="papel solto" id="pEq"></div></div>
+    </div>
+
+    <div class="remate">
+      <div class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4"
+        stroke-linecap="round" stroke-linejoin="round"><path d="m4 12 6 6L20 6"/></svg></div>
+      <div class="tx"><b id="dif">—</b><span id="porque">—</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="pe">
+  <button class="bt">Refazer o cálculo</button>
+</div>
+
+<script src="nucleo.js"></script>
+<script src="cupom.js"></script>
+<script>
+const d = Object.assign({}, PADRAO);
+const r = conta(d);
+const g = id => document.getElementById(id);
+
+g('lucro').textContent = rs(r.lucro);
+g('lucro').style.color = r.paga ? 'var(--vermelho)' : 'var(--verde)';
+g('sub').textContent = 'sobra por ' + d.servico.toLowerCase()
+  + ' · ' + pc(r.margem) + ' · ' + rs(r.porHora) + '/h';
+
+const via = (titulo, c) => `
+  <div class="tit"><h4>No mês</h4><p>${titulo}</p></div>
+  <div class="ln hero"><span class="lab">sobra pra você</span>
+    <span class="val">${rs0(c.liquido)}</span></div>
+  <div class="sec">Como</div>
+  ${linha('Atendimentos', c.serv)}
+  ${linha('Faturou', rs0(c.fat))}
+  ${linha('Custos', '− ' + rs0(c.custo))}`;
+
+g('pSo').innerHTML = via('Sozinha', r.so);
+g('pEq').innerHTML = via('Com ' + r.pessoas + ' na equipe', r.eq);
+
+g('dif').textContent = (r.ganho >= 0 ? '+ ' : '− ') + rs0(Math.abs(r.ganho)) + ' por mês';
+g('porque').textContent = 'O salão custa os mesmos ' + rs0(d.contaMes) + ' nos dois casos — '
+  + 'o rateio cai de ' + rs(r.fixo) + ' para ' + rs(r.fixoPorServicoEquipe) + ' por atendimento.';
+</script>
+</body>
+</html>

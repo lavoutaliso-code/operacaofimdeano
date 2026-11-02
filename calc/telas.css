@@ -1,0 +1,305 @@
+/* Esqueleto comum das 9 telas + os instrumentos de cada uma.
+   Paleta amostrada das referências: preto #212121, fundo #F9F9F9, pílula #EAEBED. */
+:root{
+  --preto:#212121; --fundo:#F9F9F9; --pilula:#EAEBED; --cinza:#9F9EA0;
+  --cinza2:#6B7280; --linha:#E9E9E9; --verde:#12885C; --ambar:#A96808; --vermelho:#BC3D20;
+  --ui:-apple-system,system-ui,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:var(--ui);background:var(--fundo);color:var(--preto);
+     -webkit-font-smoothing:antialiased;display:flex;flex-direction:column;overflow:hidden}
+
+.nav{flex:0 0 auto;display:flex;align-items:center;padding:13px 18px 4px;position:relative}
+.nav .volta{width:38px;height:38px;border:0;border-radius:13px;background:var(--preto);
+            color:#fff;font-size:16px;display:grid;place-items:center;cursor:pointer}
+.nav h2{position:absolute;left:0;right:0;text-align:center;font-size:12px;font-weight:700;
+        letter-spacing:.11em;text-transform:uppercase;color:var(--cinza);pointer-events:none}
+
+/* ⚠️ PERGUNTA, INSTRUMENTO E NÚMERO SÃO UM BLOCO SÓ, centrado no espaço entre
+   a barra de cima e o botão. Centralizar só o instrumento abria buraco acima
+   dele; empurrar o número para o rodapé abria buraco abaixo. O par de margens
+   automáticas divide a folga nas duas pontas e não sobra vão no meio. */
+.topo{flex:0 0 auto;margin-top:auto;padding:10px 24px 0;text-align:center}
+.topo .passo{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+             color:#C2C3C7}
+.topo h3{font-size:22px;font-weight:700;letter-spacing:-.55px;line-height:1.2;margin-top:7px}
+.topo p{font-size:13.5px;color:var(--cinza);line-height:1.45;margin-top:6px;
+        max-width:290px;margin-left:auto;margin-right:auto}
+
+/* ⚠️ SEM `justify-content:center`. Centralizar no espaço que sobra abria um
+   buraco entre a pergunta e o instrumento — o olho fazia a viagem toda à toa.
+   Agora o instrumento encosta na pergunta e a folga vai toda para baixo. */
+.meio{flex:0 1 auto;min-height:0;overflow-y:auto;padding:16px 20px 0;
+      display:flex;flex-direction:column}
+.meio::-webkit-scrollbar{display:none}
+
+/* o número que a tela produz */
+.saida{flex:0 0 auto;margin-bottom:auto;padding:16px 24px 2px;text-align:center}
+.saida .rot{font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+            color:var(--cinza)}
+.saida .n{display:flex;align-items:flex-start;justify-content:center;gap:2px;margin-top:5px;
+          font-weight:300;letter-spacing:-2px;line-height:1}
+.saida .n .cif{font-size:19px;font-weight:400;letter-spacing:0;margin-top:7px}
+.saida .n .v{font-size:46px;font-variant-numeric:tabular-nums}
+.saida .n .suf{font-size:19px;font-weight:400;letter-spacing:0;margin-top:7px;margin-left:3px}
+.saida .conta{font-size:11.5px;color:var(--cinza);margin-top:6px}
+
+.pe{flex:0 0 auto;padding:10px 20px calc(18px + env(safe-area-inset-bottom))}
+.btn{width:100%;height:54px;border:0;border-radius:99px;background:var(--preto);color:#fff;
+     font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;letter-spacing:-.1px}
+
+/* ─────────── T3 · a notinha do produto ─────────── */
+.notinha{background:#fff;border-radius:3px;padding:16px 15px 14px;position:relative;
+  box-shadow:0 3px 14px rgba(20,22,30,.08);
+  -webkit-mask:radial-gradient(circle 5px at 5px 0,transparent 4.6px,#000 5px) top left/10px 10px repeat-x,
+    radial-gradient(circle 5px at 5px 10px,transparent 4.6px,#000 5px) bottom left/10px 10px repeat-x,
+    linear-gradient(#000,#000) center/100% calc(100% - 20px) no-repeat;
+  mask:radial-gradient(circle 5px at 5px 0,transparent 4.6px,#000 5px) top left/10px 10px repeat-x,
+    radial-gradient(circle 5px at 5px 10px,transparent 4.6px,#000 5px) bottom left/10px 10px repeat-x,
+    linear-gradient(#000,#000) center/100% calc(100% - 20px) no-repeat;
+  padding-top:22px;padding-bottom:22px}
+.notinha .nTit{text-align:center;font-size:10px;font-weight:700;letter-spacing:.14em;
+               text-transform:uppercase;color:var(--cinza)}
+.nCab{display:grid;grid-template-columns:1fr 62px 46px 56px;gap:6px;margin-top:12px;
+      padding-bottom:5px;border-bottom:1.5px dashed var(--linha);
+      font-size:8.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#C2C3C7}
+.nCab span:not(:first-child){text-align:right}
+.nL{display:grid;grid-template-columns:1fr 62px 46px 56px;gap:6px;align-items:center;
+    padding:6px 0;border-bottom:1px dotted #EDEDEF}
+.nL input{border:0;background:none;outline:none;font-family:inherit;font-size:12.5px;
+          color:var(--preto);width:100%;min-width:0;padding:3px 0}
+.nL input.num{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.nL input:focus{border-bottom:1.5px solid var(--preto)}
+.nL .sub{text-align:right;font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums}
+.nL .x{border:0;background:none;color:#D4D5D8;font-size:15px;cursor:pointer;padding:0 0 0 4px}
+.nMais{display:block;width:100%;margin-top:9px;border:1.5px dashed var(--linha);background:none;
+       border-radius:9px;padding:9px;font-family:inherit;font-size:12.5px;font-weight:600;
+       color:var(--cinza2);cursor:pointer}
+.nFim{display:flex;justify-content:space-between;align-items:baseline;margin-top:11px;
+      padding-top:10px;border-top:1.5px solid var(--preto);font-size:13px;font-weight:700}
+.nFim .v{font-variant-numeric:tabular-nums}
+
+/* ─────────── T5 · os envelopes das contas ─────────── */
+.envs{display:flex;flex-direction:column;gap:8px}
+.env{display:flex;align-items:center;gap:11px;background:#fff;border-radius:11px;
+     padding:11px 13px;box-shadow:0 2px 9px rgba(20,22,30,.05)}
+.env .ic{width:34px;height:26px;border-radius:4px;background:var(--pilula);flex:0 0 auto;
+         position:relative;overflow:hidden}
+.env .ic::after{content:'';position:absolute;top:0;left:0;right:0;height:15px;
+  background:
+    linear-gradient(to bottom right,transparent 48%,#C9CACF 48%,#C9CACF 54%,transparent 54%) left top/50% 100% no-repeat,
+    linear-gradient(to bottom left, transparent 48%,#C9CACF 48%,#C9CACF 54%,transparent 54%) right top/50% 100% no-repeat}
+.env label{flex:1;font-size:13.5px;color:#4A4B50}
+.env .nomeConta{flex:1;min-width:0;border:0;background:none;outline:none;font-family:inherit;
+                font-size:13.5px;color:#4A4B50;padding:3px 0;border-bottom:1.5px solid transparent}
+.env .nomeConta:focus{border-bottom-color:var(--preto)}
+.env .tiraConta{flex:0 0 auto;width:22px;height:22px;border:0;border-radius:50%;
+                background:var(--pilula);color:#8A8B90;font-size:14px;line-height:1;
+                cursor:pointer;display:grid;place-items:center}
+.env .val{display:flex;align-items:center;gap:3px;flex:0 0 auto}
+.env .val em{font-style:normal;font-size:11.5px;color:#BFC2CB}
+.env .val input{width:70px;border:0;background:none;outline:none;font-family:inherit;
+                font-size:16px;font-weight:700;text-align:right;color:var(--preto);
+                font-variant-numeric:tabular-nums;border-bottom:1.5px solid transparent;padding-bottom:1px}
+.env .val input:focus{border-bottom-color:var(--preto)}
+
+/* ─────────── T6 · o calendário do mês ─────────── */
+.cal{background:#fff;border-radius:14px;padding:14px 13px 12px;box-shadow:0 3px 12px rgba(20,22,30,.06)}
+.calSem{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px}
+.calSem span{text-align:center;font-size:9px;font-weight:700;letter-spacing:.05em;
+             text-transform:uppercase;color:#C2C3C7}
+.calG{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.calD{aspect-ratio:1;border:0;background:#F4F4F6;border-radius:8px;font-family:inherit;
+      font-size:11px;font-weight:600;color:#B9BABF;cursor:pointer;display:flex;
+      flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:0}
+.calD.on{background:var(--preto);color:#fff}
+.calD .pts{display:flex;gap:1.5px}
+.calD .pts i{width:2.5px;height:2.5px;border-radius:50%;background:rgba(255,255,255,.55)}
+.calD.vazio{background:none;cursor:default}
+.porDia{display:flex;align-items:center;justify-content:space-between;margin-top:12px;
+        padding-top:11px;border-top:1px solid var(--linha)}
+.porDia span{font-size:13px;color:#4A4B50}
+.porDia .nav2{display:flex;align-items:center;gap:12px}
+.porDia button{width:34px;height:34px;border:0;border-radius:11px;background:var(--pilula);
+               font-family:inherit;font-size:19px;color:var(--preto);cursor:pointer}
+.porDia b{min-width:26px;text-align:center;font-size:17px;font-variant-numeric:tabular-nums}
+
+/* ─────────── T1 · a etiqueta de preço ─────────── */
+.tagWrap{display:flex;flex-direction:column;align-items:center}
+.barbante{width:2px;height:26px;background:#D4D5D8}
+.tag{position:relative;background:#fff;border-radius:12px;padding:20px 30px 22px;min-width:208px;
+     box-shadow:0 5px 18px rgba(20,22,30,.09);text-align:center;transform-origin:top center;
+     animation:balanca 4.5s ease-in-out infinite}
+@keyframes balanca{0%,100%{transform:rotate(-1.1deg)}50%{transform:rotate(1.1deg)}}
+.tag::before{content:'';position:absolute;top:10px;left:50%;transform:translateX(-50%);
+  width:11px;height:11px;border-radius:50%;background:var(--fundo);
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.14)}
+.tag .et{font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+         color:#C2C3C7;margin-top:14px}
+.tag .pv{display:flex;align-items:flex-start;justify-content:center;gap:2px;margin-top:6px;
+         font-weight:300;letter-spacing:-2.4px;line-height:1}
+.tag .pv .c{font-size:19px;font-weight:400;letter-spacing:0;margin-top:7px}
+.tag .pv .d{font-size:52px;font-variant-numeric:tabular-nums}
+.teclado{display:grid;grid-template-columns:repeat(3,1fr);gap:2px 0;margin-top:4px}
+.teclado button{height:50px;border:0;background:none;font-family:inherit;font-size:24px;
+                font-weight:400;color:var(--preto);cursor:pointer;border-radius:12px}
+.teclado button:active{background:var(--pilula)}
+
+/* ─────────── T2 · o dia da cadeira ─────────── */
+.dia{background:#fff;border-radius:14px;padding:16px 15px 14px;box-shadow:0 3px 12px rgba(20,22,30,.06)}
+.dia .cab{display:flex;justify-content:space-between;font-size:9.5px;font-weight:700;
+          letter-spacing:.08em;text-transform:uppercase;color:#C2C3C7;margin-bottom:9px}
+.trilhoDia{height:62px;border-radius:9px;background:#F4F4F6;display:flex;gap:2px;padding:4px;
+           overflow:hidden}
+.bloco{flex:0 0 auto;background:var(--preto);border-radius:6px;display:flex;align-items:center;
+       justify-content:center;color:#fff;font-size:10px;font-weight:700}
+.bloco.sobra{background:repeating-linear-gradient(45deg,#E6E7EA 0 5px,#EFEFF1 5px 10px);
+             color:#A7A8AD;flex:1}
+.dia .leg{display:flex;justify-content:space-between;align-items:center;margin-top:12px;
+          padding-top:11px;border-top:1px solid var(--linha)}
+.dia .leg span{font-size:13px;color:#4A4B50}
+.passoBox{display:flex;align-items:center;gap:12px}
+.passoBox button{width:34px;height:34px;border:0;border-radius:11px;background:var(--pilula);
+                 font-family:inherit;font-size:19px;color:var(--preto);cursor:pointer}
+.passoBox b{min-width:44px;text-align:center;font-size:17px;font-variant-numeric:tabular-nums}
+
+/* ─────────── T4 · o contracheque ─────────── */
+.holerite{background:#fff;border-radius:4px;padding:18px 17px;box-shadow:0 3px 14px rgba(20,22,30,.07);
+          border-top:4px solid var(--preto)}
+.holerite .hTit{display:flex;justify-content:space-between;align-items:baseline;
+  padding-bottom:10px;border-bottom:1.5px dashed var(--linha)}
+.holerite .hTit b{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.holerite .hTit span{font-size:9.5px;color:#C2C3C7;letter-spacing:.06em;text-transform:uppercase}
+.hL{display:flex;justify-content:space-between;align-items:center;padding:9px 0;font-size:13px;
+    border-bottom:1px dotted #EDEDEF}
+.hL em{font-style:normal;color:var(--cinza);font-size:11px;display:block;margin-top:1px}
+.hL b{font-variant-numeric:tabular-nums;font-weight:700}
+.hFim{display:flex;justify-content:space-between;align-items:baseline;margin-top:11px;
+      padding-top:11px;border-top:2px solid var(--preto)}
+.hFim span{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.hFim b{font-size:21px;font-variant-numeric:tabular-nums}
+.hSlider{margin-top:20px;padding-bottom:4px}
+.hSlider input{-webkit-appearance:none;width:100%;height:4px;background:var(--pilula);
+               border-radius:4px;outline:none}
+.hSlider input::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;
+  border-radius:50%;background:var(--preto);box-shadow:0 2px 8px rgba(0,0,0,.25);cursor:pointer}
+
+/* ─────────── T7 · a cédula fatiada ─────────── */
+.cedula{background:#fff;border-radius:11px;padding:15px;box-shadow:0 3px 12px rgba(20,22,30,.06)}
+.cedula .cTit{font-size:9.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+              color:#C2C3C7;text-align:center}
+.notaBar{display:flex;height:76px;border-radius:9px;overflow:hidden;margin-top:11px;gap:2px}
+.notaBar div{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+             font-size:10px;font-weight:700;transition:flex-grow .25s}
+.notaBar .fCart{background:#D7D8DC;color:#5E6066}
+.notaBar .fImp{background:#B9BABF;color:#fff}
+.notaBar .fVoce{background:var(--preto);color:#fff}
+.notaBar b{font-size:14px;font-variant-numeric:tabular-nums}
+.ctrls{display:flex;gap:9px;margin-top:13px}
+.ctrl{flex:1;background:#F4F4F6;border-radius:10px;padding:9px 11px}
+.ctrl small{display:block;font-size:9.5px;font-weight:700;letter-spacing:.06em;
+            text-transform:uppercase;color:var(--cinza)}
+.ctrl .linha2{display:flex;align-items:center;justify-content:space-between;margin-top:5px}
+.ctrl .linha2 b{font-size:17px;font-variant-numeric:tabular-nums}
+.ctrl .linha2 div{display:flex;gap:5px}
+.ctrl button{width:27px;height:27px;border:0;border-radius:8px;background:#fff;font-family:inherit;
+             font-size:15px;color:var(--preto);cursor:pointer}
+
+/* ─────────── T8 · as cadeiras do salão ─────────── */
+.salao{background:#fff;border-radius:14px;padding:18px 15px 15px;box-shadow:0 3px 12px rgba(20,22,30,.06)}
+.cadeiras{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.cad{width:70px;border:0;background:none;cursor:pointer;display:flex;flex-direction:column;
+     align-items:center;gap:5px;padding:8px 2px;border-radius:12px}
+.cad svg{width:38px;height:38px;color:#D4D5D8}
+.cad.on svg{color:var(--preto)}
+.cad.voce svg{color:var(--preto)}
+.cad span{font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#C2C3C7}
+.cad.on span,.cad.voce span{color:var(--preto)}
+.cad.mais{border:1.5px dashed var(--linha)}
+.cad.mais svg{color:#C2C3C7}
+
+/* ─────────── T9 · a divisão da comissão ─────────── */
+.divisao{background:#fff;border-radius:14px;padding:16px 15px;box-shadow:0 3px 12px rgba(20,22,30,.06)}
+.divBar{display:flex;height:58px;border-radius:10px;overflow:hidden;gap:2px}
+.divBar div{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+            font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.divBar .pro{background:var(--pilula);color:#5E6066}
+.divBar .voce{background:var(--preto);color:#fff}
+.divBar b{font-size:15px;font-variant-numeric:tabular-nums}
+.pctGrande{display:flex;align-items:baseline;justify-content:center;gap:3px;
+           padding:18px 0 8px;font-variant-numeric:tabular-nums}
+.pctGrande span{font-size:78px;font-weight:300;letter-spacing:-4px;line-height:1;
+                color:var(--preto)}
+.pctGrande em{font-style:normal;font-size:26px;font-weight:400;color:var(--cinza)}
+.divSlider{margin-top:20px}
+.divSlider input{-webkit-appearance:none;width:100%;height:4px;background:var(--pilula);
+                 border-radius:4px;outline:none}
+.divSlider input::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;
+  border-radius:50%;background:var(--preto);box-shadow:0 2px 8px rgba(0,0,0,.25);cursor:pointer}
+.divNota{font-size:11.5px;color:var(--cinza);line-height:1.5;margin-top:11px;text-align:center}
+
+/* legenda das fatias pequenas da cédula (T7) */
+.legNota{display:flex;gap:16px;justify-content:center;margin-top:11px}
+.legNota div{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--cinza2)}
+.legNota i{width:9px;height:9px;border-radius:2px;flex:0 0 auto}
+.legNota .cCart{background:#D7D8DC}
+.legNota .cImp{background:#B9BABF}
+.legNota b{font-variant-numeric:tabular-nums;color:var(--preto)}
+.notaBar .fCart,.notaBar .fImp{min-width:10px}
+
+/* ─────────── T4 · botão «não tenho equipe» ─────────── */
+.semEquipe{display:block;width:100%;margin-top:13px;border:1.5px solid var(--linha);
+  background:#fff;border-radius:99px;padding:12px;font-family:inherit;font-size:14px;
+  font-weight:600;color:var(--cinza2);cursor:pointer}
+.semEquipe[aria-pressed=true]{background:var(--preto);border-color:var(--preto);color:#fff}
+.divSlider input:disabled{opacity:.35}
+
+/* ─────────── T6 · a tabela da semana ─────────── */
+.semana{background:#fff;border-radius:14px;padding:4px 15px 12px;
+        box-shadow:0 3px 12px rgba(20,22,30,.06)}
+.semL{display:flex;align-items:center;justify-content:space-between;padding:3.5px 0;
+      border-bottom:1px solid #F2F2F4}
+.semL:last-of-type{border-bottom:0}
+.semL > span{font-size:13.5px;color:#9FA0A5}
+.semL.on > span{color:var(--preto);font-weight:600}
+.semCtl{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+.semB{width:30px;height:30px;border:0;border-radius:9px;background:var(--pilula);
+      color:#5E6066;font-size:17px;line-height:1;cursor:pointer;display:grid;place-items:center;
+      font-family:inherit}
+.semB:active{background:#DCDDE0}
+.semL input{width:46px;height:34px;border:1.5px solid var(--linha);border-radius:10px;
+  background:#fff;outline:none;font-family:inherit;font-size:17px;font-weight:700;
+  text-align:center;color:#C2C3C7;font-variant-numeric:tabular-nums;padding:0}
+.semL input::placeholder{color:#DEDEE1;font-weight:400}
+.semL input:focus{border-color:var(--preto)}
+.semL.on input{color:var(--preto)}
+.todos{display:block;width:100%;margin-top:9px;border:1.5px dashed var(--linha);background:none;
+  border-radius:10px;padding:10px;font-family:inherit;font-size:12.5px;font-weight:600;
+  color:var(--cinza2);cursor:pointer}
+.todos:active{background:#F7F7F9}
+.semFim{display:flex;justify-content:space-between;align-items:baseline;margin-top:9px;
+        padding-top:9px;border-top:1.5px solid var(--preto);font-size:13.5px;font-weight:700}
+.semFim b{font-size:18px;font-variant-numeric:tabular-nums}
+
+/* ─────────── T0 · o nome do procedimento ─────────── */
+.nomeBox{width:100%;max-width:300px;margin:0 auto}
+.campoNome{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--preto);
+           padding-bottom:9px}
+.campoNome svg{width:20px;height:20px;color:var(--cinza);flex:0 0 auto}
+.campoNome input{flex:1;min-width:0;border:0;background:none;outline:none;font-family:inherit;
+                 font-size:26px;font-weight:700;letter-spacing:-.7px;color:var(--preto)}
+.campoNome input::placeholder{color:#D4D5D8;font-weight:600}
+.sugest{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;justify-content:center}
+.sugest button{border:1.5px solid var(--linha);background:#fff;border-radius:99px;
+               padding:9px 15px;font-family:inherit;font-size:13.5px;font-weight:600;
+               color:#55565B;cursor:pointer}
+.sugest button[aria-pressed=true]{background:var(--preto);border-color:var(--preto);color:#fff}
+.dicaNome{font-size:12px;color:var(--cinza);text-align:center;margin-top:18px;line-height:1.5}
+
+/* o exemplo é sempre cinza, mesmo dentro de um valor preto */
+span.ex, .ex{color:#D4D5D8 !important}
+
+/* nada vem preenchido: placeholder é cinza-claro e botão travado parece travado */
+input::placeholder{color:#D4D5D8;opacity:1}
+.btn:disabled{opacity:.32;pointer-events:none}

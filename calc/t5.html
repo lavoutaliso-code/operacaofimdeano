@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>T5 · Conta do salão</title>
+<link rel="stylesheet" href="telas.css">
+</head>
+<body>
+
+<div class="nav">
+  <button class="volta">&#8249;</button>
+  <h2>Calculadora de Precificação</h2>
+</div>
+
+<div class="topo">
+  <div class="passo">Pergunta 07 de 09</div>
+  <h3>Quanto você paga de<br>contas do salão por mês?</h3>
+  <p>Escreva o nome de cada conta que chega todo mês e quanto você paga. Some quantas precisar.</p>
+</div>
+
+<div class="meio">
+  <div class="envs" id="envs"></div>
+  <button class="nMais" id="maisConta">+ anotar outra conta</button>
+</div>
+
+<div class="saida">
+  <div class="rot">Suas contas do mês</div>
+  <div class="n"><span class="cif">R$</span><span class="v" id="grande">—</span></div>
+  <div class="conta" id="conta">—</div>
+</div>
+
+<div class="pe"><button class="btn">Continuar</button></div>
+
+<script src="nucleo.js"></script>
+<script src="estado.js"></script>
+<script>
+/* ⚠️ OS NOMES DAS CONTAS ERAM MEUS — aluguel, luz, internet, sistema, contador.
+   Isso é a conta do MEU exemplo, não a dela. Agora ela escreve o nome de cada
+   uma e soma quantas quiser. Nasce com uma linha em branco. */
+let contas = (EST.contas || []).filter(c => c.nome || c.v != null).map(c => ({...c}));
+if (!contas.length) contas = [{nome:'', v:null}];
+
+const brl0 = v => Math.round(v).toLocaleString('pt-BR');
+const num = v => { const x = parseFloat(String(v).replace(/\./g,'').replace(',','.')); return isFinite(x)?x:0; };
+const g = id => document.getElementById(id);
+
+function pinta(){
+  g('envs').innerHTML = contas.map((c,k)=>`
+    <div class="env">
+      <div class="ic"></div>
+      <input class="nomeConta" data-k="${k}" data-c="nome" value="${(c.nome||'').replace(/"/g,'&quot;')}"
+             placeholder="nome da conta">
+      <div class="val"><em>R$</em><input data-k="${k}" data-c="v" inputmode="decimal"
+        value="${c.v != null ? brl0(c.v) : ''}" placeholder=""></div>
+      ${contas.length > 1 ? `<button class="tiraConta" data-k="${k}" aria-label="tirar">&times;</button>` : ''}
+    </div>`).join('');
+
+  g('envs').querySelectorAll('input').forEach(inp=>{
+    inp.addEventListener('input',()=>{
+      const c = contas[+inp.dataset.k];
+      if (inp.dataset.c === 'nome') c.nome = inp.value;
+      else { const v = num(inp.value); c.v = v>0 ? v : null; }
+      soma();
+    });
+  });
+  g('envs').querySelectorAll('.tiraConta').forEach(b=>{
+    b.onclick = () => { contas.splice(+b.dataset.k,1); pinta(); };
+  });
+  soma();
+}
+
+g('maisConta').onclick = () => { contas.push({nome:'', v:null}); pinta();
+  const ns = g('envs').querySelectorAll('.nomeConta'); ns[ns.length-1].focus(); };
+
+function soma(){
+  const t = contas.reduce((s,c)=>s+(c.v||0),0);
+  const nomeadas = contas.filter(c => (c.v||0) > 0 && c.nome.trim());
+  document.querySelector('.btn').disabled = nomeadas.length === 0;
+  salvar({contas: contas.map(c=>({...c}))});
+  g('grande').innerHTML = t > 0 ? brl0(t) : '<span class="ex">—</span>';
+  if(t <= 0){ g('conta').textContent = 'Escreva o nome da conta e quanto você paga'; return; }
+  if(!nomeadas.length){ g('conta').textContent = 'Falta o nome dessa conta'; return; }
+  const maior = nomeadas.reduce((a,b)=>(b.v||0)>(a.v||0)?b:a);
+  g('conta').textContent = nomeadas.length + (nomeadas.length===1?' conta':' contas')
+    + ' · a maior é ' + maior.nome.trim().toLowerCase()
+    + ' (' + Math.round(maior.v/t*100) + '% do total)';
+}
+pinta();
+</script>
+<script src="nav.js"></script>
+</body>
+</html>

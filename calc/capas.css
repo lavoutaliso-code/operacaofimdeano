@@ -1,0 +1,96 @@
+/* 4 capas. Mesmo conteúdo — o nome e o botão — em quatro tratamentos. */
+:root{
+  --preto:#1C1C1E; --fundo:#F2F2F7; --cinza:#A3AAB4; --cinza2:#6B7280;
+  --linha:#E4E4E6; --verde:#12885C; --lima:#C8FF00;
+  --ui:-apple-system,system-ui,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:var(--ui);color:var(--preto);-webkit-font-smoothing:antialiased;
+     display:flex;flex-direction:column;overflow:hidden;background:var(--fundo)}
+.btn{width:100%;height:56px;border:0;border-radius:99px;background:var(--preto);color:#fff;
+     font-family:inherit;font-size:15.5px;font-weight:650;cursor:pointer;letter-spacing:-.1px;
+     box-shadow:0 10px 26px -8px rgba(20,22,30,.5)}
+.pe{flex:0 0 auto;padding:14px 24px calc(26px + env(safe-area-inset-bottom))}
+
+/* ══ C1 · a nota saindo da máquina ══ */
+.c1{background:#F2F2F7}
+.c1 .palco{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;
+           justify-content:center;padding:20px}
+.c1 .maquina{width:286px}
+.c1 .carcaca{background:linear-gradient(180deg,#2C2C2E 0%,#1C1C1E 100%);border-radius:13px;
+  padding:13px 17px;display:flex;align-items:center;gap:9px;
+  box-shadow:0 5px 18px rgba(0,0,0,.22)}
+.c1 .logo{width:26px;height:26px;border-radius:8px;background:var(--lima);display:grid;
+  place-items:center;font-size:11px;font-weight:800;color:#1C1C1E;flex:0 0 auto}
+.c1 .marca{font-size:9.5px;font-weight:700;color:var(--lima);letter-spacing:.14em;
+  text-transform:uppercase;line-height:1.3}
+.c1 .fenda{width:calc(100% - 26px);margin:-3px auto 0;height:13px;
+  background:linear-gradient(180deg,#050505,#1a1a1a);border-radius:0 0 4px 4px;
+  box-shadow:0 3px 10px -2px rgba(0,0,0,.35),inset 0 2px 4px rgba(0,0,0,.6)}
+.c1 .papel{margin:0 14px;background:#fff;padding:30px 20px 34px;text-align:center;
+  box-shadow:0 3px 16px rgba(20,22,30,.1);
+  -webkit-mask:radial-gradient(circle 6px at 6px 12px,transparent 5.5px,#000 6px) bottom left/12px 12px repeat-x,
+    linear-gradient(#000,#000) top/100% calc(100% - 12px) no-repeat;
+  mask:radial-gradient(circle 6px at 6px 12px,transparent 5.5px,#000 6px) bottom left/12px 12px repeat-x,
+    linear-gradient(#000,#000) top/100% calc(100% - 12px) no-repeat}
+.c1 .papel .tr{border-top:1.5px dashed var(--linha);margin:16px 24px}
+.c1 h1{font-size:23px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;line-height:1.5}
+.c1 .sub{font-size:8.5px;font-weight:800;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--cinza)}
+
+/* ══ C2 · noite ══ */
+.c2{background:#0C0D10}
+.c2 .palco{flex:1 1 auto;position:relative;display:flex;flex-direction:column;
+           justify-content:flex-end;padding:0 28px 8px;overflow:hidden}
+.c2 .aro{position:absolute;top:-88px;right:-96px;width:318px;height:318px;border-radius:50%;
+  border:26px solid #1A1E24}
+/* ⚠️ o arco verde era o mesmo tom do fundo e sumia. Aqui ele é um segundo anel,
+   com duas faces coloridas e giro — fica legível contra o preto. */
+.c2 .aro::after{content:'';position:absolute;inset:-26px;border-radius:50%;
+  border:26px solid transparent;border-top-color:var(--verde);border-left-color:var(--verde);
+  transform:rotate(38deg)}
+.c2 .selo{position:relative;font-size:9.5px;font-weight:800;letter-spacing:.3em;
+  text-transform:uppercase;color:#6E7076;margin-bottom:auto;padding-top:40px}
+.c2 h1{position:relative;font-size:46px;font-weight:800;letter-spacing:-2px;line-height:1.02;
+  color:#fff}
+.c2 h1 em{font-style:normal;color:#5E6066}
+.c2 .fio{position:relative;height:1.5px;background:#2A2C31;margin:24px 0 0}
+.c2 .pe .btn{background:#fff;color:#0C0D10;box-shadow:0 10px 26px -8px rgba(0,0,0,.6)}
+
+/* ══ C3 · a etiqueta pendurada ══ */
+.c3{background:#fff}
+/* ⚠️ o barbante e o vão de baixo dividem o espaço em partes iguais — é isso que
+   deixa a etiqueta centrada com o cordão saindo do topo. Fixar a altura do
+   barbante joga a etiqueta para cima e abre um branco morto embaixo. */
+.c3 .palco{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;padding:0 24px}
+.c3 .barbante{width:2px;flex:1 1 auto;min-height:46px;background:linear-gradient(#E9E9EB,#D4D5D8)}
+.c3 .tag{position:relative;background:#FBFBFC;border:1.5px solid #EDEDEF;border-radius:18px;
+  padding:34px 30px 36px;width:260px;text-align:center;
+  box-shadow:0 14px 34px -10px rgba(20,22,30,.16);
+  transform-origin:top center;animation:bal 5s ease-in-out infinite}
+@keyframes bal{0%,100%{transform:rotate(-1.4deg)}50%{transform:rotate(1.4deg)}}
+.c3 .tag::before{content:'';position:absolute;top:13px;left:50%;transform:translateX(-50%);
+  width:13px;height:13px;border-radius:50%;background:#fff;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.2)}
+.c3 .tag .ico{margin:16px auto 0;display:block}
+.c3 h1{font-size:25px;font-weight:800;letter-spacing:-.7px;line-height:1.2;margin-top:14px}
+.c3 .tag .et{font-size:8.5px;font-weight:800;letter-spacing:.26em;text-transform:uppercase;
+  color:#C2C3C7;margin-top:10px}
+.c3 .vazio{flex:1 1 auto;min-height:30px}
+
+/* ══ C4 · editorial ══ */
+.c4{background:#FAFAF8}
+.c4 .palco{flex:1 1 auto;display:flex;flex-direction:column;padding:0 26px}
+.c4 .alto{display:flex;align-items:center;justify-content:space-between;padding:22px 0 0;
+  font-size:9px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:#B4B2AC}
+.c4 .fio{height:1.5px;background:#1C1C1E;margin:14px 0 0}
+.c4 h1{font-size:52px;font-weight:800;letter-spacing:-2.6px;line-height:.98;margin-top:auto;
+  padding-bottom:4px}
+.c4 h1 span{display:block}
+.c4 h1 .leve{font-weight:300;color:#8E8C86}
+.c4 .baixo{display:flex;align-items:flex-end;justify-content:space-between;
+  border-top:1.5px solid #1C1C1E;margin-top:18px;padding-top:12px;margin-bottom:auto}
+.c4 .baixo p{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#B4B2AC;
+  font-weight:800}
+.c4 .baixo svg{flex:0 0 auto}

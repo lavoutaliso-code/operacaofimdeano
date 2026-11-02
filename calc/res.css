@@ -1,0 +1,81 @@
+/* As 4 versões limpas do resultado. Mesma paleta das referências. */
+:root{
+  --preto:#1C1C1E; --fundo:#F2F2F7; --cinza:#A3AAB4; --cinza2:#6B7280;
+  --linha:#E4E4E6; --verde:#12885C; --vermelho:#BC3D20;
+  --ui:-apple-system,system-ui,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:var(--ui);background:var(--fundo);color:var(--preto);
+     -webkit-font-smoothing:antialiased;display:flex;flex-direction:column;overflow:hidden}
+.palco{flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;
+       align-items:center;padding:16px 20px 4px}
+.palco::-webkit-scrollbar{display:none}
+.palco > *{margin-block:auto}
+.pe{flex:0 0 auto;padding:10px 20px calc(18px + env(safe-area-inset-bottom))}
+.bt{width:100%;height:52px;border:0;border-radius:99px;background:var(--preto);color:#fff;
+    font-family:inherit;font-size:15.5px;font-weight:600;cursor:pointer}
+
+/* papel */
+.papel{width:300px;background:#fff;padding:26px 22px 28px;
+  -webkit-mask:radial-gradient(circle 6px at 6px 0,transparent 5.5px,#000 6px) top left/12px 12px repeat-x,
+    radial-gradient(circle 6px at 6px 12px,transparent 5.5px,#000 6px) bottom left/12px 12px repeat-x,
+    linear-gradient(#000,#000) center/100% calc(100% - 24px) no-repeat;
+  mask:radial-gradient(circle 6px at 6px 0,transparent 5.5px,#000 6px) top left/12px 12px repeat-x,
+    radial-gradient(circle 6px at 6px 12px,transparent 5.5px,#000 6px) bottom left/12px 12px repeat-x,
+    linear-gradient(#000,#000) center/100% calc(100% - 24px) no-repeat}
+.sombra{filter:drop-shadow(0 6px 20px rgba(20,22,30,.10))}
+
+.topo{text-align:center;font-size:10px;font-weight:700;letter-spacing:.14em;
+      text-transform:uppercase;color:var(--cinza)}
+.tracejo{border-top:1.5px dashed var(--linha);margin:16px 0}
+.cobra{text-align:center;font-size:13px;color:var(--cinza2)}
+.cobra b{font-weight:700;color:var(--preto);font-variant-numeric:tabular-nums}
+.rotulo{text-align:center;font-size:10px;font-weight:700;letter-spacing:.13em;
+        text-transform:uppercase;color:var(--cinza);margin-top:14px}
+.grande{text-align:center;font-size:40px;font-weight:700;letter-spacing:-1.7px;line-height:1.05;
+        margin-top:6px;color:var(--verde);font-variant-numeric:tabular-nums}
+.grande.neg{color:var(--vermelho)}
+
+.ln{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;font-size:13px}
+.ln span:last-child{font-variant-numeric:tabular-nums}
+.ln .q{color:var(--cinza2)}
+.ln.forte{font-weight:700;font-size:14px}
+
+/* carimbo */
+.carimbo{display:block;width:fit-content;margin:12px auto 0;padding:7px 18px 9px;
+  border:2.5px solid currentColor;border-radius:9px;transform:rotate(-3.5deg);
+  box-shadow:inset 0 0 0 1.5px currentColor;color:var(--verde)}
+.carimbo b{display:block;font-size:30px;font-weight:800;letter-spacing:-1.3px;line-height:1;
+           font-variant-numeric:tabular-nums}
+.carimbo i{display:block;font-style:normal;font-size:8.5px;font-weight:700;letter-spacing:.22em;
+           text-transform:uppercase;margin-top:4px;text-align:center}
+.fecho{font-size:12px;color:var(--cinza2);line-height:1.6;text-align:center}
+.fecho b{color:var(--preto);font-weight:700;font-variant-numeric:tabular-nums}
+
+/* cartões de app */
+.cartoes{width:320px;display:flex;flex-direction:column;gap:11px}
+.cartao{background:#fff;border-radius:17px;padding:19px 20px;
+        box-shadow:0 3px 14px rgba(20,22,30,.06)}
+.cartao .k{font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+           color:var(--cinza)}
+.cartao .big{font-size:42px;font-weight:700;letter-spacing:-1.9px;line-height:1.05;margin-top:6px;
+             color:var(--verde);font-variant-numeric:tabular-nums}
+.cartao .antes{display:flex;justify-content:space-between;align-items:baseline;
+               padding-bottom:13px;margin-bottom:13px;border-bottom:1px solid #F1F1F3;
+               font-size:13px;color:var(--cinza2)}
+.cartao .antes b{font-size:16px;color:var(--preto);font-variant-numeric:tabular-nums}
+.duo{display:flex;gap:11px}
+.duo .cartao{flex:1;padding:16px 15px}
+.duo .k{font-size:9.5px}
+.duo .v{font-size:21px;font-weight:700;letter-spacing:-.8px;margin-top:5px;
+        font-variant-numeric:tabular-nums}
+.cartao.escuro{background:var(--preto)}
+.cartao.escuro .k{color:#8C8E95}
+.cartao.escuro .v{color:#fff}
+
+/* tela limpa, sem caixas */
+.nu{width:320px}
+.nu .ln{padding:9px 0;border-bottom:1px solid var(--linha);font-size:14px}
+.nu .ln:last-child{border-bottom:0}
+.nu .sep{height:1.5px;background:var(--preto);margin:4px 0 0}

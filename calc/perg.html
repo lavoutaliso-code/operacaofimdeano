@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pergunta</title>
+<link rel="stylesheet" href="base.css">
+<style>
+  /* o molde aprovado — igual nas três variantes */
+  .corpo{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;
+         justify-content:center;padding:0 26px;text-align:center}
+  .icone{width:52px;height:52px;border-radius:17px;background:var(--pilula);
+         display:grid;place-items:center;margin-bottom:18px}
+  .icone svg{width:24px;height:24px;color:var(--preto)}
+  .corpo h3{font-size:21px;font-weight:600;letter-spacing:-.4px}
+  .corpo p{font-size:14px;color:var(--cinza);line-height:1.5;margin-top:7px;max-width:285px}
+  .valor{margin:26px 0 4px}
+  .valor input{font-family:inherit;font-weight:300;font-size:68px;letter-spacing:-3px;
+               border:0;outline:none;background:none;color:var(--preto);text-align:center;
+               font-variant-numeric:tabular-nums;padding:0;width:100%;max-width:260px}
+  .pil{margin-top:18px}
+  .zona{flex:0 0 auto;padding:4px 14px 0}
+  .pe{padding-top:6px}
+
+  /* v2 — atalhos */
+  .atalhos{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:0 12px 14px}
+  .atalhos button{border:0;background:var(--pilula);border-radius:99px;padding:12px 18px;
+                  font-family:var(--ui,inherit);font-size:15px;font-weight:600;color:#55565B;
+                  cursor:pointer;font-variant-numeric:tabular-nums}
+  .atalhos button[aria-pressed=true]{background:var(--preto);color:#fff}
+
+  /* v3 — passo a passo */
+  .stepper{display:flex;align-items:center;justify-content:center;gap:16px;padding:0 20px 18px}
+  .stepper button{width:64px;height:64px;border:0;border-radius:22px;background:var(--pilula);
+                  font-family:inherit;font-size:28px;font-weight:400;color:var(--preto);
+                  cursor:pointer;display:grid;place-items:center}
+  .stepper button:active{background:#DEDFE2}
+  .stepper .trilho{flex:1;max-width:150px;height:4px;border-radius:4px;background:var(--pilula);
+                   position:relative}
+  .stepper .trilho i{position:absolute;inset:0 auto 0 0;background:var(--preto);border-radius:4px}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <button class="volta" id="voltar">&#8249;</button>
+  <h2>Calculadora de Precificação</h2>
+</div>
+
+<div class="corpo">
+  <div class="icone" id="icone"></div>
+  <h3 id="tit">—</h3>
+  <p id="sub">—</p>
+  <div class="valor" id="valor"></div>
+  <span class="pil" id="pil">—</span>
+</div>
+
+<div class="zona" id="zona"></div>
+
+<div class="pe">
+  <button class="btn" id="segue">Continuar</button>
+</div>
+
+<script src="nucleo.js"></script>
+<script src="icones-zen.js"></script>
+<script>
+const q = new URLSearchParams(location.search);
+const V = +(q.get('v') || 1);           // 1 teclado · 2 atalhos · 3 passo a passo
+let i   = Math.min(Math.max(+(q.get('i') || 0), 0), PERGUNTAS.length - 1);
+
+const d = Object.assign({}, PADRAO);
+let buf = String(d[PERGUNTAS[i].k]).replace('.', ',');
+const g = id => document.getElementById(id);
+
+const vir = s => String(s).replace('.', ',');
+/* milhar na exibição: 1847 vira 1.847 — o buf continua cru */
+const fmtMil = t => {
+  const [ini, dec] = String(t).split(',');
+  return ini.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + (dec !== undefined ? ',' + dec : '');
+};
+const limpa = t => String(t).replace(/\./g, '');
+const val = () => parseFloat(String(buf).replace(',', '.')) || 0;
+
+function mostra(){
+  const p = PERGUNTAS[i];
+  g('icone').innerHTML = ICO[p.k]();
+  g('tit').textContent = p.tit;
+  g('sub').textContent = p.sub;
+  g('pil').textContent = String(i + 1).padStart(2, '0') + ' de 09  ·  ' + d.servico;
+  g('segue').textContent = i === PERGUNTAS.length - 1 ? 'Ver o resultado' : 'Continuar';
+
+  const corpoValor = V === 1
+    ? `<span class="n">${fmtMil(buf || '0')}</span>`
+    : `<input id="campo" inputmode="decimal" value="${fmtMil(buf)}">`;
+  g('valor').innerHTML =
+    (p.sinal ? `<span class="sinal">${p.sinal}</span>` : '')
+    + corpoValor
+    + (p.suf ? `<span class="suf">${p.suf}</span>` : '');
+
+  if (V !== 1) {
+    g('campo').addEventListener('input', e => {
+      buf = limpa(e.target.value); d[p.k] = buf; pintaZona();
+    });
+    const largura = Math.max(1, fmtMil(buf).length);
+    g('campo').style.width = (largura * 0.555) + 'em';
+  }
+  pintaZona();
+}
+
+function pintaZona(){
+  const p = PERGUNTAS[i];
+
+  if (V === 1) {                                   /* teclado próprio */
+    if (!g('zona').querySelector('.teclado')) {
+      g('zona').innerHTML = '<div class="teclado">'
+        + ['1','2','3','4','5','6','7','8','9',',','0','⌫']
+          .map(t => `<button data-t="${t}"${t === '⌫' ? ' class="mini"' : ''}>${t}</button>`).join('')
+        + '</div>';
+      g('zona').onclick = e => {
+        const b = e.target.closest('button'); if (!b) return;
+        const t = b.dataset.t;
+        if (t === '⌫') buf = buf.slice(0, -1);
+        else if (t === ',') { if (!buf.includes(',')) buf += buf ? ',' : '0,'; }
+        else buf = (buf === '0' ? '' : buf) + t;
+        d[p.k] = buf;
+        g('valor').querySelector('.n').textContent = fmtMil(buf || '0');
+      };
+    }
+    return;
+  }
+
+  if (V === 2) {                                   /* atalhos de valor */
+    const base = val();
+    const ops = [...new Set([
+      base - p.passo * 2, base - p.passo, base, base + p.passo, base + p.passo * 2,
+    ])].filter(v => v >= 0).slice(0, 5);
+    g('zona').innerHTML = '<div class="atalhos">' + ops.map(v =>
+      `<button data-v="${v}" aria-pressed="${Math.abs(v - base) < 1e-9}">`
+      + (p.sinal ? p.sinal + ' ' : '') + fmtMil(vir(+v.toFixed(2))) + p.suf + '</button>').join('')
+      + '</div>';
+    g('zona').querySelectorAll('button').forEach(b => {
+      b.onclick = () => { buf = vir(+(+b.dataset.v).toFixed(2)); d[p.k] = buf; mostra(); };
+    });
+    return;
+  }
+
+  /* V === 3 — passo a passo */
+  const base = val();
+  g('zona').innerHTML = `
+    <div class="stepper">
+      <button data-m="-1">−</button>
+      <div class="trilho"><i style="width:${Math.min(100, base / (p.passo * 20) * 100).toFixed(0)}%"></i></div>
+      <button data-m="1">+</button>
+    </div>`;
+  g('zona').querySelectorAll('button').forEach(b => {
+    b.onclick = () => {
+      const novo = Math.max(0, +(base + (+b.dataset.m) * p.passo).toFixed(2));
+      buf = vir(novo); d[p.k] = buf; mostra();
+    };
+  });
+}
+
+g('segue').onclick = () => {
+  if (i < PERGUNTAS.length - 1) { i++; buf = String(d[PERGUNTAS[i].k]).replace('.', ','); mostra(); }
+};
+g('voltar').onclick = () => {
+  if (i > 0) { i--; buf = String(d[PERGUNTAS[i].k]).replace('.', ','); mostra(); }
+};
+
+mostra();
+</script>
+</body>
+</html>

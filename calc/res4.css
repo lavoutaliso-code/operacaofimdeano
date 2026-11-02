@@ -1,0 +1,131 @@
+/* Tela de resultado: três números e nada de extrato.
+   Cada versão tem uma substância visual diferente. */
+:root{
+  --preto:#1C1C1E; --fundo:#F2F2F7; --cinza:#A3AAB4; --cinza2:#6B7280;
+  --fraco:#C9CACE; --linha:#E4E4E6;
+  --amarelo:#C08A00; --vermelho:#BC3D20; --verde:#12885C; --verdeClaro:#D9F0E5;
+  --ui:-apple-system,system-ui,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:var(--ui);background:var(--fundo);color:var(--preto);
+     -webkit-font-smoothing:antialiased;display:flex;flex-direction:column;overflow:hidden}
+.palco{flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;
+       align-items:center;padding:10px 18px 2px}
+.palco::-webkit-scrollbar{display:none}
+.palco > *{margin-block:auto}
+.pe{flex:0 0 auto;padding:8px 20px calc(14px + env(safe-area-inset-bottom))}
+.bt{width:100%;height:50px;border:0;border-radius:99px;background:var(--preto);color:#fff;
+    font-family:inherit;font-size:15px;font-weight:600;cursor:pointer}
+
+.folha{width:318px}
+
+/* título imponente */
+.capa{background:var(--preto);color:#fff;padding:18px 16px 14px;text-align:center;
+      border-radius:16px 16px 0 0}
+.capa h1{font-size:15.5px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;line-height:1.42}
+.capa .fio{height:1.5px;background:rgba(255,255,255,.28);margin:8px 44px}
+.capa p{font-size:8px;font-weight:800;letter-spacing:.34em;text-transform:uppercase;color:#8C8E95}
+.corpo{background:#fff;border-radius:0 0 16px 16px;padding:20px 18px 22px;
+       box-shadow:0 6px 22px rgba(20,22,30,.09)}
+.serv{text-align:center;font-size:12px;color:var(--cinza2);margin-bottom:4px}
+.serv b{color:var(--preto);font-weight:700}
+
+.rot{font-size:9px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--cinza)}
+.tracejo{border-top:1.5px dashed var(--linha);margin:16px 0}
+
+/* ─── S1 · anéis ─── */
+.anelG{position:relative;width:188px;height:188px;margin:6px auto 0}
+.anelG svg{transform:rotate(-90deg)}
+.anelG .meio{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+             justify-content:center;text-align:center}
+.anelG .meio b{font-size:28px;font-weight:800;letter-spacing:-1.2px;color:var(--verde);
+               font-variant-numeric:tabular-nums;line-height:1.05;margin-top:4px}
+.anelG .meio em{font-style:normal;font-size:10px;color:var(--cinza2);margin-top:3px}
+.anelPar{display:flex;gap:12px;margin-top:4px}
+.anelP{flex:1;text-align:center}
+.anelP .aro{position:relative;width:96px;height:96px;margin:0 auto}
+.anelP .aro svg{transform:rotate(-90deg)}
+.anelP .aro span{position:absolute;inset:0;display:grid;place-items:center;font-size:14px;
+                 font-weight:800;font-variant-numeric:tabular-nums}
+.anelP .leg{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+            color:var(--cinza2);margin-top:7px;line-height:1.4}
+
+/* ─── S2 · colunas ─── */
+.destaque{text-align:center;padding:2px 0 4px}
+.destaque b{display:block;font-size:40px;font-weight:800;letter-spacing:-1.8px;color:var(--verde);
+            font-variant-numeric:tabular-nums;line-height:1.05;margin-top:5px}
+.destaque em{font-style:normal;display:block;font-size:11px;color:var(--cinza2);margin-top:4px}
+.colunas{display:flex;align-items:flex-end;gap:16px;height:188px;margin-top:6px}
+.col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:7px}
+.col .v{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
+.col .barra{width:100%;border-radius:9px 9px 0 0}
+.col.a .barra{background:#D7D8DC} .col.a .v{color:var(--cinza2)}
+.col.b .barra{background:var(--verde)} .col.b .v{color:var(--verde)}
+.colLeg{display:flex;gap:16px;margin-top:9px}
+.colLeg div{flex:1;text-align:center;font-size:9.5px;font-weight:700;letter-spacing:.06em;
+            text-transform:uppercase;color:var(--cinza2);line-height:1.45}
+
+/* ─── S3 · escada ─── */
+.degraus{display:flex;align-items:flex-end;gap:6px;margin-top:8px}
+.deg{flex:1;border-radius:10px 10px 0 0;padding:11px 8px 12px;text-align:center;color:#fff}
+.deg small{display:block;font-size:8px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+           opacity:.78;line-height:1.35}
+.deg b{display:block;font-size:16px;font-weight:800;margin-top:5px;font-variant-numeric:tabular-nums}
+.deg.d1{background:#9FA0A5;height:104px}
+.deg.d2{background:#55565B;height:144px}
+.deg.d3{background:var(--verde);height:188px}
+.deg.d3 b{font-size:19px}
+.setaSobe{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:12px;
+          font-size:11.5px;color:var(--cinza2)}
+.setaSobe b{color:var(--verde);font-weight:800;font-variant-numeric:tabular-nums}
+
+/* ─── S4 · medalha + camadas ─── */
+.medalha{width:154px;height:154px;margin:4px auto 0;border-radius:50%;
+         background:var(--verdeClaro);display:flex;flex-direction:column;align-items:center;
+         justify-content:center;box-shadow:inset 0 0 0 3px #fff, inset 0 0 0 5px var(--verde)}
+.medalha small{font-size:8px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+               color:var(--verde);text-align:center;line-height:1.4}
+.medalha b{font-size:26px;font-weight:800;letter-spacing:-1.1px;color:var(--verde);
+           font-variant-numeric:tabular-nums;margin-top:4px}
+.medalha em{font-style:normal;font-size:8.5px;font-weight:700;letter-spacing:.1em;
+            text-transform:uppercase;color:#4E9478;margin-top:3px}
+.camadas{margin-top:18px;position:relative}
+.camada{border-radius:13px;padding:14px 16px;display:flex;align-items:center;
+        justify-content:space-between}
+.camada small{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+              line-height:1.4;max-width:140px}
+.camada b{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}
+.camada.a{background:#F1F1F3;color:var(--cinza2)}
+.camada.a b{color:var(--preto)}
+.camada.b{background:var(--preto);color:#8C8E95;margin-top:9px}
+.camada.b b{color:#fff}
+.maisZ{display:inline-block;margin-top:11px;background:var(--verde);color:#fff;font-size:10px;
+       font-weight:800;letter-spacing:.05em;padding:6px 13px;border-radius:99px}
+.centro{text-align:center}
+
+/* ─── S2 vive numa tela escura, não num cartão branco ─── */
+body.escuro{background:#0E0F12}
+body.escuro .capa{background:none;padding:22px 16px 6px;border-radius:0}
+body.escuro .capa h1{color:#fff}
+body.escuro .capa .fio{background:rgba(255,255,255,.16)}
+body.escuro .corpo{background:none;box-shadow:none;padding:12px 4px 4px}
+body.escuro .serv{color:#8C8E95}
+body.escuro .serv b{color:#fff}
+body.escuro .destaque b{color:#2FD49A}
+body.escuro .destaque em{color:#8C8E95}
+body.escuro .rot{color:#6E7076}
+body.escuro .col.a .barra{background:#2A2C31}
+body.escuro .col.a .v{color:#9FA0A5}
+body.escuro .col.b .barra{background:#2FD49A}
+body.escuro .col.b .v{color:#2FD49A}
+body.escuro .colLeg div{color:#8C8E95}
+body.escuro .tracejo{border-top-color:#2A2C31}
+body.escuro .bt{background:#fff;color:#0E0F12}
+
+/* ─── S4 sem faixa preta: o título é texto puro ─── */
+body.limpo .capa{background:none;color:var(--preto);padding:20px 16px 4px;border-radius:0}
+body.limpo .capa h1{color:var(--preto);font-size:14px}
+body.limpo .capa .fio{background:var(--linha)}
+body.limpo .capa p{color:var(--cinza)}
+body.limpo .corpo{background:none;box-shadow:none;padding:8px 4px 4px}

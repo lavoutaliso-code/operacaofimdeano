@@ -1,0 +1,88 @@
+/* Os três carimbos do cupom, em 4 arranjos.
+   Amarelo = o lucro do serviço · Vermelho = o teto sozinha · Verde = com equipe. */
+:root{
+  --preto:#1C1C1E; --fundo:#F2F2F7; --cinza:#A3AAB4; --cinza2:#6B7280;
+  --linha:#E4E4E6; --amarelo:#C08A00; --vermelho:#BC3D20; --verde:#12885C;
+  --ui:-apple-system,system-ui,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:var(--ui);background:var(--fundo);color:var(--preto);
+     -webkit-font-smoothing:antialiased;display:flex;flex-direction:column;overflow:hidden}
+.palco{flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;
+       align-items:center;padding:14px 20px 4px}
+.palco::-webkit-scrollbar{display:none}
+.palco > *{margin-block:auto}
+.pe{flex:0 0 auto;padding:10px 20px calc(18px + env(safe-area-inset-bottom))}
+.bt{width:100%;height:52px;border:0;border-radius:99px;background:var(--preto);color:#fff;
+    font-family:inherit;font-size:15.5px;font-weight:600;cursor:pointer}
+
+.sombra{filter:drop-shadow(0 6px 20px rgba(20,22,30,.10))}
+.papel{width:302px;background:#fff;padding:24px 20px 26px;
+  -webkit-mask:radial-gradient(circle 6px at 6px 0,transparent 5.5px,#000 6px) top left/12px 12px repeat-x,
+    radial-gradient(circle 6px at 6px 12px,transparent 5.5px,#000 6px) bottom left/12px 12px repeat-x,
+    linear-gradient(#000,#000) center/100% calc(100% - 24px) no-repeat;
+  mask:radial-gradient(circle 6px at 6px 0,transparent 5.5px,#000 6px) top left/12px 12px repeat-x,
+    radial-gradient(circle 6px at 6px 12px,transparent 5.5px,#000 6px) bottom left/12px 12px repeat-x,
+    linear-gradient(#000,#000) center/100% calc(100% - 24px) no-repeat}
+
+.topo{text-align:center;font-size:10px;font-weight:700;letter-spacing:.14em;
+      text-transform:uppercase;color:var(--cinza)}
+.cobra{text-align:center;font-size:12.5px;color:var(--cinza2);margin-top:9px}
+.cobra b{font-weight:700;color:var(--preto);font-variant-numeric:tabular-nums}
+.tracejo{border-top:1.5px dashed var(--linha);margin:14px 0}
+.ln{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;
+    font-size:12.5px;color:var(--cinza2)}
+.ln span:last-child{font-variant-numeric:tabular-nums}
+
+/* ── o carimbo ── */
+.cb{display:block;width:fit-content;margin:0 auto;padding:6px 15px 8px;
+    border:2.5px solid currentColor;border-radius:9px;
+    box-shadow:inset 0 0 0 1.5px currentColor;text-align:center}
+.cb small{display:block;font-size:7.5px;font-weight:800;letter-spacing:.2em;
+          text-transform:uppercase;line-height:1.3}
+.cb b{display:block;font-weight:800;letter-spacing:-1.1px;line-height:1;margin-top:3px;
+      font-variant-numeric:tabular-nums}
+.cb i{display:block;font-style:normal;font-size:7.5px;font-weight:800;letter-spacing:.2em;
+      text-transform:uppercase;margin-top:3px}
+.cb.am{color:var(--amarelo)} .cb.vm{color:var(--vermelho)} .cb.vd{color:var(--verde)}
+.cb.g b{font-size:29px}
+.cb.m b{font-size:21px}
+.cb.p b{font-size:17px}
+
+/* ── C1 · empilhados, inclinações alternadas ── */
+.c1 .cb{margin-bottom:11px}
+.c1 .cb:last-child{margin-bottom:0}
+.c1 .am{transform:rotate(-3.5deg)}
+.c1 .vm{transform:rotate(2.2deg)}
+.c1 .vd{transform:rotate(-1.8deg)}
+
+/* ── C2 · um grande, dois lado a lado ── */
+.c2 .am{transform:rotate(-3.5deg);margin-bottom:4px}
+.c2 .par{display:flex;gap:9px;justify-content:center;margin-top:16px}
+.c2 .par .cb{flex:1;padding:6px 7px 8px}
+.c2 .par .vm{transform:rotate(-2.4deg)}
+.c2 .par .vd{transform:rotate(2.4deg)}
+.c2 .par small,.c2 .par i{font-size:7px;letter-spacing:.13em}
+
+/* ── C3 · carimbados a esmo: cruzam nas pontas, nunca por cima do texto ──
+   ⚠️ A sobreposição é LATERAL. Empilhar com margem negativa tapava o rodapé
+   de cada carimbo ("por progressiva", "sozinha") — texto comido é defeito. */
+.c3{position:relative;padding-top:2px}
+.c3 .cb{position:relative;background:#fff}
+.c3 .am{transform:rotate(-5deg) translateX(-10px);z-index:3;margin-bottom:9px}
+.c3 .vm{transform:rotate(4deg) translateX(14px);z-index:2;margin-bottom:9px}
+.c3 .vd{transform:rotate(-2.5deg) translateX(-8px);z-index:1}
+
+/* ── C4 · carimbos redondos ── */
+.c4 .cb{border-radius:50%;width:132px;height:132px;display:flex;flex-direction:column;
+        align-items:center;justify-content:center;padding:0;box-shadow:inset 0 0 0 2px currentColor}
+.c4 .cb.g{width:148px;height:148px}
+.c4 .cb.g b{font-size:25px}
+.c4 .cb.m b,.c4 .cb.p b{font-size:19px}
+.c4 .cb small,.c4 .cb i{font-size:7px;letter-spacing:.14em;padding:0 10px}
+.c4 .am{transform:rotate(-7deg);margin-bottom:12px}
+.c4 .par{display:flex;gap:10px;justify-content:center;margin-top:14px}
+.c4 .par .vm{transform:rotate(-4deg)}
+.c4 .par .vd{transform:rotate(5deg)}
+.c4 .par .cb{width:124px;height:124px}

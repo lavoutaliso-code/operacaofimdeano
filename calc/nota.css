@@ -1,0 +1,71 @@
+/* Os 4 blocos de ênfase do lucro líquido, dentro da mesma nota. */
+
+.enfase{margin:6px 0 2px}
+.enfase .rot{font-size:8.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+             color:var(--tinta-3);text-align:center}
+.enfase .mini{font-size:8.5px;color:var(--tinta-3);text-align:center;margin-top:7px;
+              font-variant-numeric:tabular-nums}
+
+/* ── N1 · número gigante no corpo do papel ── */
+.n1 .num{font-size:52px;font-weight:700;letter-spacing:-2.4px;line-height:1.02;
+         text-align:center;margin-top:8px;font-variant-numeric:tabular-nums}
+.n1 .rot{font-size:12px;letter-spacing:.09em}
+
+/* ── N2 · tarja preta sangrando até as bordas do papel ── */
+.n2{margin:12px -18px 6px}
+.n2 .tarja{background:var(--tinta);padding:16px 18px 18px;text-align:center}
+.n2 .rot{color:#8C8E95;font-size:10.5px}
+.n2 .num{font-size:46px;font-weight:700;letter-spacing:-2px;line-height:1.05;color:#fff;
+         margin-top:6px;font-variant-numeric:tabular-nums}
+.n2 .num.neg{color:#FF7A66}
+.n2 .mini{color:#8C8E95;margin-top:8px}
+
+/* ── N3 · carimbo torto por cima do papel ── */
+.n3{padding:4px 0 2px}
+.n3 .carimbo{display:block;width:fit-content;margin:9px auto 0;padding:6px 14px 8px;
+             border:2.5px solid currentColor;border-radius:9px;transform:rotate(-3.5deg);
+             box-shadow:inset 0 0 0 1.5px currentColor;opacity:.92}
+.n3 .carimbo .num{display:block;font-size:26px;font-weight:800;letter-spacing:-1.3px;
+                  line-height:1;font-variant-numeric:tabular-nums}
+.n3 .carimbo .pe{display:block;font-size:8.5px;font-weight:700;letter-spacing:.24em;
+                 text-transform:uppercase;margin-top:4px;text-align:center}
+.n3 .mini{margin-top:9px}
+
+/* ── N4 · a frase inteira como manchete ── */
+.n4{padding:6px 0 2px}
+.n4 .frase{font-size:23px;font-weight:600;letter-spacing:-.5px;line-height:1.3;
+           text-align:center;color:var(--tinta)}
+.n4 .frase b{display:block;font-size:44px;font-weight:700;letter-spacing:-2px;line-height:1.1;
+             margin:4px 0 2px;font-variant-numeric:tabular-nums}
+.n4 .mini{margin-top:9px}
+
+/* ── o selo do veredito ── */
+.veredito .frase{font-size:13px;font-weight:700;line-height:1.3;letter-spacing:-.2px}
+.veredito .porque{font-size:8.5px;color:var(--tinta-2);line-height:1.5;margin-top:5px;
+                  text-align:center}
+.veredito .fonte{font-size:7.5px;color:var(--tinta-3);line-height:1.4;margin-top:5px;
+                 text-align:center;letter-spacing:.02em}
+.veredito .fonte b{font-weight:700;color:#A96808}
+
+/* ── «você cobra X, mas seu lucro é Y» ── */
+.n3 .cobra{display:flex;align-items:baseline;justify-content:center;gap:7px;
+           font-size:11.5px;color:var(--tinta-2);margin-bottom:7px}
+.n3 .cobra b{font-size:15px;font-weight:700;color:var(--tinta);
+             font-variant-numeric:tabular-nums}
+.n3 .rot{font-size:9px}
+
+/* ── o mês, com ênfase: sozinha × com equipe ── */
+.mes2{margin:13px -13px 0}
+.mes2 .m{text-align:center;padding:10px 14px}
+.mes2 .m small{display:block;font-size:8.5px;font-weight:700;letter-spacing:.06em;
+               text-transform:uppercase;color:var(--tinta-3);line-height:1.35}
+.mes2 .m b{display:block;font-size:23px;font-weight:700;letter-spacing:-.9px;line-height:1.1;
+           margin-top:3px;font-variant-numeric:tabular-nums}
+.mes2 .m em{display:block;font-style:normal;font-size:8.5px;color:var(--tinta-2);margin-top:2px;
+             white-space:nowrap}
+.mes2 .m.forte{background:var(--tinta);color:#fff;margin-top:2px}
+.mes2 .m.forte small{color:#8C8E95}
+.mes2 .m.forte em{color:#A9AAB0}
+.mes2 .m.forte .mais{display:inline-block;margin-top:7px;background:var(--verde);color:#fff;
+  font-size:8.5px;font-weight:700;letter-spacing:.03em;padding:4px 10px;border-radius:99px;
+  line-height:1.3;white-space:nowrap}

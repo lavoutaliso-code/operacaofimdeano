@@ -1,0 +1,118 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Calculadora de Precificação · todas as telas</title>
+<style>
+ *{box-sizing:border-box;margin:0;padding:0}
+ body{font-family:-apple-system,system-ui,sans-serif;background:#EFEFF1;color:#1A1B1F;
+      padding:32px 32px 70px;-webkit-font-smoothing:antialiased}
+ h1{font-size:26px;font-weight:700;letter-spacing:-.7px}
+ .sub{color:#6E7076;font-size:14px;margin-top:7px;max-width:980px;line-height:1.55}
+ .sub b{color:#1A1B1F}
+ .fluxo{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:16px;
+        font-size:11.5px;color:#73757C}
+ .fluxo span{background:#fff;border:1px solid #E4E6EA;border-radius:7px;padding:6px 10px;font-weight:600}
+ .fluxo span.g{background:#1A1B1F;color:#fff;border-color:#1A1B1F}
+ .fluxo i{font-style:normal;color:#BFC2CB}
+ section{margin-top:34px}
+ .cab{display:flex;align-items:baseline;gap:12px;border-bottom:1.5px solid #DDDEE2;padding-bottom:10px}
+ .cab h2{font-size:18px;font-weight:700;letter-spacing:-.3px}
+ .cab p{font-size:13px;color:#7A7C83}
+ .grade{display:flex;flex-wrap:wrap;gap:22px;margin-top:22px}
+ .op{width:412px}
+ .tit{display:flex;align-items:center;gap:9px;margin-bottom:4px}
+ .tit .l{min-width:26px;height:24px;padding:0 7px;border-radius:7px;background:#1A1B1F;color:#fff;
+         font-size:11.5px;font-weight:700;display:grid;place-items:center}
+ .tit .l.verde{background:#12885C}
+ .tit h3{font-size:15px;font-weight:700}
+ .op > p{font-size:12.5px;color:#73757C;line-height:1.5;margin:0 0 11px 35px;min-height:34px}
+ .fone{width:412px;height:866px;border-radius:46px;background:#15161A;padding:11px;
+       box-shadow:0 18px 44px rgba(20,22,30,.17)}
+ .fone iframe{width:390px;height:844px;border:0;border-radius:36px;background:#fff;display:block}
+ .recarrega{margin-left:35px;margin-bottom:11px;border:1px solid #E0E2E6;background:#fff;
+            border-radius:7px;padding:5px 11px;font-family:inherit;font-size:11.5px;
+            font-weight:600;color:#55585F;cursor:pointer}
+</style></head><body>
+
+<h1>Calculadora de Precificação — todas as telas</h1>
+<p class="sub">Fluxo completo: <b>9 perguntas</b>, a <b>tela de cálculo</b> e o <b>resultado</b>.
+Cada pergunta tem o instrumento dela. Todas funcionam — digite, toque, arraste.</p>
+
+<button id="zerar" style="margin-top:14px;border:1px solid #E0E2E6;background:#fff;border-radius:8px;
+  padding:8px 14px;font-family:inherit;font-size:12.5px;font-weight:600;color:#55585F;cursor:pointer">
+  ↺ zerar as respostas e voltar ao exemplo</button>
+<p style="font-size:12px;color:#8E9199;margin-top:7px">As telas agora <b>conversam entre si</b> —
+  o que você responde numa aparece no resultado. Responda e role até o fim para conferir.</p>
+
+<div class="fluxo">
+  <span>01 Nome</span><i>→</i><span>02 Preço</span><i>→</i><span>03 Tempo</span><i>→</i>
+  <span>04 Produto</span><i>→</i><span>05 Profissionais</span><i>→</i><span>06 Comissão</span><i>→</i>
+  <span>07 Contas</span><i>→</i><span>08 Atendimentos</span><i>→</i><span>09 Taxas</span><i>→</i>
+  <span class="g">Calculando</span><i>→</i><span class="g">Resultado</span>
+</div>
+
+<section>
+  <div class="cab"><h2>As 9 perguntas</h2><p>uma por tela, cada uma com seu elemento</p></div>
+  <div class="grade">
+    <div class="op"><div class="tit"><span class="l">01</span><h3>O nome</h3></div>
+      <p>Campo grande com oito atalhos de procedimento. É esse nome que aparece no resto da calculadora.</p>
+      <div class="fone"><iframe src="t0.html"></iframe></div></div>
+    <div class="op"><div class="tit"><span class="l">02</span><h3>A etiqueta</h3></div>
+      <p>O preço pendurado numa etiqueta de loja, com teclado próprio embaixo.</p>
+      <div class="fone"><iframe src="t1.html"></iframe></div></div>
+    <div class="op"><div class="tit"><span class="l">03</span><h3>O dia da cadeira</h3></div>
+      <p>O expediente vira barra; mudou a duração, os blocos se reorganizam e ela vê quantas cabem.</p>
+      <div class="fone"><iframe src="t2.html"></iframe></div></div>
+    <div class="op"><div class="tit"><span class="l">04</span><h3>A notinha</h3></div>
+      <p>Frasco ÷ quantas clientes ele dá = custo por uso. A soma vira o produto do serviço.</p>
+      <div class="fone"><iframe src="t3.html"></iframe></div></div>
+    <div class="op"><div class="tit"><span class="l">05</span><h3>As cadeiras</h3></div>
+      <p>Vem antes dos atendimentos de propósito: é a resposta daqui que decide se a próxima pergunta é sobre você ou sobre o salão.</p>
+      <div class="fone"><iframe src="t8.html"></iframe></div></div>
+    <div class="op"><div class="tit"><span class="l">06</span><h3>A divisão</h3></div>
+      <p>Arrasta e a barra parte o preço entre a profissional e você. Com botão «não tenho equipe».</p>
+      <div class="fone"><iframe src="t4.html"></iframe></div></div>
+    <div class="op"><div class="tit"><span class="l">07</span><h3>Os envelopes</h3></div>
+      <p>Uma conta por envelope. A soma é o que o salão custa mesmo num mês sem cliente.</p>
+      <div class="fone"><iframe src="t5.html"></iframe></div></div>
+    <div class="op"><div class="tit"><span class="l">08</span><h3>A semana</h3></div>
+      <p>A pergunta muda conforme a 05: sozinha, pergunta o seu dia; com equipe, pergunta o dia do salão — e a divisão é minha.</p>
+      <div class="fone"><iframe src="t6.html"></iframe></div></div>
+    <div class="op"><div class="tit"><span class="l">09</span><h3>A cédula</h3></div>
+      <p>De cada R$ 100, a barra mostra na proporção real o que a maquininha leva, o imposto leva e o que sobra.</p>
+      <div class="fone"><iframe src="t7.html"></iframe></div></div>
+
+
+
+
+
+
+
+
+
+  </div>
+</section>
+
+<section>
+  <div class="cab"><h2>Calculando</h2><p>a conta acontecendo na frente dela</p></div>
+  <div class="grade">
+    <div class="op"><div class="tit"><span class="l verde">▸</span><h3>A tela de cálculo</h3></div>
+      <p>Anel que preenche, cinco etapas que ganham check uma a uma — cada uma mostrando um número que a conta produziu de verdade — e uma frase embaixo que muda a cada passo. Dura cerca de 5 segundos.</p>
+      <button class="recarrega" onclick="this.nextElementSibling.querySelector('iframe').contentWindow.location.reload()">▸ ver de novo</button>
+      <div class="fone"><iframe src="carregando.html"></iframe></div></div>
+
+    <div class="op"><div class="tit"><span class="l verde">★</span><h3>O resultado</h3></div>
+      <p>Dentro do cupom: anel grande com o lucro líquido preenchido na margem real, e dois anéis comparando o máximo do mês sozinha e com equipe de 2 pessoas.</p>
+      <div class="fone"><iframe src="sub-a.html"></iframe></div></div>
+  </div>
+</section>
+
+<script>
+document.getElementById('zerar').onclick = () => {
+  const f = document.createElement('iframe');
+  f.style.display='none'; f.src='t0.html';
+  f.onload = () => { f.contentWindow.limpar();
+    document.querySelectorAll('iframe.zoom, .fone iframe').forEach(x => x.contentWindow.location.reload());
+    f.remove(); };
+  document.body.appendChild(f);
+};
+</script>
+</body></html>

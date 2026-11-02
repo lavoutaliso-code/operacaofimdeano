@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Calculadora de Precificação · no iPhone</title>
+<link rel="stylesheet" href="iphone.css">
+</head>
+<body>
+
+<div class="cabeca">
+  <h1>Calculadora de Precificação</h1>
+  <p>As 11 telas dentro do aparelho. Use as setas, os atalhos ou as teclas ← → do teclado.</p>
+</div>
+
+<div class="setas">
+  <button id="ant">&#8249;</button>
+  <span class="rotulo" id="rotulo">—</span>
+  <button id="prox">&#8250;</button>
+</div>
+
+<div class="fone">
+  <span class="bt-lat bt-silencio"></span>
+  <span class="bt-lat bt-vol1"></span>
+  <span class="bt-lat bt-vol2"></span>
+  <span class="bt-lat bt-power"></span>
+  <div class="tela">
+    <div class="ilha"></div>
+    <div class="status">
+      <span>9:41</span>
+      <span class="dir">
+        <svg width="18" height="12" viewBox="0 0 18 12" fill="#1A1B1F">
+          <rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/>
+          <rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/>
+        </svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#1A1B1F" stroke-width="1.6"
+          stroke-linecap="round">
+          <path d="M1.2 4.2a10 10 0 0 1 13.6 0"/><path d="M3.8 6.9a6.3 6.3 0 0 1 8.4 0"/>
+          <circle cx="8" cy="10" r="1.1" fill="#1A1B1F" stroke="none"/>
+        </svg>
+        <svg width="26" height="12" viewBox="0 0 26 12">
+          <rect x="0.6" y="0.6" width="21" height="10.8" rx="3" fill="none" stroke="#1A1B1F"
+            stroke-opacity=".38" stroke-width="1.2"/>
+          <rect x="2.2" y="2.2" width="16" height="7.6" rx="1.8" fill="#1A1B1F"/>
+          <path d="M23.4 4.2v3.6a2 2 0 0 0 0-3.6z" fill="#1A1B1F" fill-opacity=".38"/>
+        </svg>
+      </span>
+    </div>
+    <iframe id="palco" src="capa-k1.html"></iframe>
+    <div class="home"></div>
+  </div>
+</div>
+
+<div class="navegador" id="nav"></div>
+
+<script>
+const TELAS = [
+  ['capa-k1.html',    'Capa'],
+  ['t0.html',         '01 · Nome'],
+  ['t1.html',         '02 · Preço'],
+  ['t2.html',         '03 · Tempo'],
+  ['t3.html',         '04 · Produto'],
+  ['t8.html',         '05 · Profissionais'],
+  ['t4.html',         '06 · Comissão'],
+  ['t5.html',         '07 · Contas'],
+  ['t6.html',         '08 · Atendimentos'],
+  ['t7.html',         '09 · Taxas'],
+  ['carregando.html', 'Calculando'],
+  ['sub-a.html',      'Resultado'],
+];
+let i = 0;
+const g = id => document.getElementById(id);
+
+g('nav').innerHTML = TELAS.map(([, nome], k) =>
+  `<button data-k="${k}">${nome}</button>`).join('');
+
+function ir(k){
+  i = Math.max(0, Math.min(TELAS.length - 1, k));
+  g('palco').src = TELAS[i][0];
+  g('rotulo').innerHTML = '<b>' + TELAS[i][1] + '</b> · ' + (i + 1) + ' de ' + TELAS.length;
+  g('ant').disabled = i === 0;
+  g('prox').disabled = i === TELAS.length - 1;
+  [...g('nav').children].forEach((b, k2) => b.setAttribute('aria-pressed', k2 === i));
+}
+g('nav').onclick = e => { const b = e.target.closest('button'); if (b) ir(+b.dataset.k); };
+/* ⚠️ quem troca a tela é o aparelho — as telas só avisam que o botão foi tocado */
+addEventListener('message', ev => {
+  if (ev.data && ev.data.calc === 'prox') ir(i + 1);
+  if (ev.data && ev.data.calc === 'ant')  ir(i - 1);
+});
+g('ant').onclick  = () => ir(i - 1);
+g('prox').onclick = () => ir(i + 1);
+addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft')  ir(i - 1);
+  if (e.key === 'ArrowRight') ir(i + 1);
+});
+ir(0);
+</script>
+</body>
+</html>

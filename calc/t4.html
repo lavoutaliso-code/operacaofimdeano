@@ -1,0 +1,61 @@
+<!doctype html><html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>T4 · Equipe</title><link rel="stylesheet" href="telas.css">
+<style>.btn:disabled{opacity:.3;pointer-events:none}
+  .meio{margin-bottom:auto}
+  .divisao{padding:22px 15px 18px}</style></head><body>
+<div class="nav"><button class="volta">&#8249;</button><h2>Calculadora de Precificação</h2></div>
+<div class="topo">
+  <div class="passo">Pergunta 06 de 09</div>
+  <h3 id="perg">—</h3>
+  <p id="ajuda">—</p>
+</div>
+<div class="meio">
+  <div class="divisao">
+    <div class="pctGrande"><span id="pct">0</span><em>%</em></div>
+    <div class="divSlider"><input type="range" id="sl" min="0" max="70" step="5" value="0"></div>
+    <p class="divNota" id="nota">—</p>
+    <button class="semEquipe" id="sem">Ainda não tenho equipe</button>
+  </div>
+</div>
+<div class="pe"><button class="btn">Continuar</button></div>
+<script src="nucleo.js"></script>
+<script src="estado.js"></script>
+<script>
+const PRECO = +EST.preco || 0;
+let sozinha = !EST.temEquipeHoje;
+const g=id=>document.getElementById(id);
+const rs0=v=>'R$ '+Math.round(v).toLocaleString('pt-BR');
+g('sl').value = EST.comissao != null ? EST.comissao : 0;   /* começa no 0% */
+let mexeu = EST.comissao != null;
+function pinta(){
+  const p = +g('sl').value;
+  document.querySelector('.btn').disabled = !mexeu;
+  salvar({ comissao: mexeu ? +g('sl').value : null, temEquipeHoje: !sozinha });
+  const pro=PRECO*p/100, salao=PRECO-pro;
+  /* ⚠️ a barra «profissional × fica com você» saiu: só a porcentagem, centralizada. */
+  g('pct').textContent = p;
+  g('sem').setAttribute('aria-pressed', sozinha);
+  g('sem').textContent = sozinha ? 'Tenho equipe, sim' : 'Ainda não tenho equipe';
+  /* ⚠️ O SLIDER NÃO DESLIGA MAIS. Quem está sozinha responde quanto PAGARIA —
+     sem isso a equipe do cenário futuro trabalharia de graça e o número mentia. */
+  g('perg').innerHTML = sozinha
+    ? 'Quanto você pagaria<br>pra uma profissional?'
+    : 'Quanto você paga<br>pra sua equipe?';
+  g('ajuda').textContent = sozinha
+    ? 'Para a calculadora mostrar quanto você faria se montasse uma equipe.'
+    : 'A porcentagem que ela recebe em cada atendimento que faz.';
+  g('divisaoBox') && 0;
+  g('nota').innerHTML = !mexeu || PRECO <= 0
+    ? 'Arraste a barra para dizer a porcentagem.'
+    : sozinha
+    ? 'Hoje os ' + rs0(PRECO) + ' inteiros ficam com você. Se montasse equipe, '
+      + rs0(pro) + ' iriam pra ela em cada atendimento que ela fizesse.'
+    : 'Em cada atendimento de ' + rs0(PRECO) + ', você paga ' + rs0(pro)
+      + ' pra ela e ficam ' + rs0(salao) + ' para cobrir produto, contas e taxas.';
+}
+g('sl').oninput=()=>{ mexeu=true; pinta(); };
+g('sem').onclick=()=>{ sozinha=!sozinha; mexeu=true; pinta(); };
+pinta();
+</script><script src="nav.js"></script>
+</body></html>

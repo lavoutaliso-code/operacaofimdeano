@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Resultado 1 · Impressora</title>
+<link rel="stylesheet" href="cupom.css">
+</head>
+<body>
+
+<div class="palco" id="palco">
+  <div class="centro">
+    <div class="impressora" id="imp">
+      <div class="carcaca">
+        <div class="logo-box">LL</div>
+        <div class="nome">Calculadora de<br>Precificação</div>
+      </div>
+      <div class="fenda"></div>
+      <div class="dobrinha"></div>
+      <div class="saida" id="saida">
+        <div class="papel" id="papel"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="pe">
+  <button class="bt">Refazer o cálculo</button>
+</div>
+
+<script src="nucleo.js"></script>
+<script src="cupom.js"></script>
+<script>
+const d = Object.assign({}, PADRAO);
+const r = conta(d);
+
+document.getElementById('papel').innerHTML = `
+  <div class="tit">
+    <h4>${d.servico.toUpperCase()}</h4>
+    <p>o que sobra por serviço</p>
+  </div>
+  <div class="sub center">${HOJE}</div>
+  <div class="traco">· · · · · · · · · · · · · · ·</div>
+
+  <div class="ln hero">
+    <span class="lab">lucro líquido</span>
+    <span class="val" style="color:${r.paga ? 'var(--vermelho)' : 'var(--verde)'}">${rs(r.lucro)}</span>
+  </div>
+  <div class="sub center">${pc(r.margem)} do preço · ${rs(r.porHora)} por hora</div>
+
+  <div class="sec">Por que sobra isso</div>
+  ${linha('Preço cobrado', rs(r.preco))}
+  ${linha('Produto', '− ' + rs(r.produto))}
+  ${linha('Seu trabalho <em>' + String(d.horas).replace('.', ',') + 'h</em>', '− ' + rs(r.mao))}
+  ${linha('Salão <em>' + rs0(d.contaMes) + ' ÷ ' + r.atend + '</em>', '− ' + rs(r.fixo))}
+  ${linha('Cartão + imposto', '− ' + rs(r.taxa))}
+  ${linha('<b>sobra pra você</b>', '<b>' + rs(r.lucro) + '</b>', 'total' + (r.paga ? ' neg' : ''))}
+
+  <div class="sec">No mês</div>
+  ${linha('Sozinha <em>' + r.so.serv + ' atend.</em>', rs0(r.so.liquido))}
+  ${linha('Com ' + r.pessoas + ' na equipe <em>' + r.eq.serv + ' atend.</em>', rs0(r.eq.liquido))}
+  ${linha('<b>a mais por mês</b>', '<b>+ ' + rs0(r.ganho) + '</b>', 'total')}
+  <div class="sub">O salão custa os mesmos ${rs0(d.contaMes)} nos dois casos.</div>
+
+  <div class="final">
+    ${CHECK}
+    <div class="frase">Conta<br>conferida</div>
+  </div>
+
+  <div class="bar">
+    ${barras(r.atend)}
+    <span>${HOJE.replace(/\s/g, '')} · ${String(Math.round(r.lucro * 100)).padStart(8, '0')}</span>
+  </div>`;
+
+imprimir(
+  document.getElementById('palco'),
+  document.getElementById('papel'),
+  document.getElementById('saida'),
+  document.getElementById('imp')
+);
+</script>
+</body>
+</html>

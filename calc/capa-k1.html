@@ -1,0 +1,39 @@
+<!doctype html><html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Capa K1</title><link rel="stylesheet" href="capas2.css">
+<style>
+  /* o nome mora no visor; o botão desce colado na máquina, na cor da tecla = */
+  .k1 .visor{text-align:center;padding:16px 14px 17px}
+  .k1 .visor .nm{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--lcdTinta);
+                 letter-spacing:.09em;line-height:1.45;text-transform:uppercase}
+  .k1 .maq{padding-bottom:16px}
+  .k1 .btnVerde{width:268px;max-width:100%;height:54px;margin-top:16px;border:0;border-radius:99px;
+                background:var(--verde);color:#fff;font-family:inherit;font-size:16px;
+                font-weight:700;letter-spacing:-.1px;cursor:pointer;
+                box-shadow:0 12px 26px -8px rgba(18,136,92,.55)}
+  .k1 .btnVerde:active{transform:scale(.98)}
+</style></head>
+<body class="k1">
+<div class="palco">
+  <div class="maq">
+    <div class="visor">
+      <div class="nm">Calculadora<br>Precificação</div>
+    </div>
+    <div class="teclas">
+      <button>7</button><button>8</button><button>9</button><button class="op">÷</button>
+      <button>4</button><button>5</button><button>6</button><button class="op">×</button>
+      <button>1</button><button>2</button><button>3</button><button class="op">−</button>
+      <button>0</button><button>,</button><button class="op">%</button><button class="ig">=</button>
+    </div>
+  </div>
+  <button class="btnVerde btn">Calcular meu preço</button>
+</div>
+<script src="nucleo.js"></script><script src="estado.js"></script>
+<script>
+/* ⚠️ O ESTADO SOBREVIVIA ENTRE SESSÕES. Quem respondeu ontem reabria a
+   calculadora com as respostas de ontem escritas — parecia vir preenchida.
+   Tocar em «Calcular meu preço» apaga tudo e começa em branco. */
+document.querySelector('.btnVerde').addEventListener('click', () => limpar(), true);
+</script>
+<script src="nav.js"></script>
+</body></html>

@@ -1,0 +1,101 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Calculadora · tela a tela</title>
+<style>
+ *{box-sizing:border-box;margin:0;padding:0}
+ body{font-family:-apple-system,system-ui,sans-serif;background:#EFEFF1;color:#1A1B1F;
+      padding:32px 32px 70px;-webkit-font-smoothing:antialiased}
+ h1{font-size:25px;font-weight:700;letter-spacing:-.65px}
+ .sub{color:#6E7076;font-size:14px;margin-top:7px;max-width:960px;line-height:1.55}
+ .sub b{color:#1A1B1F}
+ .aviso{margin-top:14px;background:#FFF6E3;border:1px solid #F0DDAE;border-radius:11px;
+        padding:12px 15px;font-size:12.5px;color:#7A5B12;line-height:1.55;max-width:960px}
+ .aviso b{color:#55400B}
+ section{margin-top:36px}
+ .cab{display:flex;align-items:baseline;gap:12px;border-bottom:1.5px solid #DDDEE2;padding-bottom:10px}
+ .cab h2{font-size:18px;font-weight:700;letter-spacing:-.3px}
+ .cab p{font-size:13px;color:#7A7C83}
+ .grade{display:flex;flex-wrap:wrap;gap:24px;margin-top:22px}
+ .op{width:412px}
+ .tit{display:flex;align-items:center;gap:9px;margin-bottom:4px}
+ .tit .l{min-width:26px;height:24px;padding:0 7px;border-radius:7px;background:#1A1B1F;color:#fff;
+         font-size:11.5px;font-weight:700;display:grid;place-items:center}
+ .tit h3{font-size:15px;font-weight:700}
+ .op > p{font-size:12.5px;color:#73757C;line-height:1.5;margin:0 0 12px 35px;min-height:36px}
+ .fone{width:412px;height:866px;border-radius:46px;background:#15161A;padding:11px;
+       box-shadow:0 18px 44px rgba(20,22,30,.17)}
+ .fone iframe{width:390px;height:844px;border:0;border-radius:36px;background:#fff;display:block}
+</style></head><body>
+
+<h1>Calculadora de Precificação — 8 perguntas e 4 resultados</h1>
+<p class="sub">Cada pergunta ganhou o <b>instrumento dela</b>: o produto é uma notinha, as contas são
+envelopes, o volume é uma tabela da semana, as taxas são uma cédula fatiada. Nenhuma tela é só um campo.
+Todas funcionam — digite, toque, arraste.</p>
+
+<div class="aviso">
+  <b>Saiu a pergunta do «quanto você quer ganhar por hora»</b>, e isso muda o que o número significa:
+  agora o resultado é <b>tudo o que sobra pra você</b> no serviço que você faz com as próprias mãos —
+  o pagamento do seu trabalho e o lucro, juntos. Por isso ele subiu de R$ 85 para <b>R$ 177,02</b>.
+  A <b>régua do veredito ainda não tem fonte</b> (subiu junto com a base, está em 55%): me diga qual
+  usar que eu troco.
+</div>
+
+<section>
+  <div class="cab"><h2>As 8 perguntas</h2><p>uma por tela, cada uma com seu elemento</p></div>
+  <div class="grade">
+    <div class="op"><div class="tit"><span class="l">01</span><h3>A etiqueta</h3></div>
+      <p>O preço pendurado numa etiqueta de loja, balançando. Teclado próprio embaixo.</p>
+      <div class="fone"><iframe src="t1.html"></iframe></div></div>
+
+    <div class="op"><div class="tit"><span class="l">02</span><h3>O dia da cadeira</h3></div>
+      <p>O expediente vira uma barra. Mudou a duração, os blocos se reorganizam e ela vê quantas cabem.</p>
+      <div class="fone"><iframe src="t2.html"></iframe></div></div>
+
+    <div class="op"><div class="tit"><span class="l">03</span><h3>A notinha</h3></div>
+      <p>Frasco ÷ quantos atendimentos ele rende = custo por uso. A soma dá o produto do serviço.</p>
+      <div class="fone"><iframe src="t3.html"></iframe></div></div>
+
+    <div class="op"><div class="tit"><span class="l">04</span><h3>A divisão</h3></div>
+      <p>Arrasta e a barra parte o preço entre a profissional e você, em reais. Com botão «não tenho equipe».</p>
+      <div class="fone"><iframe src="t4.html"></iframe></div></div>
+
+    <div class="op"><div class="tit"><span class="l">05</span><h3>Os envelopes</h3></div>
+      <p>Uma conta por envelope. A soma é o que o salão custa mesmo num mês sem cliente.</p>
+      <div class="fone"><iframe src="t5.html"></iframe></div></div>
+
+    <div class="op"><div class="tit"><span class="l">06</span><h3>A semana</h3></div>
+      <p>Um − e um + em cada dia, para a média de cada um. A soma da semana × 4,33 vira o mês.</p>
+      <div class="fone"><iframe src="t6.html"></iframe></div></div>
+
+    <div class="op"><div class="tit"><span class="l">07</span><h3>A cédula</h3></div>
+      <p>De cada R$ 100, a barra mostra na proporção real o que o cartão leva, o imposto leva e o que sobra.</p>
+      <div class="fone"><iframe src="t7.html"></iframe></div></div>
+
+    <div class="op"><div class="tit"><span class="l">08</span><h3>As cadeiras</h3></div>
+      <p>Toque para somar ou tirar profissional. A primeira é você e nunca sai.</p>
+      <div class="fone"><iframe src="t8.html"></iframe></div></div>
+
+  </div>
+</section>
+
+<section>
+  <div class="cab"><h2>O resultado — 4 versões limpas</h2><p>mesma conta, sem poluição</p></div>
+  <div class="grade">
+    <div class="op"><div class="tit"><span class="l">R1</span><h3>Três andares</h3></div>
+      <p>O cupom dividido em três: o número, a conta, o mês. Sem carimbo, sem selo, sem bloco preto.</p>
+      <div class="fone"><iframe src="r1.html"></iframe></div></div>
+
+    <div class="op"><div class="tit"><span class="l">R2</span><h3>Carimbo</h3></div>
+      <p>Mantém o carimbo que você gostou e tira o resto. O mês inteiro cabe numa frase de duas linhas.</p>
+      <div class="fone"><iframe src="r2.html"></iframe></div></div>
+
+    <div class="op"><div class="tit"><span class="l">R3</span><h3>Cartões</h3></div>
+      <p>Sai o papel e entram três cartões com ar entre eles. O da equipe é preto, para comparar de relance.</p>
+      <div class="fone"><iframe src="r3.html"></iframe></div></div>
+
+    <div class="op"><div class="tit"><span class="l">R4</span><h3>Sem caixa</h3></div>
+      <p>Nenhuma moldura: só tipografia grande e duas linhas finas separando. O mais silencioso dos quatro.</p>
+      <div class="fone"><iframe src="r4.html"></iframe></div></div>
+  </div>
+</section>
+
+</body></html>

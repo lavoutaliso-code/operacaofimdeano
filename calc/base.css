@@ -1,0 +1,94 @@
+/* Tokens amostrados com Pillow das duas referências.
+   ref-perguntas.png (523x1048) · ref-recibo.png (494x876) */
+:root{
+  --preto:#212121;
+  --preto-forte:#0C0C0D;
+  --fundo:#F9F9F9;
+  --cartao:#FFFFFF;
+  --bloco:#F7F8FA;
+  --pilula:#EAEBED;
+  --cinza:#9F9EA0;
+  --cinza-forte:#64666C;
+  --linha:#E9E9E9;
+  --tracejo:#C5C5C5;
+  --verde:#79D44A;
+
+  --ui:-apple-system,system-ui,"Segoe UI",sans-serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:var(--ui);
+  color:var(--preto);
+  background:var(--fundo);
+  -webkit-font-smoothing:antialiased;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+
+/* ---------- barra superior (igual à ref: botão squircle + título centrado) ---------- */
+.nav{flex:0 0 auto;display:flex;align-items:center;padding:14px 20px 6px;position:relative}
+.nav .volta{width:42px;height:42px;border:0;border-radius:15px;background:var(--preto);
+            color:#fff;font-size:17px;display:grid;place-items:center;cursor:pointer}
+.nav .volta.vazio{background:transparent;pointer-events:none}
+.nav h2{position:absolute;left:0;right:0;text-align:center;font-size:17px;font-weight:600;
+        letter-spacing:-.2px;pointer-events:none}
+
+/* ---------- número gigante (o "$18,5" da ref) ---------- */
+.valor{display:flex;align-items:flex-start;justify-content:center;gap:2px;
+       font-weight:300;letter-spacing:-3px;line-height:1;color:var(--preto)}
+.valor .sinal{font-size:26px;font-weight:400;letter-spacing:0;margin-top:11px}
+.valor .n{font-size:68px;font-variant-numeric:tabular-nums}
+.valor .suf{font-size:26px;font-weight:400;letter-spacing:0;margin-top:11px;margin-left:4px}
+.valor.neg{color:#D9402F}
+
+/* ---------- pílula cinza ---------- */
+.pil{display:inline-flex;align-items:center;gap:7px;background:var(--pilula);
+     border-radius:99px;padding:9px 16px;font-size:13.5px;color:#6D6E73;font-weight:500}
+.pil svg{width:14px;height:14px}
+
+/* ---------- botão preto ---------- */
+.btn{width:100%;height:56px;border:0;border-radius:99px;background:var(--preto);color:#fff;
+     font-family:var(--ui);font-size:16.5px;font-weight:600;cursor:pointer;letter-spacing:-.1px}
+.btn:disabled{opacity:.3}
+.btn.claro{background:#fff;color:var(--preto);border:1.5px solid var(--linha)}
+
+/* ---------- teclado numérico ---------- */
+.teclado{display:grid;grid-template-columns:repeat(3,1fr);gap:2px 0}
+.teclado button{height:54px;border:0;background:none;font-family:var(--ui);font-size:25px;
+                font-weight:400;color:var(--preto);cursor:pointer;border-radius:12px}
+.teclado button:active{background:var(--pilula)}
+.teclado button.mini{font-size:20px}
+
+/* ---------- recibo (mono) ---------- */
+.rec{font-family:var(--mono);color:var(--preto-forte)}
+.rec .marca{text-align:center}
+.rec h1{font-family:var(--mono);font-size:19px;font-weight:700;letter-spacing:2.6px;
+        text-align:center;text-transform:uppercase}
+.rec .meta{text-align:center;font-size:11.5px;color:var(--cinza-forte);line-height:2;
+           letter-spacing:.6px;text-transform:uppercase}
+.tracejo{border-top:1.5px dashed var(--tracejo);margin:16px 0}
+.rec .cab{display:flex;font-size:10.5px;font-weight:700;letter-spacing:1.2px;
+          text-transform:uppercase}
+.rec .ln{display:flex;font-size:12.5px;letter-spacing:.3px;padding:7px 0}
+.rec .ln .d{margin-left:auto;text-align:right;font-variant-numeric:tabular-nums}
+.rec .tag{display:inline-block;background:var(--preto-forte);color:#fff;font-size:9.5px;
+          font-weight:700;letter-spacing:1px;padding:2px 5px;border-radius:2px;
+          vertical-align:middle;margin-left:5px}
+.rec .total{display:flex;align-items:baseline;font-size:19px;font-weight:700;letter-spacing:.5px}
+.rec .total .d{margin-left:auto;font-variant-numeric:tabular-nums}
+
+/* ---------- utilidades ---------- */
+.cresce{flex:1 1 auto;min-height:0;overflow-y:auto}
+.cresce::-webkit-scrollbar{display:none}
+.centro{display:flex;flex-direction:column;align-items:center;justify-content:center}
+.pe{flex:0 0 auto;padding:10px 20px calc(20px + env(safe-area-inset-bottom))}
+.rotulo{font-size:13px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;
+        color:var(--cinza)}
+
+@media (max-width:380px){
+  .valor .n{font-size:58px}
+  .rec h1{font-size:17px;letter-spacing:2px}
+}

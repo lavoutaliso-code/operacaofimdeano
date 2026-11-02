@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Resultado 2 · Papel</title>
+<link rel="stylesheet" href="cupom.css">
+<style>
+  .centro{justify-content:center;min-height:100%;padding-top:34px}
+  .folha{width:330px;max-width:100%;filter:drop-shadow(0 6px 18px rgba(20,22,30,.10));animation:nasce .5s cubic-bezier(.2,.9,.3,1.1) both}
+  @keyframes nasce{from{opacity:0;transform:translateY(16px) scale(.97)}
+                   to{opacity:1;transform:none}}
+  .papel.solto{padding:26px 20px 28px}
+  .tit h4{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+          color:var(--tinta-3)}
+  .tit p{font-size:15px;font-weight:700;color:var(--tinta);text-transform:none;
+         letter-spacing:0;margin-top:3px}
+  .ln.hero .val{font-size:38px;letter-spacing:-1.2px}
+  .comp{display:flex;gap:10px;margin-top:10px}
+  .comp div{flex:1;text-align:center;background:#F7F7F9;border-radius:10px;padding:10px 6px}
+  .comp small{display:block;font-size:9.5px;font-weight:700;letter-spacing:.08em;
+              text-transform:uppercase;color:var(--tinta-3)}
+  .comp b{display:block;font-size:16px;font-weight:700;margin-top:4px;
+          font-variant-numeric:tabular-nums}
+  .comp div.forte{background:var(--tinta)}
+  .comp div.forte small{color:#8C8E95}
+  .comp div.forte b{color:#fff}
+</style>
+</head>
+<body>
+
+<div class="palco pronto">
+  <div class="centro">
+    <div class="folha">
+      <div class="papel solto" id="papel"></div>
+    </div>
+  </div>
+</div>
+
+<div class="pe">
+  <button class="bt">Refazer o cálculo</button>
+</div>
+
+<script src="nucleo.js"></script>
+<script src="cupom.js"></script>
+<script>
+const d = Object.assign({}, PADRAO);
+const r = conta(d);
+
+document.getElementById('papel').innerHTML = `
+  <div class="tit">
+    <h4>Calculadora de Precificação</h4>
+    <p>${d.servico} · ${HOJE}</p>
+  </div>
+  <div class="traco">· · · · · · · · · · · · · · ·</div>
+
+  <div class="ln hero">
+    <span class="lab">lucro líquido por serviço</span>
+    <span class="val" style="color:${r.paga ? 'var(--vermelho)' : 'var(--verde)'}">${rs(r.lucro)}</span>
+  </div>
+  <div class="sub center">${pc(r.margem)} do preço · ${rs(r.porHora)} por hora</div>
+
+  <div class="sec">Por que sobra isso</div>
+  ${linha('Preço cobrado', rs(r.preco))}
+  ${linha('Produto', '− ' + rs(r.produto))}
+  ${linha('Seu trabalho <em>' + String(d.horas).replace('.', ',') + 'h</em>', '− ' + rs(r.mao))}
+  ${linha('Salão <em>' + rs0(d.contaMes) + ' ÷ ' + r.atend + '</em>', '− ' + rs(r.fixo))}
+  ${linha('Cartão + imposto', '− ' + rs(r.taxa))}
+  ${linha('<b>sobra</b>', '<b>' + rs(r.lucro) + '</b>', 'total' + (r.paga ? ' neg' : ''))}
+
+  <div class="sec">Quanto sobra no mês</div>
+  <div class="comp">
+    <div><small>Sozinha</small><b>${rs0(r.so.liquido)}</b></div>
+    <div class="forte"><small>Com ${r.pessoas}</small><b>${rs0(r.eq.liquido)}</b></div>
+  </div>
+  <div class="sub center" style="margin-top:8px">
+    ${r.ganho >= 0 ? '+ ' + rs0(r.ganho) : '− ' + rs0(-r.ganho)} por mês — o salão custa o mesmo nos dois.
+  </div>`;
+</script>
+</body>
+</html>

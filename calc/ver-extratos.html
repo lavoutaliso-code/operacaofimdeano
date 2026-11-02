@@ -1,0 +1,62 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Extrato do preço · 4 versões</title>
+<style>
+ *{box-sizing:border-box;margin:0;padding:0}
+ body{font-family:-apple-system,system-ui,sans-serif;background:#EFEFF1;color:#1A1B1F;
+      padding:32px 32px 70px;-webkit-font-smoothing:antialiased}
+ h1{font-size:25px;font-weight:700;letter-spacing:-.65px}
+ .sub{color:#6E7076;font-size:14px;margin-top:7px;max-width:980px;line-height:1.55}
+ .sub b{color:#1A1B1F}
+ .prova{margin-top:15px;background:#fff;border:1px solid #E4E6EA;border-radius:12px;
+        padding:15px 17px;max-width:980px;font-size:12.5px;line-height:1.8;color:#55585F}
+ .prova h4{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+           color:#8E9199;margin-bottom:8px}
+ .prova code{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:#1A1B1F}
+ .prova b{color:#1A1B1F}
+ .grade{display:flex;flex-wrap:wrap;gap:24px;margin-top:26px}
+ .op{width:412px}
+ .tit{display:flex;align-items:center;gap:9px;margin-bottom:4px}
+ .tit .l{min-width:26px;height:24px;padding:0 7px;border-radius:7px;background:#1A1B1F;color:#fff;
+         font-size:11.5px;font-weight:700;display:grid;place-items:center}
+ .tit h3{font-size:15px;font-weight:700}
+ .op > p{font-size:12.5px;color:#73757C;line-height:1.5;margin:0 0 12px 35px;min-height:52px}
+ .fone{width:412px;height:866px;border-radius:46px;background:#15161A;padding:11px;
+       box-shadow:0 18px 44px rgba(20,22,30,.17)}
+ .fone iframe{width:390px;height:844px;border:0;border-radius:36px;background:#fff;display:block}
+</style></head><body>
+
+<h1>O extrato do seu preço — 4 versões</h1>
+<p class="sub">Título em faixa preta sangrando, código de barras grande no pé, e o preço
+<b>aberto linha por linha</b>. Muda só <b>como o extrato é arrumado</b>. Role dentro do telefone.</p>
+
+<div class="prova">
+  <h4>De onde vem cada linha — nenhuma é invenção minha</h4>
+  <b>Produto:</b> os quatro que você anotou na notinha (tela 03), cada um <code>frasco ÷ quantos usos rende</code> —
+  <code>240÷10 · 90÷12 · 120÷20 · 50÷100</code> = R$ 38,00 ·
+  <b>Salão:</b> as cinco contas dos envelopes (tela 05), cada uma <code>÷ 87 atendimentos</code> —
+  <code>1.200 · 280 · 120 · 97 · 150</code> = R$ 21,22 ·
+  <b>Taxas:</b> os dois percentuais da tela 07 sobre o preço — <code>3,5%</code> e <code>2%</code> = R$ 13,75.<br>
+  <b>E o total é a soma do que está na tela</b>, não a conta por trás: cada parcela já vai arredondada
+  em centavos e o subtotal soma essas parcelas. Por isso <code>250,00 − 38,00 − 21,22 − 13,75 = 177,03</code>
+  fecha conferindo com o dedo.
+</div>
+
+<div class="grade">
+  <div class="op"><div class="tit"><span class="l">E1</span><h3>Em grupos</h3></div>
+    <p>Três blocos com cabeçalho e subtotal: produto, salão, banco e governo. O mais parecido com extrato de banco.</p>
+    <div class="fone"><iframe src="ex1.html"></iframe></div></div>
+
+  <div class="op"><div class="tit"><span class="l">E2</span><h3>Saldo descendo</h3></div>
+    <p>Uma coluna à direita mostra o que ainda resta dos R$ 250 a cada linha, até chegar no que fica com ela.</p>
+    <div class="fone"><iframe src="ex2.html"></iframe></div></div>
+
+  <div class="op"><div class="tit"><span class="l">E3</span><h3>Em árvore</h3></div>
+    <p>A linha-mãe fecha o grupo em negrito e as filhas aparecem recuadas, mostrando de onde o valor veio. O mais curto.</p>
+    <div class="fone"><iframe src="ex3.html"></iframe></div></div>
+
+  <div class="op"><div class="tit"><span class="l">E4</span><h3>Razão</h3></div>
+    <p>Duas colunas, sai e fica, como um livro-caixa. Toda linha é uma saída, menos a última.</p>
+    <div class="fone"><iframe src="ex4.html"></iframe></div></div>
+</div>
+
+</body></html>

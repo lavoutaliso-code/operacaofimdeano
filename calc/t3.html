@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>T3 · Produto</title>
+<link rel="stylesheet" href="telas.css">
+</head>
+<body>
+
+<div class="nav">
+  <button class="volta">&#8249;</button>
+  <h2>Calculadora de Precificação</h2>
+</div>
+
+<div class="topo">
+  <div class="passo">Pergunta 04 de 09</div>
+  <h3>Quanto você gasta<br>de produto nesse serviço?</h3>
+  <p>Anote o que você usa. Diga o preço e quantos atendimentos aquilo rende.</p>
+</div>
+
+<div class="meio">
+  <div class="notinha">
+    <div class="nTit" id="nTit">—</div>
+    <div class="nCab">
+      <span>Produto</span><span>Preço</span><span>Rende</span><span>Por uso</span>
+    </div>
+    <div id="linhas"></div>
+    <button class="nMais" id="mais">+ anotar outro produto</button>
+    <div class="nFim"><span>Custo por atendimento</span><span class="v" id="fim">—</span></div>
+  </div>
+</div>
+
+<div class="saida">
+  <div class="rot">Produto por atendimento</div>
+  <div class="n"><span class="cif">R$</span><span class="v" id="grande">—</span></div>
+  <div class="conta" id="conta">—</div>
+</div>
+
+<div class="pe"><button class="btn">Continuar</button></div>
+
+<script src="nucleo.js"></script>
+<script src="estado.js"></script>
+<script>
+/* O custo do produto não é um palpite: é o frasco dividido pelo que ele rende.
+   Com estes quatro, a soma dá exatamente os R$ 38,00 do exemplo. */
+let itens = EST.produtos.map(p => ({...p}));
+if(!itens.length) itens=[{nome:'',frasco:null,rende:null}];
+
+const brl = v => v.toLocaleString('pt-BR', { minimumFractionDigits:2, maximumFractionDigits:2 });
+const num = v => { const x = parseFloat(String(v).replace(',', '.')); return isFinite(x) ? x : 0; };
+const g = id => document.getElementById(id);
+g('nTit').textContent = 'O que entra em cada atendimento';
+
+function porUso(it){ return it.rende > 0 ? it.frasco / it.rende : 0; }
+
+function pinta(){
+  g('linhas').innerHTML = itens.map((it, k) => `
+    <div class="nL">
+      <input data-k="${k}" data-c="nome" value="${it.nome || ''}"
+             placeholder="nome do produto">
+      <input data-k="${k}" data-c="frasco" class="num" inputmode="decimal"
+             value="${it.frasco != null ? brl(it.frasco) : ''}"
+             placeholder="">
+      <input data-k="${k}" data-c="rende"  class="num" inputmode="decimal"
+             value="${it.rende != null ? it.rende : ''}"
+             placeholder="">
+      <span class="sub">${it.frasco && it.rende ? brl(porUso(it)) : '—'}</span>
+    </div>`).join('');
+
+  g('linhas').querySelectorAll('input').forEach(inp => {
+    inp.addEventListener('input', () => {
+      const it = itens[+inp.dataset.k];
+      it[inp.dataset.c] = inp.dataset.c === 'nome' ? inp.value : num(inp.value);
+      soma();
+    });
+  });
+  soma();
+}
+
+function soma(){
+  const total = itens.reduce((s, it) => s + porUso(it), 0);
+  document.querySelector('.btn').disabled = total <= 0;
+  g('fim').textContent = 'R$ ' + brl(total);
+  g('grande').innerHTML = total > 0 ? brl(total) : '<span class="ex">—</span>';
+  g('linhas').querySelectorAll('.sub').forEach((el, k) =>
+    el.textContent = (itens[k].frasco && itens[k].rende) ? brl(porUso(itens[k])) : '—');
+  salvar({produtos: itens.map(i=>({...i}))});
+  g('fim').textContent = total > 0 ? 'R$ ' + brl(total) : '—';
+  if(total <= 0){ g('conta').textContent = 'Comece pelo produto que mais pesa'; return; }
+  const maior = itens.reduce((a, b) => porUso(b) > porUso(a) ? b : a);
+  g('conta').textContent = itens.length + (itens.length === 1 ? ' produto' : ' produtos')
+    + ' · o que mais pesa é ' + (maior.nome || 'o primeiro').toLowerCase();
+}
+
+g('mais').onclick = () => { itens.push({ nome:'', frasco:0, rende:1 }); pinta(); };
+pinta();
+</script>
+<script src="nav.js"></script>
+</body>
+</html>

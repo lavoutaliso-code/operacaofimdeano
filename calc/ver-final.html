@@ -1,0 +1,57 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Extrato em árvore · 4 versões</title>
+<style>
+ *{box-sizing:border-box;margin:0;padding:0}
+ body{font-family:-apple-system,system-ui,sans-serif;background:#EFEFF1;color:#1A1B1F;
+      padding:32px 32px 70px;-webkit-font-smoothing:antialiased}
+ h1{font-size:25px;font-weight:700;letter-spacing:-.65px}
+ .sub{color:#6E7076;font-size:14px;margin-top:7px;max-width:980px;line-height:1.55}
+ .sub b{color:#1A1B1F}
+ .chips{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+ .chips div{background:#fff;border:1px solid #E4E6EA;border-radius:9px;padding:8px 12px;font-size:12px}
+ .chips b{font-weight:700}
+ .chips span{color:#8E9199}
+ .grade{display:flex;flex-wrap:wrap;gap:24px;margin-top:26px}
+ .op{width:412px}
+ .tit{display:flex;align-items:center;gap:9px;margin-bottom:4px}
+ .tit .l{min-width:26px;height:24px;padding:0 7px;border-radius:7px;background:#1A1B1F;color:#fff;
+         font-size:11.5px;font-weight:700;display:grid;place-items:center}
+ .tit h3{font-size:15px;font-weight:700}
+ .op > p{font-size:12.5px;color:#73757C;line-height:1.5;margin:0 0 12px 35px;min-height:52px}
+ .fone{width:412px;height:866px;border-radius:46px;background:#15161A;padding:11px;
+       box-shadow:0 18px 44px rgba(20,22,30,.17)}
+ .fone iframe{width:390px;height:844px;border:0;border-radius:36px;background:#fff;display:block}
+</style></head><body>
+
+<h1>Extrato em árvore — 4 versões</h1>
+<p class="sub">Base <b>E3</b>, com a escala de texto do <b>E4</b>. Todas cabem <b>sem rolar</b> numa tela
+de 844px. «Rateio» saiu: agora é <b>custo fixo por atendimento</b>, e «banco e governo» virou
+<b>taxas sobre a venda</b>.</p>
+
+<div class="chips">
+  <div><b>F1</b> <span>741px</span></div>
+  <div><b>F2</b> <span>700px</span></div>
+  <div><b>F3</b> <span>702px</span></div>
+  <div><b>F4</b> <span>741px</span></div>
+  <div><span>⚠️ em telas de 780px ou menos as quatro rolam um pouco</span></div>
+</div>
+
+<div class="grade">
+  <div class="op"><div class="tit"><span class="l">F1</span><h3>Árvore cheia</h3></div>
+    <p>O E3 como você viu, só que cabendo na tela. Cada filha mostra de onde o valor saiu (R$ 240 ÷ 10 usos).</p>
+    <div class="fone"><iframe src="f1.html"></iframe></div></div>
+
+  <div class="op"><div class="tit"><span class="l">F2</span><h3>Filhas em duas colunas</h3></div>
+    <p>As filhas se arrumam em duas colunas e o papel encurta 41px. Some o detalhe do cálculo, fica só nome e valor.</p>
+    <div class="fone"><iframe src="f2.html"></iframe></div></div>
+
+  <div class="op"><div class="tit"><span class="l">F3</span><h3>Filhas em linha corrida</h3></div>
+    <p>Cada grupo vira um parágrafo contínuo, separado por pontos. O mais enxuto e o mais parecido com cupom impresso.</p>
+    <div class="fone"><iframe src="f3.html"></iframe></div></div>
+
+  <div class="op"><div class="tit"><span class="l">F4</span><h3>Resultado primeiro</h3></div>
+    <p>Os três carimbos sobem para logo abaixo do título; o extrato vem depois. Quem só quer o número não precisa descer.</p>
+    <div class="fone"><iframe src="f4.html"></iframe></div></div>
+</div>
+
+</body></html>

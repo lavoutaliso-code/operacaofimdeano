@@ -1,0 +1,99 @@
+<!doctype html><html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Calculando</title><link rel="stylesheet" href="carregando.css"></head><body>
+
+<div class="topo">
+  <div class="rot">Calculadora de Precificação</div>
+  <h3>Calculando quanto sobra pra você<br>em cada <em id="serv">progressiva</em></h3>
+</div>
+
+<div class="meio">
+  <div class="aro">
+    <svg width="150" height="150" viewBox="0 0 150 150">
+      <circle class="trilho" cx="75" cy="75" r="66" fill="none" stroke-width="12"/>
+      <circle class="carga" id="carga" cx="75" cy="75" r="66" fill="none" stroke-width="12"/>
+    </svg>
+    <div class="pct"><b id="pct">0%</b><small>Fechando a conta</small></div>
+  </div>
+  <div class="etapas" id="etapas"></div>
+</div>
+
+<div class="pe">
+  <div class="barra"><i id="barra"></i></div>
+  <p id="frase">Lendo as suas 9 respostas…</p>
+</div>
+
+<script src="nucleo.js"></script>
+<script src="estado.js"></script>
+<script>
+const d = EST;
+const x = extrato(d);
+const r = conta(d);
+const m  = v => 'R$ ' + Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const m0 = v => 'R$ ' + Math.round(v).toLocaleString('pt-BR');
+const g = id => document.getElementById(id);
+
+g('serv').textContent = d.servico.toLowerCase();
+
+/* ⚠️ cada etapa mostra um número que a conta realmente produziu — nada de
+   texto decorativo. Quem está esperando vê a conta sendo feita. */
+/* ⚠️ «somando todos os custos» virou uma etapa PRÓPRIA, com o total de verdade
+   (R$ 72,97). Pôr esse rótulo na linha do salão faria o texto mentir sobre o
+   número ao lado dele — ali só estão as contas, R$ 21,22. */
+const ETAPAS = [
+  { nome:'Somando gastos com produto',  val:m(x.tProduto),
+    frase:'Cada frasco dividido pelo que ele rende…' },
+  { nome:'Somando as contas do salão',  val:m(x.tSalao),
+    frase:'O salão dividido entre ' + x.atend + ' atendimentos…' },
+  { nome:'Descontando taxas e impostos', val:m(x.tTaxas),
+    frase:'O que a maquininha e o governo levam de cada venda…' },
+  { nome:'Somando todos os custos',     val:m(x.custo),
+    frase:'Produto, salão e taxas, tudo junto…' },
+  { nome:'Calculando o seu mês sozinha', val:m0(r.so.liquido),
+    frase:'Projetando o mês com você atendendo…' },
+  { nome:'Simulando com uma equipe',    val:m0(r.eq.liquido),
+    frase:'Mesmo aluguel, mais cadeiras girando…' },
+];
+
+g('etapas').innerHTML = ETAPAS.map((e,i) => `
+  <div class="et" id="et${i}">
+    <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4"
+      stroke-linecap="round" stroke-linejoin="round"><path d="m4 12 6 6L20 6"/></svg></span>
+    <span class="nome">${e.nome}</span>
+    <span class="val">${e.val}</span>
+  </div>`).join('');
+
+const C = 2 * Math.PI * 66;
+g('carga').style.strokeDasharray = C;
+g('carga').style.strokeDashoffset = C;
+
+function progresso(p){
+  g('carga').style.strokeDashoffset = C * (1 - p);
+  g('pct').textContent = Math.round(p*100) + '%';
+  g('barra').style.width = (p*100) + '%';
+}
+
+let i = 0;
+function passo(){
+  if (i >= ETAPAS.length) {
+    progresso(1);
+    g('frase').textContent = 'Pronto. Abrindo o seu resultado…';
+    /* ⚠️ ela ficava parada aqui: o resultado só vinha se alguém clicasse. */
+    setTimeout(() => parent.postMessage({ calc:'prox' }, '*'), 650);
+    return;
+  }
+  const el = g('et' + i);
+  el.classList.add('ver');
+  g('frase').textContent = ETAPAS[i].frase;
+  progresso((i + 0.4) / ETAPAS.length);
+  setTimeout(() => {
+    el.classList.add('ok');
+    progresso((i + 1) / ETAPAS.length);
+    i++;
+    setTimeout(passo, 250);
+  }, 520);
+}
+setTimeout(passo, 240);
+</script>
+<script src="nav.js"></script>
+</body></html>

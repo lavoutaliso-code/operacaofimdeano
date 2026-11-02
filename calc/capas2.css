@@ -1,0 +1,112 @@
+/* 4 capas que REMETEM A UMA CALCULADORA: o objeto, o visor, a conta armada
+   e a fita de somar. Conteúdo igual: o nome e o botão. */
+:root{
+  --preto:#1C1C1E; --fundo:#F2F2F7; --cinza:#A3AAB4; --cinza2:#6B7280;
+  --linha:#E4E4E6; --verde:#12885C; --lcd:#C9D3C4; --lcdTinta:#2B3327;
+  --ui:-apple-system,system-ui,"Segoe UI",sans-serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:var(--ui);color:var(--preto);-webkit-font-smoothing:antialiased;
+     display:flex;flex-direction:column;overflow:hidden;background:var(--fundo)}
+.btn{width:100%;height:56px;border:0;border-radius:99px;background:var(--preto);color:#fff;
+     font-family:inherit;font-size:15.5px;font-weight:650;cursor:pointer;letter-spacing:-.1px;
+     box-shadow:0 10px 26px -8px rgba(20,22,30,.5)}
+.pe{flex:0 0 auto;padding:14px 24px calc(26px + env(safe-area-inset-bottom))}
+.palco{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;
+       justify-content:center;padding:14px 22px}
+
+/* ══ K1 · a calculadora de mesa ══ */
+.k1 .maq{width:268px;background:linear-gradient(170deg,#32343A 0%,#1C1D22 58%,#26282E 100%);
+  border-radius:26px;padding:16px 15px 18px;
+  box-shadow:0 22px 50px -14px rgba(14,16,22,.52), inset 0 1.5px 0 rgba(255,255,255,.09)}
+.k1 .visor{background:linear-gradient(180deg,#C2CCBD,#D5DDD0);border-radius:12px;
+  padding:13px 14px 15px;text-align:right;
+  box-shadow:inset 0 2px 7px rgba(20,30,16,.3), inset 0 -1px 0 rgba(255,255,255,.45)}
+.k1 .visor .et{font-family:var(--mono);font-size:7.5px;font-weight:700;letter-spacing:.17em;
+  text-transform:uppercase;color:#5E6B57;text-align:left}
+.k1 .visor .n{font-family:var(--mono);font-size:27px;font-weight:700;color:var(--lcdTinta);
+  letter-spacing:-.5px;margin-top:5px;font-variant-numeric:tabular-nums}
+.k1 .teclas{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:14px}
+.k1 .teclas button{height:40px;border:0;border-radius:11px;background:#3A3D44;color:#EDEEF1;
+  font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1), 0 2px 4px rgba(0,0,0,.28)}
+.k1 .teclas button.op{background:#4A4E57;color:#C8D0DC}
+.k1 .teclas button.ig{background:var(--verde);color:#fff;grid-row:span 2;height:auto}
+.k1 .nome{text-align:center;margin-top:16px;font-size:16px;font-weight:800;letter-spacing:-.4px;
+  line-height:1.25;color:#fff}
+.k1 .nome em{font-style:normal;display:block;font-size:8px;font-weight:800;letter-spacing:.26em;
+  text-transform:uppercase;color:#7E828C;margin-top:5px}
+
+/* ══ K2 · a tela é o visor ══ */
+.k2{background:linear-gradient(180deg,#C4CEBF 0%,#D7DFD2 52%,#C9D3C4 100%)}
+/* ⚠️ `space-between` jogava a conta no alto e o nome no pé, com um vão morto
+   no meio da tela. Agora o visor inteiro é um bloco só, centrado, e a etiqueta
+   do topo sai do fluxo. */
+.k2 .palco{justify-content:center;padding:0 26px;position:relative;gap:26px}
+.k2 .top{position:absolute;top:30px;left:26px;right:26px;display:flex;
+  justify-content:space-between;align-items:center;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:#5E6B57}
+.k2 .meio{width:100%;text-align:right}
+.k2 .meio .lin{font-family:var(--mono);font-size:13px;color:#6B7865;letter-spacing:.5px;
+  padding:2px 0;font-variant-numeric:tabular-nums}
+.k2 .meio .tr{border-top:2px solid #6B7865;margin:9px 0 7px}
+.k2 .meio .res{font-family:var(--mono);font-size:44px;font-weight:700;color:var(--lcdTinta);
+  letter-spacing:-1.6px;line-height:1;font-variant-numeric:tabular-nums}
+.k2 .nome{width:100%;font-size:21px;font-weight:800;letter-spacing:-.5px;line-height:1.25;
+  color:var(--lcdTinta)}
+.k2 .nome em{font-style:normal;display:block;font-family:var(--mono);font-size:8.5px;
+  font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#6B7865;margin-bottom:7px}
+.k2 .pe .btn{background:var(--lcdTinta)}
+
+/* ══ K3 · a conta armada no papel ══ */
+.k3{background:#fff;
+  background-image:linear-gradient(#EDF1F6 1px,transparent 1px),
+                   linear-gradient(90deg,#EDF1F6 1px,transparent 1px);
+  background-size:22px 22px}
+.k3 .folha{width:264px}
+.k3 .nome{font-size:17px;font-weight:800;letter-spacing:-.3px;line-height:1.3;margin-bottom:22px}
+.k3 .nome em{font-style:normal;display:block;font-size:8.5px;font-weight:800;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--cinza);margin-bottom:6px}
+.k3 .conta{font-family:var(--mono);font-size:19px;text-align:right;color:#55585F;
+  font-variant-numeric:tabular-nums}
+.k3 .conta div{padding:4px 0;display:flex;justify-content:space-between}
+.k3 .conta div span:first-child{color:#B9BABF;font-size:15px}
+.k3 .conta .tr{display:block;border-top:2.5px solid var(--preto);margin:11px 0 10px;padding:0}
+.k3 .igual{display:flex;align-items:center;justify-content:space-between;margin-top:2px}
+.k3 .igual .s{font-family:var(--mono);font-size:30px;font-weight:700;color:var(--preto)}
+.k3 .igual .q{font-size:58px;font-weight:800;color:var(--verde);line-height:1}
+
+/* ══ K4 · a fita da máquina de somar ══ */
+.k4{background:#EFEFF2}
+/* ⚠️ a máquina fica colada no alto, mas a fita e a frase formam um bloco só —
+   antes a frase caía solta com um vão entre ela e o papel. */
+.k4 .palco{justify-content:flex-start;padding:0}
+.k4 .miolo{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;
+           justify-content:center;width:100%;padding-bottom:18px}
+.k4 .corpo{width:100%;background:linear-gradient(180deg,#2C2E34,#1C1D22);padding:18px 24px 14px;
+  display:flex;align-items:center;gap:11px;box-shadow:0 8px 22px -6px rgba(0,0,0,.4)}
+.k4 .corpo .lg{width:30px;height:30px;border-radius:9px;background:#C8FF00;display:grid;
+  place-items:center;font-size:12px;font-weight:800;color:#1C1D22;flex:0 0 auto}
+.k4 .corpo b{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+  color:#C8FF00;line-height:1.3}
+.k4 .rolo{width:100%;height:12px;background:linear-gradient(180deg,#07080A,#1a1b20);
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.7)}
+.k4 .fita{width:214px;background:#fff;margin-top:-1px;padding:20px 18px 26px;
+  font-family:var(--mono);box-shadow:0 10px 26px -10px rgba(20,22,30,.3);
+  -webkit-mask:radial-gradient(circle 5px at 5px 10px,transparent 4.6px,#000 5px) bottom left/10px 10px repeat-x,
+    linear-gradient(#000,#000) top/100% calc(100% - 10px) no-repeat;
+  mask:radial-gradient(circle 5px at 5px 10px,transparent 4.6px,#000 5px) bottom left/10px 10px repeat-x,
+    linear-gradient(#000,#000) top/100% calc(100% - 10px) no-repeat}
+.k4 .fita .cab{font-size:8px;font-weight:700;letter-spacing:.19em;text-transform:uppercase;
+  color:var(--cinza);text-align:center;line-height:1.7}
+.k4 .fita .tr{border-top:1.5px dashed var(--linha);margin:11px 0}
+.k4 .fita .l{display:flex;justify-content:space-between;font-size:12px;color:#55585F;padding:2.5px 0;
+  font-variant-numeric:tabular-nums}
+.k4 .fita .l.tot{font-weight:700;color:var(--preto);border-top:1.5px solid var(--preto);
+  margin-top:7px;padding-top:7px}
+.k4 .nome{text-align:center;margin-top:26px;font-size:19px;font-weight:800;letter-spacing:-.4px;
+  line-height:1.25;padding:0 24px}
+.k4 .nome em{font-style:normal;display:block;font-size:8px;font-weight:800;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--cinza);margin-top:6px}

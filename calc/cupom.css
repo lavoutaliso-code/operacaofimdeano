@@ -1,0 +1,126 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   O CUPOM SAINDO DA IMPRESSORA — portado do «fechar caixa» do interno
+   (lailasalon-sistema/gestor/vp.css #cxPalco + caixa.js).
+   As regras que vieram junto, cada uma resolvendo um defeito já medido lá:
+
+   ⚠️ O PAR DE scaleY(-1) é o que faz o papel sair de dentro pra fora — um na
+      saída, outro no papel. Tirar um dos dois vira cortina, não impressora.
+   ⚠️ A MÁQUINA NÃO ANDA. Só a folha se mexe.
+   ⚠️ O ALVO DA ALTURA É MEDIDO, nunca fixo — papel curto e papel comprido.
+   ⚠️ O PAPEL COMPRIDO DEMORA MAIS A SAIR, como impressora de verdade.
+   ══════════════════════════════════════════════════════════════════════════ */
+:root{
+  --papelC:#fff; --tinta:#1C1C1E; --tinta-2:#6B7280; --tinta-3:#A3AAB4;
+  --trilho:#E4E4E6; --verde:#12885C; --vermelho:#BC3D20;
+  --lima:#C8FF00; --palco:#F2F2F7;
+  --sf:-apple-system,system-ui,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:var(--sf);background:var(--palco);color:var(--tinta);
+     -webkit-font-smoothing:antialiased;overflow:hidden}
+
+.palco{position:fixed;inset:0;overflow-y:auto;overflow-x:hidden}
+.palco::-webkit-scrollbar{display:none}
+.centro{display:flex;flex-direction:column;align-items:center;min-height:100%;
+  padding:14px 20px 96px}
+/* ⚠️ margin auto, e NÃO justify-content:center — com o palco rolando, o center
+   corta o topo do papel quando ele fica mais alto que a tela. */
+.centro > *{margin-block:auto}
+
+.impressora{width:258px;max-width:100%;position:relative;z-index:5}
+.carcaca{position:relative;z-index:2;
+  background:linear-gradient(180deg,#2C2C2E 0%,#1C1C1E 100%);
+  border-radius:11px;padding:9px 13px;display:flex;align-items:center;gap:8px;
+  box-shadow:0 4px 16px rgba(0,0,0,.2),0 1px 3px rgba(0,0,0,.12)}
+.logo-box{width:20px;height:20px;border-radius:6px;background:var(--lima);
+  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;
+  color:#1C1C1E;flex:0 0 auto}
+.nome{font-size:8.5px;font-weight:700;color:var(--lima);letter-spacing:.06em;
+  text-transform:uppercase;line-height:1.25}
+
+.fenda{position:relative;z-index:3;width:calc(100% - 28px);margin:-3px auto 0;height:7px;
+  background:linear-gradient(180deg,#050505 0%,#1a1a1a 100%);border-radius:0 0 4px 4px;
+  box-shadow:0 3px 10px -2px rgba(0,0,0,.35),inset 0 2px 4px rgba(0,0,0,.6);
+  transition:height .5s .3s cubic-bezier(.4,0,.2,1)}
+.impressora.imprimindo .fenda{height:14px}
+
+.dobrinha{position:relative;z-index:1;width:calc(100% - 44px);margin:0 auto;height:0;
+  background:linear-gradient(180deg,#e8e8e8 0%,#f5f5f5 40%,#fff 100%);
+  border-radius:0 0 12px 12px;box-shadow:0 4px 10px rgba(0,0,0,.08);
+  transform:perspective(200px) rotateX(-12deg);transform-origin:top center;
+  transition:height .8s .5s cubic-bezier(.4,0,.2,1)}
+.impressora.imprimindo .dobrinha{height:18px}
+
+.saida{position:relative;z-index:1;margin-top:-2px;overflow:hidden;max-height:0;
+  transition:max-height var(--dur,4s) cubic-bezier(.25,.1,.25,1);transform:scaleY(-1)}
+.saida.aberta{max-height:var(--alvo,1800px)}
+
+.papel{background:#fff;margin:0 11px;padding:13px 13px 14px;
+  border-left:2px dashed var(--trilho);border-right:2px dashed var(--trilho);
+  box-shadow:0 2px 12px rgba(0,0,0,.06);position:relative;transform:scaleY(-1);
+  color:var(--tinta);text-align:left}
+.papel::after{content:'';position:absolute;bottom:-6px;left:0;right:0;height:12px;
+  background:radial-gradient(circle 6px at 6px 0,transparent 5.5px,#fff 6px) 0 0 / 12px 12px repeat-x;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.06))}
+
+/* papel solto (sem máquina): serrilha nas duas pontas.
+   ⚠️ MÁSCARA, e não pseudo-elemento colado por fora: o ::before/::after pintado
+   com a cor do papel só funciona enquanto o papel é branco. No cupom escuro
+   ele sumia (medido). A máscara recorta o PRÓPRIO papel, então serve pra
+   qualquer cor de fundo. O preço é a sombra, que a máscara corta junto. */
+.papel.solto{--pc:#fff;transform:none;margin:0;background:var(--pc);box-shadow:none;
+  padding-top:24px;padding-bottom:26px;
+  -webkit-mask:
+    radial-gradient(circle 6px at 6px 0,transparent 5.5px,#000 6px) top left/12px 12px repeat-x,
+    radial-gradient(circle 6px at 6px 12px,transparent 5.5px,#000 6px) bottom left/12px 12px repeat-x,
+    linear-gradient(#000,#000) center/100% calc(100% - 24px) no-repeat;
+  mask:
+    radial-gradient(circle 6px at 6px 0,transparent 5.5px,#000 6px) top left/12px 12px repeat-x,
+    radial-gradient(circle 6px at 6px 12px,transparent 5.5px,#000 6px) bottom left/12px 12px repeat-x,
+    linear-gradient(#000,#000) center/100% calc(100% - 24px) no-repeat}
+.papel.solto::before,.papel.solto::after{display:none}
+
+/* ---------- miolo do cupom ---------- */
+.tit{text-align:center;margin-bottom:10px}
+.tit h4{font-size:11px;font-weight:700;letter-spacing:.04em}
+.tit p{font-size:8.5px;color:var(--tinta-3);font-weight:500;margin-top:2px;
+  letter-spacing:.02em;text-transform:uppercase}
+.sub{font-size:8.5px;color:var(--tinta-3);padding:1px 0 0;line-height:1.5}
+.sub.center{text-align:center}
+.traco{text-align:center;color:var(--trilho);letter-spacing:3.4px;font-size:9.5px;margin:6px 0 2px}
+.sec{font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  margin:8px 0 4px;padding-top:6px;border-top:1.5px dashed var(--trilho)}
+.ln{display:flex;justify-content:space-between;align-items:center;padding:2px 0;
+  font-size:10.5px;gap:8px}
+.ln .lab{font-weight:400}
+.ln .lab em{font-style:normal;color:var(--tinta-3);font-size:9px}
+.ln .val{font-weight:500;white-space:nowrap;font-variant-numeric:tabular-nums}
+.ln.hero{justify-content:center;flex-direction:column;align-items:center;padding:5px 0}
+.ln.hero .lab{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--tinta-3);margin-bottom:4px}
+.ln.hero .val{font-size:25px}
+.ln.total{font-size:11.5px;padding:7px 0 0;margin-top:4px;border-top:1.5px solid var(--tinta)}
+.ln.total .val{color:var(--verde)}
+.ln.total.neg .val{color:var(--vermelho)}
+
+.final{text-align:center;margin:9px 0 0;padding-top:8px;border-top:1.5px dashed var(--trilho)}
+.final .check{width:36px;height:36px;border-radius:50%;background:var(--verde);
+  display:inline-flex;align-items:center;justify-content:center;margin-bottom:6px}
+.final .check svg{width:19px;height:19px}
+.final .frase{font-size:12.5px;font-weight:700;line-height:1.35}
+
+.bar{text-align:center;margin-top:7px;padding-top:6px;border-top:1.5px dashed var(--trilho)}
+.bar svg{display:block;margin:0 auto 4px}
+.bar span{font-size:7.5px;color:var(--tinta-3);letter-spacing:.15em;font-weight:500}
+
+/* ---------- rodapé ---------- */
+.pe{position:fixed;bottom:0;left:0;right:0;z-index:10;padding:12px 20px calc(16px + env(safe-area-inset-bottom));
+  background:var(--palco);box-shadow:0 -10px 24px -12px rgba(0,0,0,.18);
+  display:flex;flex-direction:column;align-items:center;gap:9px;
+  opacity:0;pointer-events:none;transition:opacity .4s ease}
+.palco.pronto ~ .pe{opacity:1;pointer-events:auto}
+.bt{width:258px;max-width:100%;padding:13px;border:none;border-radius:14px;
+  font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;
+  background:#1C1C1E;color:#fff;box-shadow:0 4px 20px rgba(0,0,0,.18)}
+.bt:active{transform:scale(.97)}
