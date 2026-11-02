@@ -93,12 +93,9 @@ i{font-style:normal;color:var(--laranja)}
     /* ⚠️ o padding-top JÁ reserva a marca; com `scroll-margin-top` também a
      reservando, os dois somavam e a folha entrava 34px por baixo da doca. */
   gap:clamp(12px,2.4vh,26px);scroll-margin-top:0}
-/* ⚠️ `content-visibility:auto` manda o navegador NÃO renderizar a seção
-   enquanto ela está fora da tela — é o ganho mais barato que existe numa página
-   de rolagem longa. O `contain-intrinsic-size` reserva a altura pra barra de
-   rolagem não pular. */
-#sec-calc,#sec-antes,#sec-mentoria{content-visibility:auto;
-  contain-intrinsic-size:auto 844px}
+/* ⚠️ TENTEI `content-visibility:auto` aqui e MEDI: não deu ganho nenhum de fps
+   (34,5 contra 34,6) e piorou o pior quadro — de 67ms pra 103ms, porque a seção
+   inteira tem que ser renderizada de uma vez quando entra na tela. Retirado. */
 .tela.claro{background:#FFF}
 .tela.escuro{background:var(--noite);color:#fff}
 
