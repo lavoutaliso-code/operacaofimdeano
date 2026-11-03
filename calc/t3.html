@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>T3 · Produto</title>
-<link rel="stylesheet" href="telas.css?v=33">
+<link rel="stylesheet" href="telas.css?v=34">
 </head>
 <body>
 
@@ -14,7 +14,7 @@
 </div>
 
 <div class="topo">
-  <div class="passo">Pergunta 04 de 09</div>
+  <div class="passo">Pergunta 04 de 10</div>
   <h3>Quanto você gasta<br>de produto nesse serviço?</h3>
   <p>Anote o que você usa. Diga <b>quanto custou o frasco</b> e <b>em quantos
      atendimentos ele acaba</b>.</p>
@@ -44,8 +44,8 @@
 
 <div class="pe"><button class="btn">Continuar</button></div>
 
-<script src="nucleo.js?v=33"></script>
-<script src="estado.js?v=33"></script>
+<script src="nucleo.js?v=34"></script>
+<script src="estado.js?v=34"></script>
 <script>
 /* O custo do produto não é um palpite: é o frasco dividido pelo que ele rende.
    Com estes quatro, a soma dá exatamente os R$ 38,00 do exemplo. */
@@ -53,11 +53,13 @@ let itens = EST.produtos.map(p => ({...p}));
 if(!itens.length) itens=[{nome:'',frasco:null,rende:null}];
 
 const brl = v => v.toLocaleString('pt-BR', { minimumFractionDigits:2, maximumFractionDigits:2 });
-const num = v => { const x = parseFloat(String(v).replace(',', '.')); return isFinite(x) ? x : 0; };
+/* ⛔ 02/11 — O PARSER DAQUI LIA «1.200» COMO 1,2 (fator mil no lucro).
+   Agora é o `dinheiro()` do estado.js, um leitor só para a calculadora toda. */
+const num = v => dinheiro(v);     /* null quando o campo está vazio */
 const g = id => document.getElementById(id);
 g('nTit').textContent = 'O que entra em cada atendimento';
 
-function porUso(it){ return it.rende > 0 ? it.frasco / it.rende : 0; }
+function porUso(it){ return (it.rende > 0 && it.frasco > 0) ? it.frasco / it.rende : 0; }
 
 function pinta(){
   g('linhas').innerHTML = itens.map((it, k) => `
@@ -70,7 +72,7 @@ function pinta(){
       <input data-k="${k}" data-c="rende"  class="num" inputmode="decimal"
              value="${it.rende != null ? it.rende : ''}"
              placeholder="${k === 0 ? '10' : ''}">
-      <span class="sub">${it.frasco && it.rende ? brl(porUso(it)) : '—'}</span>
+      <span class="sub">${(it.frasco > 0 && it.rende > 0) ? brl(porUso(it)) : "—"}</span>
     </div>`).join('');
 
   g('linhas').querySelectorAll('input').forEach(inp => {
@@ -85,22 +87,49 @@ function pinta(){
 
 function soma(){
   const total = itens.reduce((s, it) => s + porUso(it), 0);
-  document.querySelector('.btn').disabled = total <= 0;
-  g('fim').textContent = 'R$ ' + brl(total);
+  /* ⛔ 02/11 — LINHA PELA METADE ENTRAVA COMO ZERO, CALADA.
+     `porUso` devolve 0 quando falta o «rende», e o botão só olhava o TOTAL.
+     Uma progressiva de R$ 240 sem o rende preenchido somava R$ 0,00 ao custo
+     e o lucro subia R$ 24 por atendimento sem ninguém ver. Agora a tela
+     aponta a linha incompleta e segura o botão. */
+  const incompleta = itens.find(it =>
+    (it.nome || '').trim() || it.frasco != null || it.rende != null
+      ? !(it.frasco > 0 && it.rende > 0) : false);
+  document.querySelector('.btn').disabled = total <= 0 || !!incompleta;
+
   g('grande').innerHTML = total > 0 ? brl(total) : '<span class="ex">—</span>';
   g('linhas').querySelectorAll('.sub').forEach((el, k) =>
-    el.textContent = (itens[k].frasco && itens[k].rende) ? brl(porUso(itens[k])) : '—');
+    el.textContent = (itens[k].frasco > 0 && itens[k].rende > 0) ? brl(porUso(itens[k])) : '—');
+  g('linhas').querySelectorAll('.nL').forEach((el, k) => {
+    const it = itens[k];
+    const meia = ((it.nome || '').trim() || it.frasco != null || it.rende != null)
+               && !(it.frasco > 0 && it.rende > 0);
+    el.classList.toggle('meia', meia);
+  });
   salvar({produtos: itens.map(i=>({...i}))});
   g('fim').textContent = total > 0 ? 'R$ ' + brl(total) : '—';
+
+  if (incompleta){
+    const quem = (incompleta.nome || '').trim();
+    g('conta').textContent = incompleta.frasco > 0
+      ? 'Falta dizer em quantos atendimentos ' + (quem ? quem.toLowerCase() : 'esse produto') + ' acaba'
+      : 'Falta quanto custou ' + (quem ? quem.toLowerCase() : 'esse produto');
+    return;
+  }
   if(total <= 0){ g('conta').textContent = 'Comece pelo produto que mais pesa'; return; }
   const maior = itens.reduce((a, b) => porUso(b) > porUso(a) ? b : a);
   g('conta').textContent = itens.length + (itens.length === 1 ? ' produto' : ' produtos')
     + ' · o que mais pesa é ' + (maior.nome || 'o primeiro').toLowerCase();
 }
 
-g('mais').onclick = () => { itens.push({ nome:'', frasco:0, rende:1 }); pinta(); };
+/* ⛔ 02/11 — A LINHA NOVA NASCIA COM `rende:1` JÁ ESCRITO. Como o campo vinha
+   preenchido com um «1» plausível, era fácil não trocar — e aí o frasco INTEIRO
+   virava gasto de uma cliente só. Medido ao vivo: um botox de R$ 180 entrou
+   como R$ 180,00 por atendimento e jogou o resultado no vermelho.
+   Agora nasce em branco, igual à primeira linha. */
+g('mais').onclick = () => { itens.push({ nome:'', frasco:null, rende:null }); pinta(); };
 pinta();
 </script>
-<script src="nav.js?v=33"></script>
+<script src="nav.js?v=34"></script>
 </body>
 </html>

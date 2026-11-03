@@ -19,8 +19,14 @@ const PERGUNTAS = [
     sinal:'',   suf:'h', passo:0.5, rot:'Tempo do serviço', dec:1 },
   { k:'produto',  tit:'Quanto gasta de produto?',      sub:'Só o que vai no cabelo da cliente.',
     sinal:'R$', suf:'',  passo:5,   rot:'Produto' },
-  { k:'hora',     tit:'Quanto quer ganhar por hora?',  sub:'O seu salário. Sem ele, o lucro é mentira.',
-    sinal:'R$', suf:'',  passo:5,   rot:'Sua hora' },
+  /* ⛔ 02/11 — esta pergunta existia aqui e NÃO existia no app: `BASE` não
+     tinha o campo e `conta()` não descontava nada. Era a pergunta fantasma que
+     fazia o «lucro líquido» da tela ser salário + lucro somados. Agora é
+     `proLabore`, por MÊS (que é o número que a dona de salão sabe de cabeça;
+     por hora ela não sabe), e ele entra na conta pelo rateio das contas. */
+  { k:'proLabore', tit:'Quanto você quer ganhar por mês?',
+    sub:'O seu salário. Sem ele na conta, o lucro é mentira.',
+    sinal:'R$', suf:'',  passo:100, rot:'Seu salário' },
   { k:'contaMes', tit:'Quanto custa o salão por mês?', sub:'Aluguel, luz, internet, sistema, contador.',
     sinal:'R$', suf:'',  passo:50,  rot:'Salão por mês' },
   { k:'atend',    tit:'Quantos atendimentos no mês?',  sub:'A média de uma pessoa, não do salão inteiro.',
@@ -70,52 +76,81 @@ function conta(d) {
   const pTaxa   = x0.pTaxa;
 
   /* --- por serviço feito pelas mãos dela ---
-     ⚠️ SEM DESCONTAR O TRABALHO DELA (ela tirou essa pergunta). Então este
-     número é tudo o que sobra para ela: o pagamento do próprio trabalho E o
-     lucro, juntos. Não é «lucro além do salário». */
+     ✅ 02/11 — AGORA COM O TRABALHO DELA DESCONTADO. `x0.sobra` já tirou a
+     fatia do salário dela junto com as outras contas do salão, então este
+     número é lucro de verdade: o que sobra DEPOIS de ela estar paga. */
   const custo = x0.custo;
   const lucro = x0.sobra;
-  const minimo = pTaxa < .99 ? (produto + fixo) / (1 - pTaxa) : null;
-
-  /* --- no mês: sozinha --- */
-  const soFat    = preco * atend;
-  const soVar    = (produto + taxa) * atend;
-  const soLiquido = soFat - soVar - fixoMes;
-
-  /* --- no mês: com equipe (mesmo aluguel, mais cadeiras girando) --- */
-  const comissao = preco * pCom;
-  /* ⚠️ ANTES A EQUIPE FAZIA SEMPRE O MESMO TANTO QUE ELA. A média respondida na
-     tela 07 é a DELA; supor que cada profissional repete isso inflava o cenário
-     com equipe sem nunca ter sido perguntado. Agora dá para responder. */
-  const atendProf = d.atendPorProf != null ? n(d.atendPorProf) : atend;
-  const eqServ   = atendProf * pessoas;
-  const eqFat    = preco * (atend + eqServ);
-  const eqVar    = (produto + taxa) * atend
-                 + (produto + taxa + comissao) * eqServ;
-  const eqLiquido = eqFat - eqVar - fixoMes;
+  const comissao = x0.tComissao;          /* já é 0 quando não há equipe */
+  /* ⛔ 02/11 — O MÍNIMO IGNORAVA A COMISSÃO. Num serviço feito pela
+     profissional a 40%, ele dizia R$ 62,67 quando o mínimo real é R$ 108,66.
+     Agora entra tudo que o preço precisa cobrir: produto, o rateio (contas +
+     salário dela), a comissão e as taxas. */
+  const pTudo = pTaxa + (x0.temEquipe ? pCom * ((Math.max(1,pessoas+1)-1)/Math.max(1,pessoas+1)) : 0);
+  const minimo = pTudo < .99 ? (produto + fixo) / (1 - pTudo) : null;
 
   /* ══════════════════════════════════════════════════════════════════════
-     OS DOIS CENÁRIOS SÃO «HOJE» E «O PRÓXIMO DEGRAU».
-     Antes eram fixos (sozinha × com equipe). Mas quem já tem duas profissionais
-     não precisa ver quanto faria sozinha — precisa ver quanto faria com quatro.
-     Regra: sem equipe → o degrau é 2; com equipe → dobra o que ela tem.
-     ⚠️ A comissão do degrau futuro é a mesma que ela respondeu; quem está
-     sozinha responde «quanto pagaria», senão a equipe futura sairia de graça.
+     ⛔ 02/11 — O MÊS TINHA ARITMÉTICA PRÓPRIA, E POR ISSO DISCORDAVA DA TELA.
+     `mesCom()` remontava faturamento, variáveis e fixo do zero. Medido no caso
+     dela: o anel grande dizia R$ 177,03 por serviço e o anel pequeno do mesmo
+     cupom dizia R$ 9.600,75 no mês — 177,03 × 87 dá R$ 15.401,61. R$ 5.800,86
+     de divergência entre dois números da MESMA tela.
+
+     Agora existe uma conta só: o mês é a sobra do serviço vezes quantos desses
+     serviços o salão faz. Como o rateio do extrato já carrega a fatia certa das
+     contas e do salário, a multiplicação fecha por construção.
+     ⚠️ Quem mexer aqui: não reintroduza fórmula de mês. Se faltar uma parcela,
+        ela nasce no `extrato()`.
      ══════════════════════════════════════════════════════════════════════ */
+  const servicoMes = x0.servicoMes;
+  const bocas = Math.max(1, pessoas + 1);
+
+  /* o serviço sem comissão nenhuma — a base de onde cada cenário tira a sua */
+  const semComissao = cent(lucro + comissao);
+  const comCheia    = cent(semComissao - preco * pCom);
+
   const mesCom = p => {
-    const serv = atend * (1 + p);
-    const fatM = preco * serv;
-    const varM = (produto + taxa) * atend
-               + (produto + taxa + preco * pCom) * (atend * p);
-    return { pessoas: p, serv, fat: fatM, custo: varM + fixoMes,
-             liquido: fatM - varM - fixoMes };
+    /* mais gente na cadeira → o salão faz mais DESTE serviço, na mesma
+       proporção de bocas. Quem está sozinha hoje passa a ter `p` profissionais. */
+    const nb    = p + 1;
+    const serv  = servicoMes * (nb / bocas);
+    const dela  = serv / nb;              /* as mãos dela não pagam comissão */
+    const prof  = serv - dela;
+    const liquido = cent(semComissao * dela + comCheia * prof);
+    return { pessoas: p, serv, dela, prof, fat: cent(preco * serv),
+             custo: cent(preco * serv - liquido), liquido,
+             porServico: serv > 0 ? cent(liquido / serv) : 0 };
   };
   const hoje    = mesCom(pessoas);
+  /* ══════════════════════════════════════════════════════════════════════
+     O DEGRAU SUPÕE AS MESMAS CONTAS COM MAIS CADEIRA GIRANDO — e isso é
+     verdade só até a sala encher. Acima disso precisaria de mais espaço, mais
+     energia e mais lavatório, e nada disso foi perguntado. A tela diz isso em
+     vez de o número fingir que o aluguel não muda.
+     ══════════════════════════════════════════════════════════════════════ */
   const degrau  = pessoas === 0 ? 2 : pessoas * 2;
   const proximo = mesCom(degrau);
 
+  /* ══════════════════════════════════════════════════════════════════════
+     ⛔ 02/11 — A AGENDA NUNCA FOI CONFERIDA. A tela chamava o número do mês de
+     «sua capacidade máxima» sem nunca perguntar se o dia cabe nas 24 horas.
+     Medido: 10 progressivas de 3h por dia passavam lisas e a tela projetava
+     R$ 41.173 no mês — 30 horas de cadeira num dia de 24.
+     Aqui não se corrige a resposta dela; só se mede e se avisa.
+     ══════════════════════════════════════════════════════════════════════ */
+  const semana = Array.isArray(d.semana) ? d.semana.map(v => n(v)) : [];
+  const picoDia = semana.length ? Math.max(...semana) / bocas : 0;
+  const horasPico = picoDia * horas;
+  const horasMes = horas * atend;
+
   return {
     preco, horas, produto, fixo, taxa, custo, lucro, minimo,
+    /* o trabalho dela, já dentro de `fixo` — a tela nomeia, não soma de novo */
+    trabalho: x0.tTrabalho, proLaboreMes: x0.proLaboreMes, semSalario: x0.semSalario,
+    horasMes, horasPico, picoDia,
+    /* 10h de cadeira num dia é o teto que usamos para avisar; acima disso o
+       número do mês supõe um dia que provavelmente não existe */
+    agendaEstoura: horasPico > 10,
     /* ⚠️ fixoMes e pTaxa saem daqui porque os indicadores precisavam deles e
        estavam lendo os campos soltos do exemplo (ver `indicadores`). */
     fixoMes, pTaxa, atendDoSalao: x0.atendDoSalao,
@@ -124,11 +159,18 @@ function conta(d) {
     porHora: horas > 0 ? lucro / horas : 0,
     paga: lucro < 0,
     atend, pessoas, comissao, semVolume: atend <= 0,
-    atendProf, temEquipeHoje: !!d.temEquipeHoje,
-    so:  { fat: soFat, custo: soVar + fixoMes, liquido: soLiquido, serv: atend },
-    eq:  { fat: eqFat, custo: eqVar + fixoMes, liquido: eqLiquido, serv: atend + eqServ },
-    ganho: eqLiquido - soLiquido,
-    fixoPorServicoEquipe: (atend + eqServ) > 0 ? fixoMes / (atend + eqServ) : 0,
+    servicoMes, semComissao, comCheia, bocas,
+    /* ⚠️ `atendPorProf` nunca foi perguntado em tela nenhuma: `derivar()` grava
+       sempre o mesmo valor de `atend`. Fica aqui só para quem lê o estado saber
+       que a divisão é IGUAL entre as bocas — não é resposta dela. */
+    atendProf: atend, divisaoIgual: true,
+    temEquipeHoje: pessoas > 0,
+    /* ⚠️ `so`/`eq` são dos mockups irmãos (sb/sc/sd/final). Antes tinham
+       aritmética própria e divergiam da tela principal; agora saem do MESMO
+       `mesCom`, então os quatro cupons mostram o mesmo número. */
+    so:  mesCom(0),
+    eq:  mesCom(pessoas || 2),
+    ganho: cent(mesCom(pessoas || 2).liquido - mesCom(0).liquido),
   };
 }
 
@@ -159,11 +201,26 @@ const HOJE = (() => {
       produto + o trabalho dela + o rateio do salão + as taxas, está errado, e
       isso é medido, não opinado.
    ══════════════════════════════════════════════════════════════════════════ */
-/* ⚠️ A FAIXA SUBIU porque a base mudou: sem descontar o trabalho dela, a
-   margem de qualquer serviço sobe junto. Continua sem fonte. */
-const REGUA = { limite: 0.35, apertado: 0.55, fonte: 'faixa a definir' };
+/* ⛔ 02/11 — A FAIXA TINHA SIDO SUBIDA PARA CABER NO ERRO.
+   Enquanto o salário dela não era descontado, a margem de QUALQUER serviço
+   nascia inflada, e a régua foi erguida para 35%/55% para acompanhar. O efeito
+   foi o pior possível: uma progressiva que deixava R$ 177 das mãos dela (sem
+   pagar nada do trabalho) recebia o carimbo «Sua precificação está correta».
+   Agora o salário dela está na conta e a margem é lucro de verdade — sobra
+   DEPOIS de pagar produto, contas, o salário dela e as taxas. A faixa volta
+   para patamar de lucro, não de faturamento. */
+const REGUA = { limite: 0.08, apertado: 0.18,
+  fonte: 'referência nossa — não existe órgão que fixe margem de salão no Brasil' };
 
 function veredito(r){
+  /* ⚠️ sem o salário dela respondido, o número não é lucro e a tela não pode
+     carimbar «correta». Isto não é régua: é a conta estar incompleta. */
+  if (r.semSalario) return {
+    nivel: 'semdados', cor: '#A96808', icone: '!',
+    titulo: 'Falta dizer quanto você quer ganhar',
+    frase: 'Sem o seu salário na conta, o que sobra não é lucro — é o seu '
+         + 'pagamento e o lucro misturados, e parece maior do que é.',
+  };
   if (r.semVolume) return {
     nivel: 'semdados', cor: '#A96808', icone: '!',
     titulo: 'Falta dizer quantos atendimentos',
@@ -173,24 +230,26 @@ function veredito(r){
   if (r.paga) return {
     nivel: 'errado', cor: '#BC3D20', icone: 'x',
     titulo: 'Sua precificação está errada',
-    frase: `Cada atendimento tira ${R$(Math.abs(r.lucro))} do seu bolso. `
-         + `O mínimo para não trabalhar de graça é ${R$(r.minimo)}.`,
+    frase: `Depois de pagar produto, contas e o seu salário, cada atendimento `
+         + `tira ${R$(Math.abs(r.lucro))} do caixa. O mínimo para fechar é ${R$(r.minimo)}.`,
   };
   if (r.margem < REGUA.limite) return {
     nivel: 'limite', cor: '#A96808', icone: '!',
     titulo: 'Sua precificação está no limite',
-    frase: `Sobram só ${pc(r.margem)} do preço. Um produto que subir já come o lucro.`,
+    frase: `Depois do seu salário sobram só ${pc(r.margem)} do preço. `
+         + `Um produto que subir já come o lucro.`,
   };
   if (r.margem < REGUA.apertado) return {
     nivel: 'apertado', cor: '#A96808', icone: '!',
     titulo: 'Sua precificação está apertada',
-    frase: `${pc(r.margem)} sobram. Paga as contas, mas não dá para repor equipamento.`,
+    frase: `${pc(r.margem)} sobram depois do seu salário. Paga tudo e sobra pouco: `
+         + `não dá para repor equipamento nem guardar para o mês fraco.`,
   };
   return {
     nivel: 'certo', cor: '#12885C', icone: 'check',
     titulo: 'Sua precificação está correta',
-    frase: `${pc(r.margem)} do preço sobram para você — acima dos ${pc(REGUA.apertado)} `
-         + `que estamos usando como referência.`,
+    frase: `${pc(r.margem)} do preço sobram DEPOIS de pagar o seu salário — `
+         + `acima dos ${pc(REGUA.apertado)} que usamos como referência.`,
   };
 }
 
@@ -238,8 +297,12 @@ function numeroDoc(r){
   const dia = String(t.getFullYear())
     + '-' + String(t.getMonth() + 1).padStart(2,'0')
     + String(t.getDate()).padStart(2,'0');
-  const s = String(Math.round(r.lucro * 100)).padStart(6,'0');
-  return dia + '-' + s.slice(-6);
+  /* ⛔ 02/11 — COM PREJUÍZO SAÍA LIXO. `padStart` numa string já com sinal
+     imprimia «Nº 2026-1102-00-252» no cupom. Agora o sinal vira uma letra: P
+     de prejuízo. */
+  const neg = r.lucro < 0;
+  const s = String(Math.abs(Math.round(r.lucro * 100))).padStart(6,'0').slice(-6);
+  return dia + '-' + (neg ? 'P' : '') + s;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -289,8 +352,31 @@ function extrato(d){
      a única conta da casa. */
   const _produtos = d.produtos || (d.produto != null
     ? [{ nome:'Produto do serviço', frasco:n(d.produto), rende:1 }] : PRODUTOS);
-  const _contas   = d.contas   || (d.contaMes != null
-    ? [{ nome:'Contas do salão', v:n(d.contaMes) }] : CONTAS);
+  const _contas = (d.contas || (d.contaMes != null
+    ? [{ nome:'Contas do salão', v:n(d.contaMes) }] : CONTAS)).slice();
+  /* ══════════════════════════════════════════════════════════════════════
+     ⛔ 02/11 — AQUI FALTAVA O TRABALHO DELA, E ERA ISSO QUE INFLAVA O LUCRO.
+
+     A calculadora perguntava preço, produto, contas, taxas e volume — e
+     chamava o que sobrava de «lucro líquido». Não era: era o pagamento das
+     mãos dela E o lucro, somados, sem separar. Medido numa progressiva de
+     R$ 250 em 3h: a tela imprimia R$ 177,03 (70,8% do preço). R$ 177,03 em
+     3 horas é R$ 59,01/h — o salário dela, chamado de lucro.
+
+     O salário dela é custo do salão como o aluguel: tem que ser pago todo mês
+     dê no que der. Então entra na MESMA lista, rateado pelo MESMO divisor, e
+     atravessa o mesmo caminho de código. Uma conta só — é o que faz as
+     parcelas da tela fecharem com o total e o mês fechar com o serviço.
+     ⚠️ Quem mexer aqui: não crie um segundo rateio para o salário. Já houve
+        esse bug (o aluguel em dobro) e ele custou meses de número errado.
+     ══════════════════════════════════════════════════════════════════════ */
+  if (n(d.proLabore) > 0) _contas.push({ nome:'Seu salário', v:n(d.proLabore), meu:true });
+  /* ⛔ 02/11 — MEI NÃO PAGA IMPOSTO EM PORCENTAGEM. A tela 09 só aceitava %,
+     com «2» de exemplo. Quem é MEI paga o DAS fixo (~R$ 80/mês): digitando o
+     2 do exemplo ela pagava R$ 5,00 por atendimento em vez de R$ 0,92 — cerca
+     de R$ 360/mês de imposto que não existe. Imposto fixo é conta do mês, não
+     fatia da venda; entra aqui e é rateado como as outras. */
+  if (n(d.impostoFixo) > 0) _contas.push({ nome:'Imposto (valor fixo)', v:n(d.impostoFixo) });
   const _taxas    = d.taxasLista
     || ((d.taxaCartao != null || d.taxaImposto != null)
         ? [{ nome:'Taxa da maquininha', pct:n(d.taxaCartao  || 0) },
@@ -316,32 +402,86 @@ function extrato(d){
      salão, não pelos de uma pessoa. Medido no caso dela: lucro líquido de
      R$ 189,17 (errado) para R$ 200,71 (certo). */
   const atendDoSalao = n(d.salaoMes) > 0 ? n(d.salaoMes) : atend;
+  /* ══════════════════════════════════════════════════════════════════════
+     ⛔ 02/11 — O MÊS COBRAVA PREÇO DE PROGRESSIVA EM TODO ATENDIMENTO.
+     A tela 08 pergunta o movimento do SALÃO — todos os serviços, corte,
+     escova, hidratação — e o mês multiplicava esse total pelo preço de UM
+     serviço. Medido num salão misto de 87/mês (29 progressivas de R$ 250 +
+     58 cortes de R$ 60): a tela projetava R$ 21.750 de faturamento contra
+     R$ 10.730 reais. Inflava 103%, e a ressalva em letra miúda não mudava
+     o número.
+     Agora ela diz quantos daquele serviço o salão faz, e o mês projeta só
+     esses. O rateio continua caindo sobre TODOS os atendimentos — porque o
+     aluguel é pago por todos eles, não só pela progressiva.
+     ══════════════════════════════════════════════════════════════════════ */
+  const servicoMes = n(d.servicoMes) > 0 ? Math.min(n(d.servicoMes), atendDoSalao)
+                   : atendDoSalao;
   const salao = _contas.map(c => ({
     nome: c.nome, detalhe: R$0(n(c.v)) + ' ÷ ' + atendDoSalao,
     v: cent(atendDoSalao > 0 ? n(c.v) / atendDoSalao : 0),
+    meu: !!c.meu,
   }));
   const taxas = _taxas.map(t => ({
     nome: t.nome, detalhe: String(n(t.pct)).replace('.', ',') + '% de ' + R$0(preco),
     v: cent(preco * n(t.pct) / 100),
   }));
 
+  /* ══════════════════════════════════════════════════════════════════════
+     ⛔ 02/11 — A COMISSÃO SÓ EXISTIA NO MÊS, NUNCA NO SERVIÇO.
+     Num salão com equipe, a maior parte dos atendimentos é feita por uma
+     profissional que leva 40% — e o extrato do serviço não descontava nada
+     disso. Medido num salão de 2: a tela dizia R$ 191,14 de «lucro» numa
+     progressiva de R$ 250 que, feita pela profissional, deixa R$ 60,37.
+
+     Quando há equipe, o serviço que a tela abre é o que a PROFISSIONAL faz —
+     é ele que se multiplica quando o salão cresce, e é ele que decide se o
+     preço aguenta uma cadeira a mais. Sem equipe, não há comissão nenhuma.
+     ══════════════════════════════════════════════════════════════════════ */
+  const temEquipe = Math.round(n(d.pessoas)) > 0;
+  const pCom = n(d.comissao) / 100;
+  /* ⚠️ A COMISSÃO ENTRA PELA FATIA, NÃO CHEIA — e é isso que faz os dois
+     números da tela fecharem. Num salão de 3 bocas, 2 de cada 3 atendimentos
+     são de profissional e pagam comissão; o terceiro é das mãos dela e não
+     paga. Cobrar 40% cheios em todos mentiria para baixo; cobrar zero (como
+     era até hoje) mente para cima. A fatia é a média real do salão — e é
+     exatamente ela que, multiplicada pelo volume, dá o mês. */
+  const bocasX = Math.max(1, Math.round(n(d.pessoas)) + 1);
+  const fatiaProf = temEquipe ? (bocasX - 1) / bocasX : 0;
+  const comissoes = (temEquipe && pCom > 0)
+    ? [{ nome:'Comissão da profissional',
+         detalhe: String(n(d.comissao)).replace('.', ',') + '% em '
+                + (bocasX - 1) + ' de cada ' + bocasX + ' atendimentos',
+         v: cent(preco * pCom * fatiaProf) }]
+    : [];
+
   const soma = a => cent(a.reduce((s, x) => s + x.v, 0));
   const tProduto = soma(produtos), tSalao = soma(salao), tTaxas = soma(taxas);
-  const sobra = cent(preco - tProduto - tSalao - tTaxas);
+  const tComissao = soma(comissoes);
+  /* a fatia do salário dela dentro do custo fixo — a tela nomeia essa parcela,
+     mas ela NÃO é somada de novo: já está dentro de tSalao */
+  const trabalho = salao.filter(l => l.meu);
+  const tTrabalho = soma(trabalho);
+  const sobra = cent(preco - tProduto - tSalao - tComissao - tTaxas);
   /* a conta do salão CHEIA, como ela paga — é o que o mês desconta uma vez */
   const fixoMes = cent(_contas.reduce((s, c) => s + n(c.v), 0));
   const pTaxa = _taxas.reduce((s, t) => s + n(t.pct), 0) / 100;
 
   return {
     preco, atend, produtos, salao, taxas, fixoMes, pTaxa, atendDoSalao,
+    /* ⚠️ `trabalho` é um RECORTE de `salao`, não uma lista nova. Quem for somar
+       as parcelas da tela soma `salao` — somar as duas cobra o salário 2×. */
+    trabalho, tTrabalho, proLaboreMes: n(d.proLabore) || 0,
+    semSalario: !(n(d.proLabore) > 0),
+    comissoes, tComissao, temEquipe, servicoMes,
     /* ⚠️ sem volume não existe rateio, e sem rateio o lucro por serviço SOBE —
        medido: 0 atendimentos devolvia R$ 198,25 contra R$ 177,03 com 87.
        Quem consome precisa saber que o número não vale. */
     semVolume: atend <= 0,
     /* ⚠️ «rateio» é jargão de contador. Na tela, custo fixo por atendimento. */
-    titulos: ['Produto por atendimento', 'Custo fixo por atendimento', 'Taxas sobre a venda'],
+    titulos: ['Produto por atendimento', 'Custo fixo por atendimento',
+              'Comissão da profissional', 'Taxas sobre a venda'],
     tProduto, tSalao, tTaxas, sobra,
-    custo: cent(tProduto + tSalao + tTaxas),
+    custo: cent(tProduto + tSalao + tComissao + tTaxas),
     margem: preco ? sobra / preco : 0,
   };
 }

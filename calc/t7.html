@@ -1,6 +1,6 @@
 <!doctype html><html lang="pt-BR"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>T7 · Cartão e imposto</title><link rel="stylesheet" href="telas.css?v=33">
+<title>T7 · Cartão e imposto</title><link rel="stylesheet" href="telas.css?v=34">
 <style>.ex{color:#D4D5D8}
 .btn:disabled{opacity:.3;pointer-events:none}  .ctrl .linha2 input{width:66px;border:0;background:none;outline:none;font-family:inherit;
     font-size:21px;font-weight:700;color:var(--preto);font-variant-numeric:tabular-nums;
@@ -12,7 +12,7 @@
 </style></head><body>
 <div class="nav"><button class="volta">&#8249;</button><h2>Calculadora de Precificação</h2></div>
 <div class="topo">
-  <div class="passo">Pergunta 09 de 09</div>
+  <div class="passo">Pergunta 10 de 10</div>
   <h3>Quanto você paga de taxas<br>pro governo e pra maquininha?</h3>
   <p>A maquininha e o governo levam uma parte de cada venda, antes de você receber.</p>
 </div>
@@ -34,12 +34,23 @@
         <div class="linha2">
           <input id="pc" inputmode="decimal" placeholder="3,5"><span class="pct">%</span></div>
       </div>
-      <div class="ctrl">
+      <div class="ctrl" id="boxPct">
         <small>Imposto</small>
         <div class="linha2">
           <input id="pi" inputmode="decimal" placeholder="2"><span class="pct">%</span></div>
       </div>
+      <div class="ctrl" id="boxFixo" hidden>
+        <small>Imposto por mês</small>
+        <div class="linha2">
+          <span class="pct" style="margin:0 2px 0 0">R$</span>
+          <input id="pf" inputmode="decimal" placeholder="81"></div>
+      </div>
     </div>
+    <!-- ⛔ 02/11 — MEI NÃO PAGA IMPOSTO EM PORCENTAGEM. A tela só aceitava %,
+         com «2» de exemplo. Quem é MEI paga o DAS fixo: digitando o 2 pagava
+         R$ 5,00 por atendimento em vez de ~R$ 0,92 — uns R$ 360/mês de imposto
+         que não existe. Valor fixo é conta do mês, e é assim que entra. -->
+    <button class="meiBt" id="mei">Sou MEI — pago um valor fixo por mês</button>
   </div>
 </div>
 <div class="saida">
@@ -48,39 +59,50 @@
   <div class="conta" id="conta">—</div>
 </div>
 <div class="pe"><button class="btn">Ver o resultado</button></div>
-<script src="nucleo.js?v=33"></script>
-<script src="estado.js?v=33"></script>
+<script src="nucleo.js?v=34"></script>
+<script src="estado.js?v=34"></script>
 <script>
 /* ⚠️ nascem vazias: 3,5% e 2% eram chute meu, não resposta dela */
 let c = EST.taxaCartao != null ? +EST.taxaCartao : null;
 let i = EST.taxaImposto != null ? +EST.taxaImposto : null;
+let f = EST.impostoFixo != null ? +EST.impostoFixo : null;
+let fixoOn = EST.impostoFixo != null && +EST.impostoFixo > 0;
 const g=id=>document.getElementById(id);
 const vir=v=>v.toFixed(1).replace('.',',');
 const rs=v=>'R$ '+v.toFixed(2).replace('.',',');
 const rs0=v=>'R$ '+Math.round(v).toLocaleString('pt-BR');
 function pinta(){
-  const cc = c || 0, ii = i || 0;
+  const cc = c || 0, ii = fixoOn ? 0 : (i || 0);
   const voce = 100 - cc - ii;
-  const pronto = c != null && i != null;
+  const pronto = c != null && (fixoOn ? f != null && f > 0 : i != null);
   document.querySelector('.btn').disabled = !pronto;
-  salvar({ taxaCartao:c, taxaImposto:i });
+  g('boxPct').hidden = fixoOn; g('boxFixo').hidden = !fixoOn;
+  g('mei').setAttribute('aria-pressed', fixoOn);
+  g('mei').textContent = fixoOn ? 'Meu imposto é uma porcentagem'
+                                : 'Sou MEI — pago um valor fixo por mês';
+  salvar({ taxaCartao:c, taxaImposto: fixoOn ? 0 : i, impostoFixo: fixoOn ? f : null });
   g('bCart').style.flex=Math.max(cc,0.6); g('bImp').style.flex=Math.max(ii,0.6); g('bVoce').style.flex=voce;
   g('vCart').textContent = c!=null ? rs(cc) : '—';
-  g('vImp').textContent  = i!=null ? rs(ii) : '—';
+  g('vImp').textContent  = fixoOn ? '—' : (i!=null ? rs(ii) : '—');
   g('vVoce').textContent = pronto ? rs(voce) : '—';
 
   g('grande').innerHTML = pronto ? vir(cc+ii) : '<span class=\"ex\">—</span>';
   g('conta').textContent = pronto
     ? 'Em cada atendimento de '+rs0(EST.preco)+', você paga '+rs(EST.preco*(cc+ii)/100)
-    : 'Escreva quanto a maquininha e o governo levam';
+      + (fixoOn ? ' de cartão, mais '+rs0(f)+' de imposto no mês' : '')
+    : (fixoOn ? 'Escreva a taxa do cartão e o imposto que você paga por mês'
+              : 'Escreva quanto a maquininha e o governo levam');
 }
 /* ⚠️ eram dois steppers de meio em meio ponto: 11 toques para 3,5% + 2%.
    Agora ela digita. */
 const leia = v => { const x = parseFloat(String(v).replace(',', '.')); return isFinite(x) ? x : null; };
 g('pc').addEventListener('input', () => { c = leia(g('pc').value); pinta(); });
 g('pi').addEventListener('input', () => { i = leia(g('pi').value); pinta(); });
+g('pf').addEventListener('input', () => { f = dinheiro(g('pf').value); pinta(); });
+g('mei').onclick = () => { fixoOn = !fixoOn; pinta(); };
 if (c != null) g('pc').value = vir(c);
 if (i != null) g('pi').value = vir(i);
+if (f != null) g('pf').value = String(f).replace('.', ',');
 pinta();
-</script><script src="nav.js?v=33"></script>
+</script><script src="nav.js?v=34"></script>
 </body></html>

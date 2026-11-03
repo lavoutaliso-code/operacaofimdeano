@@ -17,14 +17,49 @@ const CHAVE = 'calcprec.v1';
    exemplo em cinza dentro, e nenhum stepper começa com valor.
    ⚠️ `pessoas` nasce em ZERO: a calculadora não pode supor que ela tem equipe.
    ══════════════════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════════════════
+   ⛔ 02/11 — DINHEIRO ERA LIDO DE DOIS JEITOS, E OS DOIS ERRAVAM.
+   A tela 04 fazia `replace(',','.')` e nada mais: «1.200» virava **1,2** —
+   um frasco de R$ 1.200 entrava como R$ 1,20 e o lucro subia por mil.
+   A tela 07 fazia `replace(/\./g,'')` antes: «1200.50» virava **120050** —
+   uma conta de R$ 1.200,50 entrava como R$ 120 mil e o lucro despencava.
+   Medido nas duas, ao vivo, digitando como brasileira digita.
+
+   Agora existe UM leitor, e ele é desconfiado: só trata o último separador
+   como decimal se sobrarem 1 ou 2 dígitos depois dele. «1.200» é mil e
+   duzentos; «1200.50» é mil e duzentos e cinquenta centavos; «1.200,00»
+   também. Quem mexer aqui: mexa aqui, não na tela.
+   ══════════════════════════════════════════════════════════════════════════ */
+function dinheiro(v){
+  const s = String(v == null ? '' : v).trim().replace(/[^\d.,]/g, '');
+  if (!s) return null;
+  const ult = Math.max(s.lastIndexOf(','), s.lastIndexOf('.'));
+  let x;
+  if (ult < 0) x = parseFloat(s);
+  else {
+    const dec = s.slice(ult + 1);
+    x = (dec.length === 1 || dec.length === 2)
+      ? parseFloat(s.slice(0, ult).replace(/[.,]/g, '') + '.' + dec)
+      : parseFloat(s.replace(/[.,]/g, ''));
+  }
+  return isFinite(x) ? x : null;
+}
+
 const BASE = {
   servico:  '',
   preco:    null,
   horas:    null,
   produtos: [{ nome:'', frasco:null, rende:null }],
   contas:   [{ nome:'', v:null }],   /* ⚠️ os nomes são dela: nada de aluguel/luz meus */
+  /* ⛔ 02/11 — O CAMPO QUE FALTAVA. Sem ele o «lucro líquido» da tela era o
+     salário dela somado ao lucro, e parecia 70% quando era 48%. */
+  proLabore: null,
   taxaCartao:  null,
   taxaImposto: null,
+  /* imposto fixo (MEI) em vez de percentual — ver tela 09 */
+  impostoFixo: null,
+  /* quantos atendimentos do mês são DESTE serviço (tela 08) */
+  servicoSemana: null,
   /* a semana é do SALÃO quando há equipe e DELA quando trabalha sozinha */
   semana:   [0, 0, 0, 0, 0, 0, 0],
   pessoas:  0,
@@ -63,6 +98,14 @@ function derivar(){
   EST.atend = Math.round(EST.salaoMes / bocas);
   EST.atendPorProf = EST.atend;        /* divisão igual — é o que ela respondeu */
   EST.temEquipeHoje = bocas > 1;
+  /* ⛔ 02/11 — QUANTOS DESSES SÃO O SERVIÇO QUE ELA ESTÁ CALCULANDO.
+     A tela 08 pergunta o movimento do salão — todos os serviços. O mês
+     multiplicava esse total pelo preço de UM serviço e inflava até 103% no
+     salão misto. Agora o mês projeta só estes. Em branco = todos, que é o
+     caso de quem só faz aquilo. */
+  EST.servicoMes = (+EST.servicoSemana > 0)
+    ? Math.min(Math.round(+EST.servicoSemana * 4.33), EST.salaoMes)
+    : EST.salaoMes;
 }
 
 function salvar(campos){

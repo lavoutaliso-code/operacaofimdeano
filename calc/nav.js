@@ -82,3 +82,29 @@ addEventListener('keydown', e => {
   new MutationObserver(agenda).observe(document.body, { childList:true, subtree:true });
   agenda();
 })();
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ⚠️ 02/11 — REDE DE SEGURANÇA PARA O LINK DIRETO.
+   As telas avisam o aparelho por `postMessage` e quem troca de tela é o
+   `iphone.html` (ou a página que embute a calculadora num iframe). É assim
+   que funciona no ar — a Operação Fim de Ano carrega `calc/capa-k1.html`
+   dentro de um iframe, e está certo.
+   MAS se alguém abrir esse mesmo endereço direto no navegador, `parent` é a
+   própria janela: o recado não chega em ninguém e o botão não faz nada.
+   Então quando não há moldura, a tela anda sozinha.
+   ══════════════════════════════════════════════════════════════════════════ */
+(function semMoldura(){
+  if (window.parent !== window) return;        /* tem aparelho em volta: não mexe */
+  const FLUXO = ['capa-k1.html','t0.html','t1.html','t2.html','t3.html','t8.html',
+                 't4.html','t5.html','t9.html','t6.html','t7.html',
+                 'carregando.html','sub-a.html'];
+  const aqui = location.pathname.split('/').pop() || 'capa-k1.html';
+  const i = FLUXO.indexOf(aqui);
+  if (i < 0) return;
+  addEventListener('message', ev => {
+    const d = ev.data || {};
+    const alvo = d.calc === 'prox' ? i + 1 : d.calc === 'ant' ? i - 1 : null;
+    if (alvo == null || alvo < 0 || alvo >= FLUXO.length) return;
+    location.href = FLUXO[alvo] + location.search;
+  });
+})();

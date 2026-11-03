@@ -1,0 +1,97 @@
+<!doctype html><html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>T9 · Seu salário</title><link rel="stylesheet" href="telas.css?v=34">
+<style>
+  .btn:disabled{opacity:.3;pointer-events:none}
+  .meio{margin-bottom:auto}
+  .salBox{background:#fff;border-radius:18px;padding:24px 18px 20px;
+          box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .salCampo{display:flex;align-items:baseline;justify-content:center;gap:4px}
+  .salCampo em{font-style:normal;font-size:22px;font-weight:700;color:#9A9BA0}
+  .salCampo input{width:170px;border:0;background:none;outline:none;font-family:inherit;
+    font-size:42px;font-weight:800;letter-spacing:-2px;color:var(--preto);
+    font-variant-numeric:tabular-nums;text-align:center;
+    border-bottom:1.5px solid var(--linha);padding-bottom:4px}
+  .salCampo input::placeholder{color:#D4D5D8;font-weight:500}
+  .salCampo input:focus{border-bottom-color:var(--preto)}
+  .atalhos{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:18px}
+  .atalhos button{border:1px solid #E3E4E8;background:#fff;color:#55565B;border-radius:99px;
+    padding:7px 13px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+  .atalhos button[aria-pressed="true"]{background:var(--preto);border-color:var(--preto);color:#fff}
+  .salNota{font-size:11px;line-height:1.5;color:#7A7B80;text-align:center;margin-top:16px}
+  .salNota b{color:var(--preto);font-weight:700;font-variant-numeric:tabular-nums}
+</style></head><body>
+<div class="nav"><button class="volta">&#8249;</button><h2>Calculadora de Precificação</h2></div>
+<div class="topo">
+  <div class="passo">Pergunta 08 de 10</div>
+  <h3>Quanto você quer<br>ganhar por mês?</h3>
+  <p>O seu salário, como o de qualquer profissional. É a conta que mais gente
+     esquece — e sem ela o lucro parece maior do que é.</p>
+</div>
+<div class="meio">
+  <div class="salBox">
+    <div class="salCampo"><em>R$</em><input id="sal" inputmode="numeric" placeholder="5.000"></div>
+    <div class="atalhos" id="atalhos"></div>
+    <p class="salNota" id="nota">—</p>
+  </div>
+</div>
+<div class="saida">
+  <div class="rot">Seu salário por mês</div>
+  <div class="n"><span class="cif">R$</span><span class="v" id="grande">—</span></div>
+  <div class="conta" id="conta">—</div>
+</div>
+<div class="pe"><button class="btn">Continuar</button></div>
+<script src="nucleo.js?v=34"></script>
+<script src="estado.js?v=34"></script>
+<script>
+/* ══════════════════════════════════════════════════════════════════════════
+   ⛔ 02/11 — ESTA PERGUNTA NUNCA FOI FEITA, E ERA ELA QUE INFLAVA O LUCRO.
+   A calculadora perguntava preço, produto, contas, taxas e volume, somava tudo
+   e chamava o resto de «lucro líquido». Não era: era o salário dela E o lucro,
+   juntos. Medido numa progressiva de R$ 250 em 3h — a tela dizia R$ 177,03
+   (70,8% do preço), que são R$ 59,01 por hora das mãos dela. Com o salário na
+   conta o mesmo serviço deixa R$ 119,56 (47,8%).
+
+   Por MÊS, não por hora: dona de salão sabe de cabeça quanto precisa tirar no
+   mês; quanto vale a hora dela, não. E o número não é cobrado dela como meta —
+   é o que ela QUER ganhar, e a conta mostra se o preço aguenta.
+   ══════════════════════════════════════════════════════════════════════════ */
+const ATALHOS = [2000, 3000, 5000, 8000];
+const g = id => document.getElementById(id);
+const brl0 = v => Math.round(v).toLocaleString('pt-BR');
+let sal = EST.proLabore != null ? +EST.proLabore : null;
+
+/* as horas que ela já disse que trabalha — para traduzir o mês em hora */
+const horasMes = (+EST.horas || 0) * (+EST.atend || 0);
+const atend = +EST.atend || 0;
+
+function pinta(){
+  document.querySelector('.btn').disabled = !(sal > 0);
+  salvar({ proLabore: sal });
+  g('atalhos').innerHTML = ATALHOS.map(v =>
+    `<button data-v="${v}" aria-pressed="${sal === v}">R$ ${brl0(v)}</button>`).join('');
+  g('atalhos').querySelectorAll('button').forEach(b => b.onclick = () => {
+    sal = +b.dataset.v; g('sal').value = brl0(sal); pinta();
+  });
+
+  g('grande').innerHTML = sal > 0 ? brl0(sal) : '<span class="ex">—</span>';
+  if (!(sal > 0)){
+    g('nota').textContent = 'Escreva quanto você precisa tirar do salão todo mês.';
+    g('conta').textContent = 'Sem esse número o lucro vira o seu salário disfarçado';
+    return;
+  }
+  /* ⚠️ só traduz em hora se ela já respondeu tempo e volume; senão, cala. */
+  g('nota').innerHTML = horasMes > 0
+    ? `Pelas suas respostas você fica <b>${Math.round(horasMes)}h</b> na cadeira por mês. `
+      + `Esse salário dá <b>R$ ${(sal/horasMes).toFixed(2).replace('.',',')}</b> por hora sua.`
+    : 'Esse é o valor que a calculadora vai descontar antes de dizer o lucro.';
+  g('conta').textContent = atend > 0
+    ? 'R$ ' + (sal/atend).toFixed(2).replace('.',',') + ' em cada atendimento do salão'
+    : 'Vai ser dividido pelos atendimentos do mês';
+}
+const leia = v => dinheiro(v);
+g('sal').addEventListener('input', () => { sal = leia(g('sal').value); pinta(); });
+if (sal != null) g('sal').value = brl0(sal);
+pinta();
+</script><script src="nav.js?v=34"></script>
+</body></html>

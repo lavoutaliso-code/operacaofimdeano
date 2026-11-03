@@ -1,12 +1,12 @@
 <!doctype html><html lang="pt-BR"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>T4 · Equipe</title><link rel="stylesheet" href="telas.css?v=33">
+<title>T4 · Equipe</title><link rel="stylesheet" href="telas.css?v=34">
 <style>.btn:disabled{opacity:.3;pointer-events:none}
   .meio{margin-bottom:auto}
   .divisao{padding:22px 15px 18px}</style></head><body>
 <div class="nav"><button class="volta">&#8249;</button><h2>Calculadora de Precificação</h2></div>
 <div class="topo">
-  <div class="passo">Pergunta 06 de 09</div>
+  <div class="passo">Pergunta 06 de 10</div>
   <h3 id="perg">—</h3>
   <p id="ajuda">—</p>
 </div>
@@ -19,19 +19,21 @@
   </div>
 </div>
 <div class="pe"><button class="btn">Continuar</button></div>
-<script src="nucleo.js?v=33"></script>
-<script src="estado.js?v=33"></script>
+<script src="nucleo.js?v=34"></script>
+<script src="estado.js?v=34"></script>
 <script>
 const PRECO = +EST.preco || 0;
 let sozinha = !EST.temEquipeHoje;
 const g=id=>document.getElementById(id);
 const rs0=v=>'R$ '+Math.round(v).toLocaleString('pt-BR');
 g('sl').value = EST.comissao != null ? EST.comissao : 0;   /* começa no 0% */
-let mexeu = EST.comissao != null;
+let mexeu = EST.comissao != null && +EST.comissao > 0;
 function pinta(){
   const p = +g('sl').value;
-  document.querySelector('.btn').disabled = !mexeu;
-  salvar({ comissao: mexeu ? +g('sl').value : null, temEquipeHoje: !sozinha });
+  document.querySelector('.btn').disabled = !mexeu || p <= 0;
+  /* ⚠️ `temEquipeHoje` sai de `pessoas` em derivar(): gravar aqui era
+   escrever um valor que a linha seguinte apagava. */
+  salvar({ comissao: mexeu ? +g('sl').value : null });
   const pro=PRECO*p/100, salao=PRECO-pro;
   /* ⚠️ a barra «profissional × fica com você» saiu: só a porcentagem, centralizada. */
   g('pct').textContent = p;
@@ -55,7 +57,12 @@ function pinta(){
       + ' pra ela e ficam ' + rs0(salao) + ' para cobrir produto, contas e taxas.';
 }
 g('sl').oninput=()=>{ mexeu=true; pinta(); };
-g('sem').onclick=()=>{ sozinha=!sozinha; mexeu=true; pinta(); };
+/* ⛔ 02/11 — UM TOQUE AQUI SALVAVA COMISSÃO ZERO. `mexeu=true` sem a barra
+   sair do 0 liberava o botão com `comissao:0` — e a equipe do cenário
+   trabalhava de graça. Medido: R$ 15.400 no mês contra R$ 9.600 com os 40%
+   que ela paga, sem o número grande piscar. Trocar de «tenho/não tenho»
+   não é responder quanto é a comissão. */
+g('sem').onclick=()=>{ sozinha=!sozinha; pinta(); };
 pinta();
-</script><script src="nav.js?v=33"></script>
+</script><script src="nav.js?v=34"></script>
 </body></html>

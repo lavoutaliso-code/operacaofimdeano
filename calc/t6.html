@@ -1,11 +1,11 @@
 <!doctype html><html lang="pt-BR"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>T6 · Atendimentos</title><link rel="stylesheet" href="telas.css?v=33">
+<title>T6 · Atendimentos</title><link rel="stylesheet" href="telas.css?v=34">
 <style>.ex{color:#D4D5D8}
 .btn:disabled{opacity:.3;pointer-events:none}</style></head><body>
 <div class="nav"><button class="volta">&#8249;</button><h2>Calculadora de Precificação</h2></div>
 <div class="topo">
-  <div class="passo">Pergunta 08 de 09</div>
+  <div class="passo">Pergunta 09 de 10</div>
   <h3 id="pergunta">—</h3>
   <p id="ajuda">—</p>
 </div>
@@ -15,6 +15,22 @@
     <button class="todos" id="todos">Repetir esse número de terça a sábado</button>
     <div class="semFim"><span id="semRot">Na semana</span><b id="semTot">—</b></div>
   </div>
+  <!-- ⛔ 02/11 — O MÊS COBRAVA PREÇO DE PROGRESSIVA EM TODO ATENDIMENTO.
+       Esta tela pergunta o movimento do salão (todos os serviços) e o resultado
+       multiplicava tudo pelo preço de UM. Medido num salão misto de 87/mês:
+       R$ 21.750 projetados contra R$ 10.730 reais, 103% a mais. Aqui ela
+       separa — e o rateio continua caindo sobre todos, porque o aluguel é
+       pago por todos. -->
+  <div class="recorte" id="recorte" hidden>
+    <label for="sv" id="svRot">Desses, quantos são —?</label>
+    <div class="svLinha">
+      <button class="semB" id="svMenos" aria-label="menos">&minus;</button>
+      <input id="sv" inputmode="numeric" aria-label="por semana">
+      <button class="semB" id="svMais" aria-label="mais">+</button>
+      <span class="svSuf">por semana</span>
+    </div>
+    <button class="todosServ" id="svTodos">São todos esse serviço</button>
+  </div>
 </div>
 <div class="saida">
   <div class="rot" id="rotSaida">—</div>
@@ -22,8 +38,8 @@
   <div class="conta" id="conta">—</div>
 </div>
 <div class="pe"><button class="btn">Continuar</button></div>
-<script src="nucleo.js?v=33"></script>
-<script src="estado.js?v=33"></script>
+<script src="nucleo.js?v=34"></script>
+<script src="estado.js?v=34"></script>
 <script>
 /* 4,33 semanas por mês — é a média real (52 semanas ÷ 12 meses). */
 const SEMANAS = 4.33;
@@ -90,22 +106,54 @@ g('todos').onclick = () => {
   soma();
 };
 
+/* quantos daquele serviço, por semana. null = ainda não respondeu */
+const SERV = (EST.servico || 'esse serviço').toLowerCase();
+let sv = EST.servicoSemana != null ? +EST.servicoSemana : null;
+let svTodos = EST.servicoSemana === 0 ? false : EST.servicoSemana == null ? null : false;
+g('svRot').textContent = 'Desses, quantos são ' + SERV + '?';
+
+function pintaRecorte(sem){
+  g('recorte').hidden = sem <= 0;
+  if (sem <= 0) return;
+  if (sv != null) sv = Math.max(0, Math.min(sem, sv));
+  g('sv').value = sv != null ? sv : '';
+  g('sv').placeholder = String(sem);
+  g('svTodos').setAttribute('aria-pressed', sv === sem);
+}
+g('svMenos').onclick = () => { sv = Math.max(0, (sv == null ? 0 : sv) - 1); soma(); };
+g('svMais').onclick  = () => { sv = (sv == null ? 0 : sv) + 1; soma(); };
+g('sv').addEventListener('input', () => {
+  const t = g('sv').value.trim();
+  sv = t === '' ? null : Math.max(0, parseInt(t, 10) || 0);
+  soma();
+});
+g('svTodos').onclick = () => { sv = DIAS.reduce((s, [, v]) => s + v, 0); soma(); };
+
 function soma(){
   const sem = DIAS.reduce((s, [, v]) => s + v, 0);
-  document.querySelector('.btn').disabled = sem <= 0;
-  salvar({ semana: DIAS.map(([,v])=>v) });
+  /* ⚠️ o botão exige as DUAS respostas: sem o recorte o mês volta a supor que
+     todo atendimento do salão é este serviço. */
+  document.querySelector('.btn').disabled = sem <= 0 || !(sv > 0);
+  if (sv != null) sv = Math.max(0, Math.min(sem, sv));
+  salvar({ semana: DIAS.map(([,v])=>v), servicoSemana: sv });
+  pintaRecorte(sem);
+
   const mesSalao = Math.round(sem * SEMANAS);
   const porPessoa = Math.round(mesSalao / BOCAS);
+  const mesServico = sv > 0 ? Math.min(Math.round(sv * SEMANAS), mesSalao) : null;
   const abertos = DIAS.filter(([, v]) => v > 0).length;
   g('semTot').textContent = sem > 0 ? sem : '—';
   g('grande').innerHTML = sem > 0 ? porPessoa : '<span class="ex">—</span>';
   if(sem <= 0){ g('conta').textContent = 'Escreva quantas clientes você atende em cada dia'; return; }
-  g('conta').textContent = COM_EQUIPE
-    ? mesSalao + ' no salão ÷ ' + BOCAS + ' pessoas · ' + abertos
-      + (abertos === 1 ? ' dia aberto' : ' dias abertos')
-    : sem + ' por semana × 4,33 semanas · ' + abertos
-      + (abertos === 1 ? ' dia aberto' : ' dias abertos');
+  if(!(sv > 0)){
+    g('conta').textContent = 'Agora diga quantos desses ' + mesSalao + ' são ' + SERV;
+    return;
+  }
+  g('conta').textContent = mesSalao + ' no mês'
+    + (COM_EQUIPE ? ' ÷ ' + BOCAS + ' pessoas' : '')
+    + ' · ' + mesServico + ' são ' + SERV
+    + ' · ' + abertos + (abertos === 1 ? ' dia aberto' : ' dias abertos');
 }
 soma();
-</script><script src="nav.js?v=33"></script>
+</script><script src="nav.js?v=34"></script>
 </body></html>

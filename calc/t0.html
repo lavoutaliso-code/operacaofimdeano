@@ -1,6 +1,6 @@
 <!doctype html><html lang="pt-BR"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>T0 · Procedimento</title><link rel="stylesheet" href="telas.css?v=33">
+<title>T0 · Procedimento</title><link rel="stylesheet" href="telas.css?v=34">
 <style>
   /* ⚠️ esta tela não tem instrumento alto: centralizar na tela inteira deixava
      a pergunta a 324px do topo. Aqui o conteúdo começa logo abaixo da barra. */
@@ -9,7 +9,7 @@
 </style></head><body>
 <div class="nav"><button class="volta">&#8249;</button><h2>Calculadora de Precificação</h2></div>
 <div class="topo">
-  <div class="passo">Pergunta 01 de 09</div>
+  <div class="passo">Pergunta 01 de 10</div>
   <h3>Qual procedimento<br>você quer calcular?</h3>
   <p>Um por vez. Comece pelo que você mais faz; depois você calcula os outros.</p>
 </div>
@@ -26,8 +26,8 @@
   </div>
 </div>
 <div class="pe"><button class="btn">Continuar</button></div>
-<script src="nucleo.js?v=33"></script>
-<script src="estado.js?v=33"></script>
+<script src="nucleo.js?v=34"></script>
+<script src="estado.js?v=34"></script>
 <script>
 const OPCOES=['Progressiva','Botox','Mechas','Corte','Escova','Hidratação','Coloração','Luzes'];
 const g=id=>document.getElementById(id);
@@ -47,5 +47,5 @@ function pinta(){
 salvar({});
 g('nome').addEventListener('input',()=>{ salvar({servico:g('nome').value.trim()||'Procedimento'}); pinta(); });
 pinta();
-</script><script src="nav.js?v=33"></script>
+</script><script src="nav.js?v=34"></script>
 </body></html>

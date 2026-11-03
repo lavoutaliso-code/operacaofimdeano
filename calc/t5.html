@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>T5 · Conta do salão</title>
-<link rel="stylesheet" href="telas.css?v=33">
+<link rel="stylesheet" href="telas.css?v=34">
 </head>
 <body>
 
@@ -14,7 +14,7 @@
 </div>
 
 <div class="topo">
-  <div class="passo">Pergunta 07 de 09</div>
+  <div class="passo">Pergunta 07 de 10</div>
   <h3>Quanto você paga de<br>contas do salão por mês?</h3>
   <p>Escreva o nome de cada conta que chega todo mês e quanto você paga. Some quantas precisar.</p>
 </div>
@@ -22,6 +22,8 @@
 <div class="meio">
   <div class="envs" id="envs"></div>
   <button class="nMais" id="maisConta">+ anotar outra conta</button>
+  <p class="lembreteTit">Você também paga alguma destas?</p>
+  <div class="chips" id="chips"></div>
 </div>
 
 <div class="saida">
@@ -32,8 +34,8 @@
 
 <div class="pe"><button class="btn">Continuar</button></div>
 
-<script src="nucleo.js?v=33"></script>
-<script src="estado.js?v=33"></script>
+<script src="nucleo.js?v=34"></script>
+<script src="estado.js?v=34"></script>
 <script>
 /* ⚠️ OS NOMES DAS CONTAS ERAM MEUS — aluguel, luz, internet, sistema, contador.
    Isso é a conta do MEU exemplo, não a dela. Agora ela escreve o nome de cada
@@ -42,8 +44,21 @@ let contas = (EST.contas || []).filter(c => c.nome || c.v != null).map(c => ({..
 if (!contas.length) contas = [{nome:'', v:null}];
 
 const brl0 = v => Math.round(v).toLocaleString('pt-BR');
-const num = v => { const x = parseFloat(String(v).replace(/\./g,'').replace(',','.')); return isFinite(x)?x:0; };
+/* ⛔ 02/11 — O PARSER DAQUI TIRAVA TODOS OS PONTOS: «1200.50» virava 120050.
+   Uma conta de R$ 1.200,50 entrava como R$ 120 mil. Medido ao vivo na tela.
+   Agora é o `dinheiro()` do estado.js, o mesmo leitor da tela 04. */
+const num = v => dinheiro(v) || 0;
 const g = id => document.getElementById(id);
+
+/* ⚠️ 02/11 — LEMBRETE, NÃO LISTA PRONTA. Os nomes das contas continuam sendo
+   dela (ela tirou os meus, com razão: eram o MEU exemplo, com os MEUS valores).
+   O que faltava era outra coisa — ninguém lembra de cabeça tudo que chega todo
+   mês. Medido: a tela libera o «Continuar» com UMA conta escrita, e cada conta
+   esquecida sobe o lucro, porque reduz o rateio sem ela perceber.
+   Estes chips não escrevem valor nenhum: só abrem a linha com o nome, e ela
+   decide se aquilo existe no salão dela. */
+const LEMBRETES = ['Aluguel','Luz','Água','Internet','Sistema / agenda','Contador',
+                   'Material de limpeza','Manutenção','Mensalidade da maquininha'];
 
 function pinta(){
   g('envs').innerHTML = contas.map((c,k)=>`
@@ -73,11 +88,29 @@ function pinta(){
 g('maisConta').onclick = () => { contas.push({nome:'', v:null}); pinta();
   const ns = g('envs').querySelectorAll('.nomeConta'); ns[ns.length-1].focus(); };
 
+function chips(){
+  const jaTem = n => contas.some(c => (c.nome||'').trim().toLowerCase() === n.toLowerCase());
+  const faltam = LEMBRETES.filter(n => !jaTem(n));
+  g('chips').innerHTML = faltam.map(n => `<button data-n="${n}">+ ${n}</button>`).join('');
+  g('chips').parentElement.querySelector('.lembreteTit').hidden = !faltam.length;
+  g('chips').querySelectorAll('button').forEach(b => b.onclick = () => {
+    /* a linha em branco do fim vira a conta escolhida, em vez de sobrar vazia */
+    const vazia = contas.findIndex(c => !(c.nome||'').trim() && c.v == null);
+    if (vazia > -1) contas[vazia].nome = b.dataset.n;
+    else contas.push({ nome:b.dataset.n, v:null });
+    pinta();
+    const campos = g('envs').querySelectorAll('.env');
+    const alvo = campos[vazia > -1 ? vazia : contas.length-1];
+    alvo && alvo.querySelector('.val input').focus();
+  });
+}
+
 function soma(){
   const t = contas.reduce((s,c)=>s+(c.v||0),0);
   const nomeadas = contas.filter(c => (c.v||0) > 0 && c.nome.trim());
   document.querySelector('.btn').disabled = nomeadas.length === 0;
   salvar({contas: contas.map(c=>({...c}))});
+  chips();
   g('grande').innerHTML = t > 0 ? brl0(t) : '<span class="ex">—</span>';
   if(t <= 0){ g('conta').textContent = 'Escreva o nome da conta e quanto você paga'; return; }
   if(!nomeadas.length){ g('conta').textContent = 'Falta o nome dessa conta'; return; }
@@ -88,6 +121,6 @@ function soma(){
 }
 pinta();
 </script>
-<script src="nav.js?v=33"></script>
+<script src="nav.js?v=34"></script>
 </body>
 </html>
